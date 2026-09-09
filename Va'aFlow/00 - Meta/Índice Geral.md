@@ -45,6 +45,8 @@ Bem-vindo à base de conhecimento central do **Va'aFlow** (SaaS Serverless para 
 
 ## 🟡 07 - Documentação Acadêmica (Subagent 6)
 - [[07 - Documentação Acadêmica/Entregáveis Acadêmicos|Documentação, Normas e Entregáveis UniSENAI]]
+- [[07 - Documentação Acadêmica/Relatório Técnico de Engenharia|Relatório Técnico de Engenharia de Software]]
+- [[07 - Documentação Acadêmica/Manual de Uso e Recomendações de Segurança|Manual de Uso e Recomendações de Segurança Náutica]]
 
 ---
 

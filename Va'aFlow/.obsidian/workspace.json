@@ -4,17 +4,21 @@
     "type": "split",
     "children": [
       {
-        "id": "b0505553707aa10e",
+        "id": "e93168f052aa74d2",
         "type": "tabs",
         "children": [
           {
-            "id": "30f7dfacc739797c",
+            "id": "5b2902614b8fabc0",
             "type": "leaf",
             "state": {
-              "type": "empty",
-              "state": {},
+              "type": "markdown",
+              "state": {
+                "file": "00 - Meta/Roadmap e Fases.md",
+                "mode": "source",
+                "source": false
+              },
               "icon": "lucide-file",
-              "title": "Nova aba"
+              "title": "Roadmap e Fases"
             }
           }
         ]
@@ -181,8 +185,11 @@
       "bases:Criar nova base": false
     }
   },
-  "active": "30f7dfacc739797c",
+  "active": "5b2902614b8fabc0",
   "lastOpenFiles": [
+    "07 - Documentação Acadêmica/Manual de Uso e Recomendações de Segurança.md",
+    "07 - Documentação Acadêmica/Relatório Técnico de Engenharia.md",
+    "Bem-vindo.md",
     "01 - Arquitetura/Roadmap e Fases.md",
     "00 - Meta/Roadmap e Fases.md",
     "07 - Documentação Acadêmica/Entregáveis Acadêmicos.md",
@@ -202,7 +209,6 @@
     "01 - Visão Geral",
     "01 - Arquitetura/Backlog de Infraestrutura AWS.md",
     "00 - Meta/Índice Geral.md",
-    "Bem-vindo.md",
     "01 - Arquitetura/Entregáveis Acadêmicos.md",
     "01 - Arquitetura/Estratégia de QA e Testes.md",
     "01 - Arquitetura/Modelagem DynamoDB.md",

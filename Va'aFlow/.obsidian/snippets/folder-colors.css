@@ -79,3 +79,4 @@
 .nav-folder[data-path^="07 - Documentação Acadêmica"] > .nav-folder-title .nav-folder-title-content::before {
   content: "🟡 ";
 }
+
