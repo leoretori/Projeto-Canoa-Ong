@@ -145,3 +145,4 @@ def test_sessions_and_reservations_handlers(init_dynamo):
     assert resp_me["statusCode"] == 200
     my_res = json.loads(resp_me["body"])
     assert len(my_res) == 1
+

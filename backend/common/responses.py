@@ -64,3 +64,4 @@ def error_response(
     if details is not None:
         payload["details"] = details
     return api_response(status_code=status_code, body=payload)
+

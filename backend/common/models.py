@@ -146,3 +146,4 @@ class ReservationResponse(BaseModel):
     status: str = "CONFIRMED"
     notes: Optional[str] = None
     created_at: str
+

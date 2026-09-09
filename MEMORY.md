@@ -58,3 +58,4 @@ O **Va'aFlow** é uma solução de software desenvolvida no escopo do Programa "
 - **Perfil do Usuário:** `PK: USER#{userId}`, `SK: PROFILE`
 - **Sessão / Remada:** `PK: SESSION#{sessionId}`, `SK: METADATA`, `GSI1PK: SESSIONS`, `GSI1SK: {date}#{time}`
 - **Reserva do Atleta:** `PK: SESSION#{sessionId}`, `SK: RES#{userId}`, `GSI1PK: USER#{userId}`, `GSI1SK: RES#{sessionId}`
+
