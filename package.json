@@ -1,0 +1,15 @@
+{
+  "name": "vaaflow-root",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Root scripts para automação do Va'aFlow",
+  "scripts": {
+    "web": "npm --prefix frontend run web",
+    "android": "npm --prefix frontend run android",
+    "ios": "npm --prefix frontend run ios",
+    "start": "npm --prefix frontend start",
+    "lint": "npm --prefix frontend run lint",
+    "test:backend": "pytest tests/ -v",
+    "server": "python backend/dev_server.py"
+  }
+}
