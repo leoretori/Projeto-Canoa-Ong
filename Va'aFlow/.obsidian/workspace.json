@@ -1,0 +1,209 @@
+{
+  "main": {
+    "id": "59c80fb27a023c48",
+    "type": "split",
+    "children": [
+      {
+        "id": "b0505553707aa10e",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "30f7dfacc739797c",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "01 - Arquitetura/Backlog de Infraestrutura AWS.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Backlog de Infraestrutura AWS"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "a80674179a932c52",
+    "type": "split",
+    "children": [
+      {
+        "id": "644dd909040c0f16",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "29627f55f33044c6",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Explorador de arquivos"
+            }
+          },
+          {
+            "id": "e23dd3b3db1e812a",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Procurar"
+            }
+          },
+          {
+            "id": "f0fa43d64df8dbaa",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-bookmark",
+              "title": "Marcadores"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "0df13d8d873531fb",
+    "type": "split",
+    "children": [
+      {
+        "id": "ca919db8dd12b479",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "edc291263328aaac",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Links inversos"
+            }
+          },
+          {
+            "id": "c6eb4485caa1b0f1",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Links de saída"
+            }
+          },
+          {
+            "id": "a496c8387806e614",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "Etiquetas"
+            }
+          },
+          {
+            "id": "67d48b9cd2de789d",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "Todas as propriedades"
+            }
+          },
+          {
+            "id": "561d08b653eb4baa",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "Sumário"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Abrir a troca rápida": false,
+      "graph:Abrir visualização em gráfico": false,
+      "canvas:Criar novo canvas": false,
+      "daily-notes:Abrir a nota de hoje": false,
+      "templates:Inserir modelo": false,
+      "command-palette:Abrir paleta de comandos": false,
+      "bases:Criar nova base": false
+    }
+  },
+  "active": "30f7dfacc739797c",
+  "lastOpenFiles": [
+    "01 - Arquitetura/Roadmap e Fases.md",
+    "00 - Meta/Índice Geral.md",
+    "01 - Arquitetura/Backlog de Infraestrutura AWS.md",
+    "Bem-vindo.md",
+    "01 - Arquitetura/Entregáveis Acadêmicos.md",
+    "01 - Arquitetura/Estratégia de QA e Testes.md",
+    "01 - Arquitetura/Modelagem DynamoDB.md",
+    "01 - Arquitetura/Back-End e Microsserviços.md",
+    "01 - Arquitetura/Front-End Multiplataforma.md",
+    "01 - Arquitetura/Infraestrutura e SAM.md",
+    "01 - Arquitetura/Visão Geral da Arquitetura.md",
+    "01 - Arquitetura",
+    "00 - Meta/Contrato de Integração.md",
+    "00 - Meta/Governança e Squad.md",
+    "gemini-scribe/Prompts",
+    "gemini-scribe",
+    "00 - Meta/MAIN.md",
+    "00 - Meta"
+  ]
+}
