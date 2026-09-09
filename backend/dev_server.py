@@ -199,13 +199,28 @@ class LocalGatewayHandler(BaseHTTPRequestHandler):
 
 
 def run():
-    server_address = ("", PORT)
-    httpd = HTTPServer(server_address, LocalGatewayHandler)
+    candidate_ports = [PORT, 8001, 8080, 5000, 3001] if PORT == 8000 else [PORT]
+    httpd = None
+    active_port = PORT
+
+    for port in candidate_ports:
+        try:
+            server_address = ("127.0.0.1", port)
+            httpd = HTTPServer(server_address, LocalGatewayHandler)
+            active_port = port
+            break
+        except (PermissionError, OSError) as e:
+            print(f"[AVISO] Porta {port} indisponivel ou bloqueada pelo Windows ({e}). Tentando proxima porta...")
+
+    if not httpd:
+        print("[ERRO] Nao foi possivel iniciar o servidor em nenhuma das portas candidatas.")
+        return
+
     print(f"\n=======================================================")
-    print(f"🚀 Va'aFlow Local Dev Server ativo em http://localhost:{PORT}")
-    print(f"📦 Emulação DynamoDB (Moto) e Handlers Lambda carregados")
-    print(f"🌊 Dados de demonstração semeados para testes offline")
-    print(f"Pressione Ctrl+C para encerrar.")
+    print(f">> Va'aFlow Local Dev Server ativo em http://127.0.0.1:{active_port}")
+    print(f">> Emulacao DynamoDB (Moto) e Handlers Lambda carregados")
+    print(f">> Dados de demonstracao semeados para testes offline")
+    print(f">> Pressione Ctrl+C para encerrar.")
     print(f"=======================================================\n")
     try:
         httpd.serve_forever()

@@ -5,6 +5,7 @@ Garante conformidade estrita com o Contrato Central de Integração.
 """
 
 import json
+from decimal import Decimal
 from typing import Any, Dict, Optional
 from pydantic import BaseModel
 
@@ -20,6 +21,8 @@ DEFAULT_CORS_HEADERS = {
 def _serialize(obj: Any) -> Any:
     if isinstance(obj, BaseModel):
         return obj.model_dump(mode="json")
+    if isinstance(obj, Decimal):
+        return int(obj) if obj % 1 == 0 else float(obj)
     if isinstance(obj, list):
         return [_serialize(item) for item in obj]
     if isinstance(obj, dict):
