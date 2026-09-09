@@ -191,3 +191,4 @@ def test_pydantic_schema_strict_validations():
             "name": "Nome Válido",
             "campo_proibido_injecao": "dados indevidos"
         })
+

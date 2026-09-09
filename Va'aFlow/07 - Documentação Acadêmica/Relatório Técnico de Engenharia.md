@@ -44,3 +44,4 @@ A maior criticidade do sistema reside na garantia de que múltiplos atletas disp
 - [[05 - Banco de Dados/Modelagem DynamoDB|Modelagem DynamoDB]]
 - [[06 - QA e Testes/Estratégia de QA e Testes|Estratégia de QA e Testes]]
 - [[00 - Meta/Índice Geral|Índice Geral]]
+
