@@ -15,4 +15,4 @@ Este documento é a **Bússola de Operação (MAIN)** do cofre Obsidian para o p
 - 🗺️ [[00 - Meta/Índice Geral|Índice Geral da Base de Conhecimento]]
 - 👥 [[00 - Meta/Governança e Squad|Governança e Matriz de Subagents]]
 - 📜 [[00 - Meta/Contrato de Integração|Contrato Central de Integração]]
-- 🏛️ [[01 - Arquitetura/Visão Geral da Arquitetura|Visão Geral da Arquitetura]]
+- 🏛️ [[01 - Visão Geral/Visão Geral da Arquitetura|Visão Geral da Arquitetura]]

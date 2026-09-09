@@ -30,6 +30,6 @@ As configurações finais da AWS (credenciais, contas, domínios e e-mails reais
 ---
 
 ## 🔗 Links Relacionados
-- [[01 - Arquitetura/Infraestrutura e SAM|Infraestrutura e SAM]]
+- [[02 - Infraestrutura/Infraestrutura e SAM|Infraestrutura e SAM]]
 - [[00 - Meta/Índice Geral|Índice Geral]]
 

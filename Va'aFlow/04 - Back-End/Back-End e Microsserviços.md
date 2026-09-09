@@ -43,7 +43,7 @@ class ReservationCreateRequest(BaseModel):
 ---
 
 ## 🔗 Links Relacionados
-- [[01 - Arquitetura/Modelagem DynamoDB|Modelagem DynamoDB]]
+- [[05 - Banco de Dados/Modelagem DynamoDB|Modelagem DynamoDB]]
 - [[00 - Meta/Contrato de Integração|Contrato de Integração]]
 - [[00 - Meta/Índice Geral|Índice Geral]]
 

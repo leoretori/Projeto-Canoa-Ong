@@ -74,9 +74,15 @@ Consulte o arquivo [MEMORY.md](MEMORY.md) para o manifesto completo de contexto 
 ├── tests/                     # Suíte de testes de QA e Concorrência
 │   ├── test_concurrency_reservation.py # Teste multithread de Race Conditions no DynamoDB
 │   └── test_handlers_and_models.py     # Testes de integração dos handlers e Pydantic
-└── Va'aFlow/                  # Cofre Obsidian (Documentação e Decisões de Arquitetura)
-    ├── 00 - Meta/
-    └── 01 - Arquitetura/
+└── Va'aFlow/                  # Cofre Obsidian (Organizado por Pastas e Cores de Domínio)
+    ├── 00 - Meta/             # 🟣 Governança, Contratos e Roadmap
+    ├── 01 - Visão Geral/      # ⚪ Visão Geral da Arquitetura
+    ├── 02 - Infraestrutura/   # 🟠 AWS SAM, IaC e Backlog
+    ├── 03 - Front-End/        # 🔷 React Native, Expo e UI/UX
+    ├── 04 - Back-End/         # 🟢 Lambdas Python 3.12 e Pydantic v2
+    ├── 05 - Banco de Dados/   # 🔵 DynamoDB Single Table e Concorrência
+    ├── 06 - QA e Testes/      # 🔴 pytest e Simulações de Race Condition
+    └── 07 - Documentação Acadêmica/ # 🟡 Entregáveis e Relatórios UniSENAI
 ```
 
 ---
@@ -125,3 +131,4 @@ npm run android
 - **Projeto de Extensão:** Canoa Para Todos (CPT) — UniSENAI São Caetano do Sul
 - **Docente Responsável:** Prof. Dr. Fabio Xavier de Melo
 - **Repositório:** [https://github.com/murilo-lameira/Canoa-para-todos](https://github.com/murilo-lameira/Canoa-para-todos)
+

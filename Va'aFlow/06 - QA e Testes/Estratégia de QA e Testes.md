@@ -28,7 +28,7 @@ Este documento define o plano de validação e garantia de qualidade conduzido p
 ---
 
 ## 🔗 Links Relacionados
-- [[01 - Arquitetura/Modelagem DynamoDB|Modelagem DynamoDB]]
-- [[01 - Arquitetura/Back-End e Microsserviços|Back-End e Microsserviços]]
+- [[05 - Banco de Dados/Modelagem DynamoDB|Modelagem DynamoDB]]
+- [[04 - Back-End/Back-End e Microsserviços|Back-End e Microsserviços]]
 - [[00 - Meta/Índice Geral|Índice Geral]]
 

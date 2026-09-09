@@ -39,7 +39,7 @@ except client.exceptions.ConditionalCheckFailedException:
 ---
 
 ## 🔗 Links Relacionados
-- [[01 - Arquitetura/Back-End e Microsserviços|Back-End e Microsserviços]]
-- [[01 - Arquitetura/Estratégia de QA e Testes|Estratégia de QA e Testes]]
+- [[04 - Back-End/Back-End e Microsserviços|Back-End e Microsserviços]]
+- [[06 - QA e Testes/Estratégia de QA e Testes|Estratégia de QA e Testes]]
 - [[00 - Meta/Índice Geral|Índice Geral]]
 

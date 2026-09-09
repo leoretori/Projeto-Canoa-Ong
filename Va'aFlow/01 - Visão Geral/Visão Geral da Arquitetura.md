@@ -41,9 +41,9 @@ O **Va'aFlow** é uma plataforma SaaS projetada para gestão e agendamento de ca
 ---
 
 ## 🔗 Links Relacionados
-- [[01 - Arquitetura/Infraestrutura e SAM|Infraestrutura e SAM]]
-- [[01 - Arquitetura/Front-End Multiplataforma|Front-End Multiplataforma]]
-- [[01 - Arquitetura/Back-End e Microsserviços|Back-End e Microsserviços]]
-- [[01 - Arquitetura/Modelagem DynamoDB|Modelagem DynamoDB]]
+- [[02 - Infraestrutura/Infraestrutura e SAM|Infraestrutura e SAM]]
+- [[03 - Front-End/Front-End Multiplataforma|Front-End Multiplataforma]]
+- [[04 - Back-End/Back-End e Microsserviços|Back-End e Microsserviços]]
+- [[05 - Banco de Dados/Modelagem DynamoDB|Modelagem DynamoDB]]
 - [[00 - Meta/Índice Geral|Índice Geral]]
 
