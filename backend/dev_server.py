@@ -129,8 +129,33 @@ class LocalGatewayHandler(BaseHTTPRequestHandler):
         # Roteamento RESTful
         response = None
 
+        # 0. Rota Raiz e Healthcheck
+        if path in ["/", "/health"] and method == "GET":
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json; charset=utf-8")
+            self.send_header("Access-Control-Allow-Origin", "*")
+            self.end_headers()
+            welcome = {
+                "service": "Va'aFlow Local Dev Server (Serverless Emulation)",
+                "status": "ONLINE",
+                "message": "Servidor de backend local ativo. O aplicativo Expo deve ser acessado no navegador pela porta do Metro (geralmente http://localhost:8081).",
+                "endpoints": [
+                    "GET  /sessions - Listar remadas",
+                    "POST /sessions - Criar nova remada",
+                    "GET  /sessions/{sessionId} - Detalhes da remada",
+                    "PATCH /sessions/{sessionId}/status - Atualizar status",
+                    "POST /sessions/{sessionId}/reservations - Agendamento atomico de vaga",
+                    "GET  /reservations/me - Listar minhas reservas",
+                    "DELETE /sessions/{sessionId}/reservations/{userId} - Cancelar reserva",
+                    "GET  /users/me - Perfil do remador",
+                    "PUT  /users/me - Atualizar necessidades de acessibilidade"
+                ]
+            }
+            self.wfile.write(json.dumps(welcome, ensure_ascii=False, indent=2).encode("utf-8"))
+            return
+
         # 1. Rota de Usuário
-        if path == "/users/me":
+        elif path == "/users/me":
             response = users.handler(event, None)
 
         # 2. Rota de Reservas do Usuário
