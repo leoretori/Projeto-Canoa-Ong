@@ -8,14 +8,24 @@ import logging
 from typing import Any, Dict
 from pydantic import ValidationError
 
-from common.models import SessionCreateRequest, SessionStatusUpdate, SessionResponse
-from common.responses import success_response, error_response
-from common.dynamo_dal import DynamoDAL, ResourceNotFoundError
+from common.models import SessionCreateRequest, SessionStatusUpdate, SessionUpdateRequest, SessionResponse
+from common.responses import success_response, error_response, validation_error_response
+from common.dynamo_dal import DynamoDAL, ResourceNotFoundError, DALException
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
 dal = DynamoDAL()
+
+PRIVILEGED_ROLES = {"INSTRUCTOR", "ADMIN"}
+
+
+def get_user_role(event: Dict[str, Any]) -> str:
+    """Extrai o role do usuário a partir dos claims do Cognito (custom:role)."""
+    authorizer = event.get("requestContext", {}).get("authorizer", {})
+    claims = authorizer.get("claims", {})
+    headers = event.get("headers") or {}
+    return claims.get("custom:role") or headers.get("X-User-Role") or "ATHLETE"
 
 
 def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
@@ -23,6 +33,14 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     resource = event.get("resource", "")
     path_params = event.get("pathParameters") or {}
     session_id = path_params.get("sessionId")
+
+    # Criar, editar ou alterar status de sessão exige role de Instrutor ou Admin.
+    if http_method in ("POST", "PATCH", "PUT") and get_user_role(event) not in PRIVILEGED_ROLES:
+        return error_response(
+            "Apenas instrutores ou administradores podem gerenciar sessões.",
+            status_code=403,
+            error_code="FORBIDDEN",
+        )
 
     try:
         # GET /sessions/{sessionId}
@@ -34,7 +52,12 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
 
         # GET /sessions
         elif http_method == "GET":
-            sessions = dal.list_sessions()
+            query_params = event.get("queryStringParameters") or {}
+            try:
+                limit = int(query_params.get("limit", 50))
+            except (TypeError, ValueError):
+                limit = 50
+            sessions = dal.list_sessions(limit=limit)
             return success_response(sessions, status_code=200)
 
         # POST /sessions
@@ -55,13 +78,25 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             updated = dal.update_session_status(session_id, validated.status.value)
             return success_response(updated, status_code=200)
 
+        # PUT /sessions/{sessionId} — edição de dados cadastrais (não mexe em ocupação)
+        elif http_method == "PUT" and session_id:
+            body_raw = event.get("body") or "{}"
+            body_json = json.loads(body_raw) if isinstance(body_raw, str) else body_raw
+
+            validated = SessionUpdateRequest.model_validate(body_json)
+            updates = validated.model_dump(exclude_unset=True, exclude_none=True)
+            updated = dal.update_session_fields(session_id, updates)
+            return success_response(updated, status_code=200)
+
         else:
             return error_response(f"Rota ou método {http_method} não suportado.", status_code=404, error_code="NOT_FOUND")
 
     except ValidationError as e:
-        return error_response("Payload de sessão inválido.", status_code=400, error_code="VALIDATION_ERROR", details=e.errors())
+        return validation_error_response(e, "Payload de sessão inválido.")
     except ResourceNotFoundError as e:
         return error_response(str(e), status_code=404, error_code="NOT_FOUND")
+    except DALException as e:
+        return error_response(str(e), status_code=400, error_code="INVALID_UPDATE")
     except Exception as e:
         logger.exception("Erro interno no SessionsFunction")
         return error_response("Erro interno no servidor.", status_code=500, error_code="INTERNAL_ERROR", details=str(e))
