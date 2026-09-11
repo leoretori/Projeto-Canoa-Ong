@@ -1,0 +1,82 @@
+/* Cores para a Árvore de Pastas do Obsidian (File Explorer) */
+
+/* 00 - Meta (Roxo / Violeta) */
+.nav-folder[data-path^="00 - Meta"] > .nav-folder-title,
+.nav-file[data-path^="00 - Meta"] > .nav-file-title {
+  color: #a855f7 !important;
+  font-weight: 600;
+}
+.nav-folder[data-path^="00 - Meta"] > .nav-folder-title .nav-folder-title-content::before {
+  content: "🟣 ";
+}
+
+/* 01 - Visão Geral (Slate / Cinza) */
+.nav-folder[data-path^="01 - Visão Geral"] > .nav-folder-title,
+.nav-file[data-path^="01 - Visão Geral"] > .nav-file-title {
+  color: #94a3b8 !important;
+  font-weight: 600;
+}
+.nav-folder[data-path^="01 - Visão Geral"] > .nav-folder-title .nav-folder-title-content::before {
+  content: "⚪ ";
+}
+
+/* 02 - Infraestrutura (Laranja AWS) */
+.nav-folder[data-path^="02 - Infraestrutura"] > .nav-folder-title,
+.nav-file[data-path^="02 - Infraestrutura"] > .nav-file-title {
+  color: #ff9900 !important;
+  font-weight: 600;
+}
+.nav-folder[data-path^="02 - Infraestrutura"] > .nav-folder-title .nav-folder-title-content::before {
+  content: "🟠 ";
+}
+
+/* 03 - Front-End (Ciano React) */
+.nav-folder[data-path^="03 - Front-End"] > .nav-folder-title,
+.nav-file[data-path^="03 - Front-End"] > .nav-file-title {
+  color: #06b6d4 !important;
+  font-weight: 600;
+}
+.nav-folder[data-path^="03 - Front-End"] > .nav-folder-title .nav-folder-title-content::before {
+  content: "🔷 ";
+}
+
+/* 04 - Back-End (Verde Python) */
+.nav-folder[data-path^="04 - Back-End"] > .nav-folder-title,
+.nav-file[data-path^="04 - Back-End"] > .nav-file-title {
+  color: #10b981 !important;
+  font-weight: 600;
+}
+.nav-folder[data-path^="04 - Back-End"] > .nav-folder-title .nav-folder-title-content::before {
+  content: "🟢 ";
+}
+
+/* 05 - Banco de Dados (Azul DynamoDB) */
+.nav-folder[data-path^="05 - Banco de Dados"] > .nav-folder-title,
+.nav-file[data-path^="05 - Banco de Dados"] > .nav-file-title {
+  color: #3b82f6 !important;
+  font-weight: 600;
+}
+.nav-folder[data-path^="05 - Banco de Dados"] > .nav-folder-title .nav-folder-title-content::before {
+  content: "🔵 ";
+}
+
+/* 06 - QA e Testes (Vermelho) */
+.nav-folder[data-path^="06 - QA e Testes"] > .nav-folder-title,
+.nav-file[data-path^="06 - QA e Testes"] > .nav-file-title {
+  color: #ef4444 !important;
+  font-weight: 600;
+}
+.nav-folder[data-path^="06 - QA e Testes"] > .nav-folder-title .nav-folder-title-content::before {
+  content: "🔴 ";
+}
+
+/* 07 - Documentação Acadêmica (Dourado UniSENAI) */
+.nav-folder[data-path^="07 - Documentação Acadêmica"] > .nav-folder-title,
+.nav-file[data-path^="07 - Documentação Acadêmica"] > .nav-file-title {
+  color: #f59e0b !important;
+  font-weight: 600;
+}
+.nav-folder[data-path^="07 - Documentação Acadêmica"] > .nav-folder-title .nav-folder-title-content::before {
+  content: "🟡 ";
+}
+

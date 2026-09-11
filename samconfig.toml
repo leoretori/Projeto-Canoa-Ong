@@ -1,0 +1,20 @@
+version = 0.1
+
+[default.global.parameters]
+stack_name = "vaaflow-stack"
+
+[default.build.parameters]
+cached = true
+parallel = true
+
+[default.validate.parameters]
+lint = true
+
+[default.deploy.parameters]
+capabilities = "CAPABILITY_IAM"
+confirm_changeset = true
+resolve_s3 = true
+region = "us-east-1"
+# TODO: BACKLOG - Preencher BudgetAlertEmail com email real no momento do deploy
+parameter_overrides = "Stage=\"dev\" BudgetAlertEmail=\"\""
+
