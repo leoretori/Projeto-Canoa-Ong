@@ -9,7 +9,7 @@ from typing import Any, Dict
 from pydantic import ValidationError
 
 from common.models import UserProfileUpdate, UserProfileResponse, AccessibilityType, UserRole
-from common.responses import success_response, error_response
+from common.responses import success_response, error_response, validation_error_response
 from common.dynamo_dal import DynamoDAL
 
 logger = logging.getLogger()
@@ -74,7 +74,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             return error_response(f"Método {http_method} não suportado.", status_code=405, error_code="METHOD_NOT_ALLOWED")
 
     except ValidationError as e:
-        return error_response("Payload de usuário inválido.", status_code=400, error_code="VALIDATION_ERROR", details=e.errors())
+        return validation_error_response(e, "Payload de usuário inválido.")
     except Exception as e:
         logger.exception("Erro interno no UsersFunction")
         return error_response("Erro interno no servidor.", status_code=500, error_code="INTERNAL_ERROR", details=str(e))

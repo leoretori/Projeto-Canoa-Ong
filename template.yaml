@@ -168,6 +168,7 @@ Resources:
         AllowOrigin: "'*'"
       Auth:
         DefaultAuthorizer: CognitoAuth
+        AddDefaultAuthorizerToCorsPreflight: false
         Authorizers:
           CognitoAuth:
             UserPoolArn: !GetAtt VaaFlowUserPool.Arn
@@ -234,6 +235,12 @@ Resources:
             RestApiId: !Ref VaaFlowApi
             Path: /sessions/{sessionId}/status
             Method: PATCH
+        UpdateSessionDetails:
+          Type: Api
+          Properties:
+            RestApiId: !Ref VaaFlowApi
+            Path: /sessions/{sessionId}
+            Method: PUT
 
   ReservationsFunction:
     Type: AWS::Serverless::Function
@@ -251,11 +258,23 @@ Resources:
             RestApiId: !Ref VaaFlowApi
             Path: /sessions/{sessionId}/reservations
             Method: POST
+        ListSessionReservations:
+          Type: Api
+          Properties:
+            RestApiId: !Ref VaaFlowApi
+            Path: /sessions/{sessionId}/reservations
+            Method: GET
         ListUserReservations:
           Type: Api
           Properties:
             RestApiId: !Ref VaaFlowApi
             Path: /reservations/me
+            Method: GET
+        ListRecentActivity:
+          Type: Api
+          Properties:
+            RestApiId: !Ref VaaFlowApi
+            Path: /reservations/recent
             Method: GET
         CancelReservation:
           Type: Api
@@ -263,6 +282,37 @@ Resources:
             RestApiId: !Ref VaaFlowApi
             Path: /sessions/{sessionId}/reservations/{userId}
             Method: DELETE
+
+  # ============================================================================
+  # 5b. AWS LAMBDA — ADMINISTRAÇÃO DE USUÁRIOS (gestão de roles no Cognito)
+  # ============================================================================
+  AdminFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: backend/
+      Handler: handlers.admin.handler
+      Description: Lista usuários e altera roles (ATHLETE/INSTRUCTOR/ADMIN) — restrito a Admins
+      Policies:
+        - Statement:
+            - Effect: Allow
+              Action:
+                - cognito-idp:ListUsers
+                - cognito-idp:AdminUpdateUserAttributes
+                - cognito-idp:AdminGetUser
+              Resource: !GetAtt VaaFlowUserPool.Arn
+      Events:
+        ListUsers:
+          Type: Api
+          Properties:
+            RestApiId: !Ref VaaFlowApi
+            Path: /admin/users
+            Method: GET
+        UpdateUserRole:
+          Type: Api
+          Properties:
+            RestApiId: !Ref VaaFlowApi
+            Path: /admin/users/{userId}/role
+            Method: PATCH
 
   # ============================================================================
   # 6. BUDGET KILL-SWITCH (bloqueia a API automaticamente ao estourar o budget)
@@ -303,6 +353,27 @@ Resources:
           Type: SNS
           Properties:
             Topic: !Ref BudgetAlertTopic
+
+  # ============================================================================
+  # 7. CORS EM RESPOSTAS DE ERRO (401/403/4XX/5XX do Cognito Authorizer)
+  # ============================================================================
+  ApiGatewayDefault4xx:
+    Type: AWS::ApiGateway::GatewayResponse
+    Properties:
+      RestApiId: !Ref VaaFlowApi
+      ResponseType: DEFAULT_4XX
+      ResponseParameters:
+        gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+        gatewayresponse.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-User-Id,X-User-Email,X-User-Name'"
+
+  ApiGatewayDefault5xx:
+    Type: AWS::ApiGateway::GatewayResponse
+    Properties:
+      RestApiId: !Ref VaaFlowApi
+      ResponseType: DEFAULT_5XX
+      ResponseParameters:
+        gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+        gatewayresponse.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-User-Id,X-User-Email,X-User-Name'"
 
 Outputs:
   ApiUrl:

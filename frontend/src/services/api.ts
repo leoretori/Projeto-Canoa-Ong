@@ -7,6 +7,8 @@
 
 const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL || 'http://127.0.0.1:8000';
 
+import { getIdToken, notifySessionExpired } from './auth';
+
 export interface UserProfile {
   user_id: string;
   email: string;
@@ -16,6 +18,15 @@ export interface UserProfile {
   accessibility_type: 'NONE' | 'WHEELCHAIR' | 'REDUCED_MOBILITY' | 'VISUAL_IMPAIRMENT' | 'OTHER';
   role: 'ATHLETE' | 'INSTRUCTOR' | 'ADMIN';
   notes?: string;
+}
+
+export interface AdminUser {
+  user_id: string;
+  email: string;
+  name: string;
+  role: 'ATHLETE' | 'INSTRUCTOR' | 'ADMIN';
+  status: string;
+  enabled: boolean;
 }
 
 export interface Session {
@@ -104,25 +115,42 @@ let fallbackReservations: Reservation[] = [
 ];
 
 class ApiService {
-  private getHeaders(): HeadersInit {
-    return {
+  private async getHeaders(): Promise<HeadersInit> {
+    const token = await getIdToken();
+    const headers: Record<string, string> = {
       'Content-Type': 'application/json',
-      'X-User-Id': 'user-demo-me',
-      'X-User-Name': 'Remador UniSENAI',
-      'X-User-Email': 'remador@cpt.org'
     };
+    if (token) {
+      headers['Authorization'] = token;
+    } else {
+      // Fallback apenas para backend/dev_server.py local (sem Cognito real).
+      headers['X-User-Id'] = 'user-demo-me';
+      headers['X-User-Name'] = 'Remador UniSENAI';
+      headers['X-User-Email'] = 'remador@cpt.org';
+    }
+    return headers;
   }
 
-  async getSessions(): Promise<Session[]> {
+  private checkAuthError(response: Response) {
+    if (response.status === 401) {
+      notifySessionExpired();
+      throw new Error('Sessão expirada. Faça login novamente.');
+    }
+  }
+
+  async getSessions(limit: number = 50): Promise<Session[]> {
     try {
-      const response = await fetch(`${API_BASE_URL}/sessions`, {
+      const response = await fetch(`${API_BASE_URL}/sessions?limit=${limit}`, {
         method: 'GET',
-        headers: this.getHeaders()
+        headers: await this.getHeaders()
       });
+      this.checkAuthError(response);
       if (!response.ok) throw new Error(`HTTP error ${response.status}`);
       return await response.json();
     } catch {
-      return [...fallbackSessions];
+      const fallback = [...fallbackSessions];
+      (fallback as any).__isFallback = true;
+      return fallback;
     }
   }
 
@@ -130,9 +158,10 @@ class ApiService {
     try {
       const response = await fetch(`${API_BASE_URL}/sessions`, {
         method: 'POST',
-        headers: this.getHeaders(),
+        headers: await this.getHeaders(),
         body: JSON.stringify(sessionData)
       });
+      this.checkAuthError(response);
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || 'Erro ao criar sessão');
@@ -162,12 +191,13 @@ class ApiService {
     try {
       const response = await fetch(`${API_BASE_URL}/sessions/${sessionId}/reservations`, {
         method: 'POST',
-        headers: this.getHeaders(),
+        headers: await this.getHeaders(),
         body: JSON.stringify({
           requires_adapted_seat: requiresAdapted,
           notes
         })
       });
+      this.checkAuthError(response);
 
       if (!response.ok) {
         const errJson = await response.json();
@@ -210,16 +240,117 @@ class ApiService {
     }
   }
 
+  // --- Perfil do usuário ---
+  async getProfile(): Promise<UserProfile> {
+    const response = await fetch(`${API_BASE_URL}/users/me`, {
+      method: 'GET',
+      headers: await this.getHeaders()
+    });
+    this.checkAuthError(response);
+    if (!response.ok) throw new Error(`HTTP error ${response.status}`);
+    return await response.json();
+  }
+
+  async updateProfile(data: Partial<UserProfile>): Promise<UserProfile> {
+    const response = await fetch(`${API_BASE_URL}/users/me`, {
+      method: 'PUT',
+      headers: await this.getHeaders(),
+      body: JSON.stringify(data)
+    });
+    this.checkAuthError(response);
+    if (!response.ok) {
+      const errJson = await response.json();
+      throw new Error(errJson.message || 'Erro ao salvar perfil.');
+    }
+    return await response.json();
+  }
+
+  // --- Edição e status de sessão (Instrutor/Admin) ---
+  async updateSession(sessionId: string, data: Partial<Session>): Promise<Session> {
+    const response = await fetch(`${API_BASE_URL}/sessions/${sessionId}`, {
+      method: 'PUT',
+      headers: await this.getHeaders(),
+      body: JSON.stringify(data)
+    });
+    this.checkAuthError(response);
+    if (!response.ok) {
+      const errJson = await response.json();
+      throw new Error(errJson.message || 'Erro ao editar remada.');
+    }
+    return await response.json();
+  }
+
+  async updateSessionStatus(sessionId: string, status: Session['status']): Promise<Session> {
+    const response = await fetch(`${API_BASE_URL}/sessions/${sessionId}/status`, {
+      method: 'PATCH',
+      headers: await this.getHeaders(),
+      body: JSON.stringify({ status })
+    });
+    this.checkAuthError(response);
+    if (!response.ok) {
+      const errJson = await response.json();
+      throw new Error(errJson.message || 'Erro ao alterar status da remada.');
+    }
+    return await response.json();
+  }
+
+  // --- Administração de usuários (só Admin) ---
+  async adminListUsers(): Promise<AdminUser[]> {
+    const response = await fetch(`${API_BASE_URL}/admin/users`, {
+      method: 'GET',
+      headers: await this.getHeaders()
+    });
+    this.checkAuthError(response);
+    if (!response.ok) throw new Error(`HTTP error ${response.status}`);
+    return await response.json();
+  }
+
+  async adminSetUserRole(userId: string, role: AdminUser['role']): Promise<void> {
+    const response = await fetch(`${API_BASE_URL}/admin/users/${userId}/role`, {
+      method: 'PATCH',
+      headers: await this.getHeaders(),
+      body: JSON.stringify({ role })
+    });
+    this.checkAuthError(response);
+    if (!response.ok) {
+      const errJson = await response.json();
+      throw new Error(errJson.message || 'Erro ao alterar role do usuário.');
+    }
+  }
+
+  async getRecentActivity(): Promise<Reservation[]> {
+    const response = await fetch(`${API_BASE_URL}/reservations/recent`, {
+      method: 'GET',
+      headers: await this.getHeaders()
+    });
+    this.checkAuthError(response);
+    if (!response.ok) throw new Error(`HTTP error ${response.status}`);
+    return await response.json();
+  }
+
+  async getSessionRoster(sessionId: string): Promise<Reservation[]> {
+    const response = await fetch(`${API_BASE_URL}/sessions/${sessionId}/reservations`, {
+      method: 'GET',
+      headers: await this.getHeaders()
+    });
+    this.checkAuthError(response);
+    if (!response.ok) throw new Error(`HTTP error ${response.status}`);
+    return await response.json();
+  }
+
   async getMyReservations(): Promise<Reservation[]> {
     try {
       const response = await fetch(`${API_BASE_URL}/reservations/me`, {
         method: 'GET',
-        headers: this.getHeaders()
+        headers: await this.getHeaders()
       });
+      this.checkAuthError(response);
       if (!response.ok) throw new Error(`HTTP error ${response.status}`);
       return await response.json();
     } catch {
-      return [...fallbackReservations];
+      const fallback = [...fallbackReservations];
+      (fallback as any).__isFallback = true;
+      return fallback;
     }
   }
 
@@ -227,8 +358,9 @@ class ApiService {
     try {
       const response = await fetch(`${API_BASE_URL}/sessions/${sessionId}/reservations/${userId}`, {
         method: 'DELETE',
-        headers: this.getHeaders()
+        headers: await this.getHeaders()
       });
+      this.checkAuthError(response);
       if (!response.ok) throw new Error('Erro ao cancelar reserva.');
     } catch {
       const idx = fallbackReservations.findIndex((r) => r.session_id === sessionId && r.user_id === userId);

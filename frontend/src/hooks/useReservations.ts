@@ -17,6 +17,9 @@ export function useReservations() {
       setError(null);
       const data = await api.getMyReservations();
       setReservations(data);
+      if ((data as any).__isFallback) {
+        setError('Sem conexão com o servidor — mostrando dados de exemplo.');
+      }
     } catch (err: any) {
       setError(err.message || 'Erro ao carregar reservas');
     } finally {
