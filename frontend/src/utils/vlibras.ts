@@ -57,3 +57,4 @@ export function toggleVLibras(): boolean {
     return false;
   }
 }
+

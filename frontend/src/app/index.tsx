@@ -8,6 +8,7 @@ import {
   Image,
   Modal,
   Platform,
+  Linking,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { isAuthenticated, getCurrentUserRole, getCurrentUserEmail } from '../services/auth';
@@ -112,6 +113,16 @@ export default function LandingPage() {
   const abrirLibras = () => {
     setModalLibras(true);
     toggleVLibras();
+  };
+
+  const WHATSAPP_LINK = 'https://chat.whatsapp.com/GR1tEIaQrurAatkbZdYpbv?mode=ac_t';
+
+  const abrirWhatsApp = () => {
+    if (Platform.OS === 'web' && typeof window !== 'undefined') {
+      window.open(WHATSAPP_LINK, '_blank');
+    } else {
+      Linking.openURL(WHATSAPP_LINK);
+    }
   };
 
   const copiarPix = () => {
@@ -239,24 +250,16 @@ export default function LandingPage() {
             </View>
           </TouchableOpacity>
 
-          {/* Links Centrais de Navegação Desktop (Stitch) */}
-          <View className="hidden xl:flex flex-row items-center gap-1">
-            <TouchableOpacity onPress={() => router.push('/')} className="px-3 py-1.5 rounded-lg bg-surface-container">
-              <Text className="text-sm font-bold text-on-surface">Início</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => showAlert('O Projeto', 'O Projeto Canoa Para Todos promove inclusão social, fisioterapia motora e vivências no mar de forma 100% gratuita.')} className="px-3 py-1.5 rounded-lg">
-              <Text className="text-sm text-on-surface-variant font-medium">O Projeto</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => showAlert('Como Funciona', 'Atendemos com esteiras de praia acessíveis, cadeiras anfíbias, coletes homologados pela Marinha e canoas OC6 com assentos adaptados.')} className="px-3 py-1.5 rounded-lg">
-              <Text className="text-sm text-on-surface-variant font-medium">Como Funciona</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => showAlert('Impacto & Histórias', 'Confira o depoimento da atleta Camila Meireles e nossos indicadores de impacto logo abaixo.')} className="px-3 py-1.5 rounded-lg">
-              <Text className="text-sm text-on-surface-variant font-medium">Impacto & Histórias</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => setModalDoacao(true)} className="px-3 py-1.5 rounded-lg">
-              <Text className="text-sm text-on-surface-variant font-medium">Como Apoiar</Text>
-            </TouchableOpacity>
-          </View>
+          {/* Canal Direto WhatsApp Oficial */}
+          <TouchableOpacity
+            onPress={abrirWhatsApp}
+            accessibilityRole="link"
+            accessibilityLabel="Entrar no Grupo Oficial do WhatsApp do Canoa Para Todos"
+            className="flex-row items-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 shadow-sm"
+          >
+            <Text className="text-white text-base">💬</Text>
+            <Text className="text-white text-xs sm:text-sm font-bold">Comunidade WhatsApp</Text>
+          </TouchableOpacity>
 
           {/* Ações / Login */}
           <View className="flex-row items-center gap-3">
@@ -678,12 +681,21 @@ export default function LandingPage() {
                   Siga @canoaparatodos
                 </Text>
               </View>
-              <TouchableOpacity
-                onPress={() => showAlert('Instagram', 'Acesse nosso perfil @canoaparatodos nas redes sociais.')}
-                className="px-4 py-2 rounded-xl bg-surface-container"
-              >
-                <Text className="text-xs font-semibold text-primary">Ver no Instagram</Text>
-              </TouchableOpacity>
+              <View className="flex-row items-center gap-2">
+                <TouchableOpacity
+                  onPress={abrirWhatsApp}
+                  className="px-4 py-2 rounded-xl bg-emerald-600 flex-row items-center gap-1.5 shadow-sm"
+                >
+                  <Text className="text-xs">💬</Text>
+                  <Text className="text-xs font-bold text-white">Grupo WhatsApp</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => showAlert('Instagram', 'Acesse nosso perfil @canoaparatodos nas redes sociais.')}
+                  className="px-4 py-2 rounded-xl bg-surface-container"
+                >
+                  <Text className="text-xs font-semibold text-primary">Ver no Instagram</Text>
+                </TouchableOpacity>
+              </View>
             </View>
 
             <View className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -752,6 +764,9 @@ export default function LandingPage() {
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => setModalVoluntario(true)} className="mb-1">
                   <Text className="text-xs text-on-surface-variant">Seja Voluntário</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={abrirWhatsApp} className="mt-1 flex-row items-center gap-1">
+                  <Text className="text-xs text-emerald-600 font-bold">💬 Comunidade WhatsApp</Text>
                 </TouchableOpacity>
               </View>
 
