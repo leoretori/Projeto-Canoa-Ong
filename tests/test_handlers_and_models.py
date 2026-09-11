@@ -96,6 +96,11 @@ def test_sessions_and_reservations_handlers(init_dynamo):
     # 1. Cria Sessão via POST /sessions
     event_create_session = {
         "httpMethod": "POST",
+        "requestContext": {
+            "authorizer": {
+                "claims": {"sub": "user-instrutor-1", "email": "instrutor@vaaflow.org", "name": "Instrutor CPT", "custom:role": "INSTRUCTOR"}
+            }
+        },
         "body": json.dumps({
             "date": "2026-10-30",
             "time": "06:30",
