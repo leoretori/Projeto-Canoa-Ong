@@ -133,6 +133,7 @@ npm run android
 
 ## 🤝 Colaboradores e Autores
 - **Projeto de Extensão:** Canoa Para Todos (CPT) — UniSENAI São Caetano do Sul
+- **Integrantes**  Leonardo Retori Apolonio e Murilo Lameira
 - **Docente Responsável:** Prof. Dr. Fabio Xavier de Melo
-- **Repositório:** [https://github.com/murilo-lameira/Canoa-para-todos](https://github.com/murilo-lameira/Canoa-para-todos)
+- **Repositório:** [https://github.com/leoretori/Projeto-Canoa-Ong](https://github.com/leoretori/Projeto-Canoa-Ong)
 
