@@ -164,7 +164,11 @@ export default function LandingPage() {
   };
 
   return (
-    <View className={`flex-1 ${highContrast ? 'bg-black text-white high-contrast' : 'bg-surface text-on-surface'} font-sans`}>
+    <View
+      className={`flex-1 ${highContrast ? 'bg-black text-white high-contrast' : 'bg-surface text-on-surface'} font-sans`}
+      accessibilityLabel="Conteúdo Principal"
+      {...(Platform.OS === 'web' ? ({ role: 'main' } as any) : {})}
+    >
       {/* 0. BARRA DE ACESSIBILIDADE CIDADÃ (WCAG 2.1 AA) */}
       <View className="bg-surface-container-low border-b border-outline-variant/30 px-4 py-2">
         <View className="max-w-7xl mx-auto flex-row flex-wrap items-center justify-between gap-2 w-full">

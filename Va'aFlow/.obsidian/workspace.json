@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "00 - Meta/Roadmap e Fases.md",
+                "file": "03 - Front-End/Front-End Multiplataforma.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Roadmap e Fases"
+              "title": "Front-End Multiplataforma"
             }
           }
         ]
@@ -187,18 +187,18 @@
   },
   "active": "5b2902614b8fabc0",
   "lastOpenFiles": [
+    "02 - Infraestrutura/Infraestrutura e SAM.md",
+    "00 - Meta/Roadmap e Fases.md",
     "07 - Documentação Acadêmica/Manual de Uso e Recomendações de Segurança.md",
     "07 - Documentação Acadêmica/Relatório Técnico de Engenharia.md",
     "Bem-vindo.md",
     "01 - Arquitetura/Roadmap e Fases.md",
-    "00 - Meta/Roadmap e Fases.md",
     "07 - Documentação Acadêmica/Entregáveis Acadêmicos.md",
     "06 - QA e Testes/Estratégia de QA e Testes.md",
     "05 - Banco de Dados/Modelagem DynamoDB.md",
     "04 - Back-End/Back-End e Microsserviços.md",
     "03 - Front-End/Front-End Multiplataforma.md",
     "02 - Infraestrutura/Backlog de Infraestrutura AWS.md",
-    "02 - Infraestrutura/Infraestrutura e SAM.md",
     "01 - Visão Geral/Visão Geral da Arquitetura.md",
     "07 - Documentação Acadêmica",
     "06 - QA e Testes",

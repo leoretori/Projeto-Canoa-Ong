@@ -241,6 +241,14 @@ Resources:
             RestApiId: !Ref VaaFlowApi
             Path: /sessions/{sessionId}
             Method: PUT
+        HealthCheck:
+          Type: Api
+          Properties:
+            RestApiId: !Ref VaaFlowApi
+            Path: /health
+            Method: GET
+            Auth:
+              Authorizer: NONE
 
   ReservationsFunction:
     Type: AWS::Serverless::Function

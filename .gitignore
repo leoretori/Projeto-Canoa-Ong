@@ -22,8 +22,15 @@ ENV/
 
 # Ambientes e Segredos
 .env
-.env.local
-.env.*.local
+.env.*
+*.env
+*.env.*
+**/.env
+**/.env.*
+!.env.example
+!**/.env.example
+*.pem
+*.key
 
 # IDEs e Sistema
 .DS_Store
