@@ -137,6 +137,17 @@ class DynamoDAL:
         )
         return response.get("Items", [])
 
+    def list_recent_reservations(self, limit: int = 20) -> List[Dict[str, Any]]:
+        """Lista as reservas mais recentes de todas as sessões (feed de atividade do Instrutor).
+        Usa Scan filtrado por prefixo de SK — aceitável na escala atual do projeto."""
+        response = self.table.scan(
+            FilterExpression="begins_with(SK, :sk)",
+            ExpressionAttributeValues={":sk": "RES#"}
+        )
+        items = response.get("Items", [])
+        items.sort(key=lambda x: x.get("created_at", ""), reverse=True)
+        return items[:limit]
+
     def update_session_status(self, session_id: str, new_status: str) -> Dict[str, Any]:
         pk = f"SESSION#{session_id}"
         sk = "METADATA"
@@ -154,6 +165,63 @@ class DynamoDAL:
             if e.response["Error"]["Code"] == "ConditionalCheckFailedException":
                 raise ResourceNotFoundError(f"Sessão {session_id} não encontrada.")
             raise e
+
+    def update_session_fields(self, session_id: str, updates: Dict[str, Any]) -> Dict[str, Any]:
+        """Edita dados cadastrais da sessão (data, local, capacidade etc).
+        Nunca mexe em booked_seats/booked_adapted_seats/status — isso é feito
+        só pela reserva atômica e pelo update_session_status."""
+        if not updates:
+            session = self.get_session(session_id)
+            if not session:
+                raise ResourceNotFoundError(f"Sessão {session_id} não encontrada.")
+            return session
+
+        existing = self.get_session(session_id)
+        if not existing:
+            raise ResourceNotFoundError(f"Sessão {session_id} não encontrada.")
+
+        new_total_capacity = updates.get("total_capacity", existing.get("total_capacity"))
+        new_max_adapted = updates.get("max_adapted_seats", existing.get("max_adapted_seats"))
+        if new_total_capacity < existing.get("booked_seats", 0):
+            raise DALException(
+                f"Não é possível reduzir a capacidade para {new_total_capacity}: já há "
+                f"{existing.get('booked_seats', 0)} vaga(s) ocupada(s)."
+            )
+        if new_max_adapted < existing.get("booked_adapted_seats", 0):
+            raise DALException(
+                f"Não é possível reduzir vagas adaptadas para {new_max_adapted}: já há "
+                f"{existing.get('booked_adapted_seats', 0)} ocupada(s)."
+            )
+
+        pk = f"SESSION#{session_id}"
+        sk = "METADATA"
+        expr_names = {}
+        expr_values = {}
+        set_parts = []
+        for field, value in updates.items():
+            placeholder = f"#{field}"
+            value_placeholder = f":{field}"
+            expr_names[placeholder] = field
+            expr_values[value_placeholder] = value
+            set_parts.append(f"{placeholder} = {value_placeholder}")
+
+        # Atualiza o GSI1SK também se data ou hora mudaram (mantém ordenação correta).
+        if "date" in updates or "time" in updates:
+            new_date = updates.get("date", existing.get("date"))
+            new_time = updates.get("time", existing.get("time"))
+            expr_names["#gsi1sk"] = "GSI1SK"
+            expr_values[":gsi1sk"] = f"{new_date}#{new_time}"
+            set_parts.append("#gsi1sk = :gsi1sk")
+
+        response = self.table.update_item(
+            Key={"PK": pk, "SK": sk},
+            UpdateExpression="SET " + ", ".join(set_parts),
+            ExpressionAttributeNames=expr_names,
+            ExpressionAttributeValues=expr_values,
+            ConditionExpression="attribute_exists(PK)",
+            ReturnValues="ALL_NEW"
+        )
+        return response.get("Attributes", {})
 
     # ========================================================================
     # 3. TRANSAÇÃO ATÔMICA DE RESERVA (CONTROLE DE OVERBOOKING)
@@ -359,6 +427,21 @@ class DynamoDAL:
             ExpressionAttributeValues={
                 ":gsi1pk": f"USER#{user_id}",
                 ":gsi1sk": "RES#"
+            }
+        )
+        return response.get("Items", [])
+
+    # ========================================================================
+    # 6. LISTAGEM DE RESERVAS POR SESSÃO (roster do Instrutor/Admin)
+    # ========================================================================
+
+    def list_session_reservations(self, session_id: str) -> List[Dict[str, Any]]:
+        """Lista os remadores inscritos em uma sessão (tabela principal, sem GSI)."""
+        response = self.table.query(
+            KeyConditionExpression="PK = :pk AND begins_with(SK, :sk)",
+            ExpressionAttributeValues={
+                ":pk": f"SESSION#{session_id}",
+                ":sk": "RES#"
             }
         )
         return response.get("Items", [])

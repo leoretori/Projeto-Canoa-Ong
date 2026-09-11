@@ -18,13 +18,15 @@ O sistema prioriza **acessibilidade** (controle rigoroso de assentos adaptados p
 [ Usuário: Web / iOS / Android ]
                │  (HTTPS / REST)
                ▼
-   [ Amazon API Gateway + AWS Cognito ]
-               │  (Auth / Rate Limit / CORS)
+   [ Amazon API Gateway + AWS Cognito Authorizer ]
+               │  (Auth JWT / Rate Limit / CORS)
                ▼
 [ AWS Lambda Functions (Python 3.12 + Pydantic v2) ]
   ├── UsersFunction: /users/me
-  ├── SessionsFunction: /sessions
-  └── ReservationsFunction: /sessions/{id}/reservations
+  ├── SessionsFunction: /sessions, /sessions/{id}, /sessions/{id}/status
+  ├── ReservationsFunction: /sessions/{id}/reservations, /reservations/me, /reservations/recent
+  ├── AdminFunction: /admin/users (gestão de roles — só ADMIN)
+  └── KillSwitchFunction: acionada via SNS quando o budget estoura
                │
                ▼
    [ Amazon DynamoDB (Single Table Design) ]
@@ -33,18 +35,16 @@ O sistema prioriza **acessibilidade** (controle rigoroso de assentos adaptados p
 
 ---
 
-## 🤖 Squad e Domínios dos Agentes (Antigravity)
+## ✨ Funcionalidades
 
-O desenvolvimento segue uma divisão estrita em 6 domínios independentes:
-
-1. **Subagent 1 (Infra/Líder):** AWS SAM (`template.yaml`), Cognito, API Gateway e **Budget Alert obrigatório de US$ 1,00/mês**.
-2. **Subagent 2 (Front-End/UI):** React Native + Expo Router + NativeWind em `/frontend`. *(Dumb client: não possui regras de negócio).*
-3. **Subagent 3 (Back-End/API):** AWS Lambdas Python 3.12+ com validação estrita em Pydantic v2 em `/backend`.
-4. **Subagent 4 (Banco de Dados):** Amazon DynamoDB Single Table Design com travas atômicas contra overbooking (`TransactWriteItems`) em `backend/common/dynamo_dal.py`.
-5. **Subagent 5 (QA & Testes):** Suíte automatizada com `pytest` e simulações multithread de Race Conditions em `/tests`.
-6. **Subagent 6 (Documentação):** Cofre Obsidian em `/Va'aFlow/` com padrão de no máximo 200 linhas por nota.
-
-Consulte o arquivo [MEMORY.md](MEMORY.md) para o manifesto completo de contexto e regras invioláveis.
+- **Autenticação real via Cognito:** login, cadastro com confirmação por e-mail, recuperação de senha
+- **Controle de acesso por role:** `ATHLETE` / `INSTRUCTOR` / `ADMIN`, aplicado tanto na UI quanto na API
+- **Painel do Instrutor:** criar, editar e cancelar/reabrir remadas; ver quem se inscreveu; exportar lista em CSV
+- **Gestão de usuários (Admin):** promover/rebaixar roles direto pelo app, sem precisar do Console AWS
+- **Perfil do atleta:** necessidades de acessibilidade pré-preenchidas automaticamente no agendamento
+- **Busca e paginação** no calendário de remadas
+- **Dark mode** e identidade visual própria
+- **Contenção de custos automática:** AWS Budget de US$1 + kill-switch que bloqueia a API sozinho
 
 ---
 
@@ -52,8 +52,7 @@ Consulte o arquivo [MEMORY.md](MEMORY.md) para o manifesto completo de contexto 
 
 ```text
 .
-├── AGENTS.md                  # Regras de governança para as IAs e desenvolvedores
-├── MEMORY.md                  # Memória viva de contexto do squad
+├── AGENTS.md                  # Diretrizes técnicas do projeto
 ├── README.md                  # Guia geral de inicialização do projeto
 ├── template.yaml              # Infraestrutura como Código (AWS SAM)
 ├── samconfig.toml             # Parâmetros de deploy do AWS SAM
@@ -71,11 +70,16 @@ Consulte o arquivo [MEMORY.md](MEMORY.md) para o manifesto completo de contexto 
 │   │   └── responses.py       # Padronização de respostas REST com CORS
 │   ├── handlers/
 │   │   ├── users.py           # Handler Lambda de Usuários e Perfis
-│   │   ├── sessions.py        # Handler Lambda de Calendário de Remadas
-│   │   └── reservations.py    # Handler Lambda de Reservas com travas 409 Conflict
+│   │   ├── sessions.py        # Handler Lambda de Calendário de Remadas (CRUD completo)
+│   │   ├── reservations.py    # Handler Lambda de Reservas com travas 409 Conflict
+│   │   └── admin.py           # Gestão de roles de usuário via Cognito (só ADMIN)
 │   └── requirements.txt
 ├── frontend/                  # Aplicativo React Native (Expo)
-│   ├── src/app/               # Rotas Expo Router (Login, Registro Acessível, Calendário, Admin)
+│   ├── src/app/               # Rotas Expo Router (Login, Registro, Calendário, Perfil, Admin)
+│   ├── src/services/
+│   │   ├── api.ts             # Cliente HTTP da API
+│   │   └── auth.ts            # Autenticação Cognito (login, cadastro, recuperação de senha)
+│   ├── src/utils/alert.ts     # Helper de alerta cross-platform (web + mobile)
 │   ├── package.json
 │   └── tailwind.config.js
 ├── tests/                     # Suíte de testes de QA e Concorrência

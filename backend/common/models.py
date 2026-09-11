@@ -98,6 +98,42 @@ class SessionStatusUpdate(BaseModel):
     status: SessionStatus
 
 
+class SessionUpdateRequest(BaseModel):
+    """Edição de dados da sessão pelo Instrutor/Admin (não altera contadores de ocupação)."""
+    model_config = ConfigDict(extra="forbid")
+
+    date: Optional[str] = Field(None, description="Data da remada no formato YYYY-MM-DD")
+    time: Optional[str] = Field(None, description="Horário de saída no formato HH:MM")
+    location: Optional[str] = Field(None, min_length=3, max_length=150)
+    canoe_type: Optional[str] = Field(None, min_length=2, max_length=20)
+    total_capacity: Optional[int] = Field(None, ge=1, le=12)
+    max_adapted_seats: Optional[int] = Field(None, ge=0, le=4)
+    instructor_name: Optional[str] = Field(None, max_length=100)
+    notes: Optional[str] = Field(None, max_length=500)
+
+    @field_validator("date")
+    @classmethod
+    def validate_date_format(cls, v: Optional[str]) -> Optional[str]:
+        if v is None:
+            return v
+        try:
+            datetime.strptime(v, "%Y-%m-%d")
+        except ValueError:
+            raise ValueError("Formato de data inválido. Utilize YYYY-MM-DD.")
+        return v
+
+    @field_validator("time")
+    @classmethod
+    def validate_time_format(cls, v: Optional[str]) -> Optional[str]:
+        if v is None:
+            return v
+        try:
+            datetime.strptime(v, "%H:%M")
+        except ValueError:
+            raise ValueError("Formato de hora inválido. Utilize HH:MM.")
+        return v
+
+
 class SessionResponse(BaseModel):
     session_id: str
     date: str

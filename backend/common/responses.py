@@ -68,3 +68,17 @@ def error_response(
         payload["details"] = details
     return api_response(status_code=status_code, body=payload)
 
+
+def validation_error_response(pydantic_error: Any, fallback_message: str) -> Dict[str, Any]:
+    """Constrói uma mensagem de erro apontando o campo e a regra violada,
+    em vez de um genérico 'payload inválido' que não ajuda o usuário a corrigir."""
+    errors = pydantic_error.errors()
+    if errors:
+        first = errors[0]
+        field = ".".join(str(part) for part in first.get("loc", []) if part != "body")
+        rule_msg = first.get("msg", "valor inválido")
+        message = f"Campo '{field}': {rule_msg}." if field else f"{fallback_message} {rule_msg}."
+    else:
+        message = fallback_message
+    return error_response(message, status_code=400, error_code="VALIDATION_ERROR", details=errors)
+
