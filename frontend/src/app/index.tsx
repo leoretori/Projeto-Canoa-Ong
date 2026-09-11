@@ -130,6 +130,25 @@ export default function LandingPage() {
             </View>
           </TouchableOpacity>
 
+          {/* Links Centrais de Navegação Desktop (Stitch) */}
+          <View className="hidden xl:flex flex-row items-center gap-1">
+            <TouchableOpacity onPress={() => router.push('/')} className="px-3 py-1.5 rounded-lg bg-surface-container">
+              <Text className="text-sm font-bold text-on-surface">Início</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => showAlert('O Projeto', 'O Projeto Canoa Para Todos promove inclusão social, fisioterapia motora e vivências no mar de forma 100% gratuita.')} className="px-3 py-1.5 rounded-lg">
+              <Text className="text-sm text-on-surface-variant font-medium">O Projeto</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => showAlert('Como Funciona', 'Atendemos com esteiras de praia acessíveis, cadeiras anfíbias, coletes homologados pela Marinha e canoas OC6 com assentos adaptados.')} className="px-3 py-1.5 rounded-lg">
+              <Text className="text-sm text-on-surface-variant font-medium">Como Funciona</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => showAlert('Impacto & Histórias', 'Confira o depoimento da atleta Camila Meireles e nossos indicadores de impacto logo abaixo.')} className="px-3 py-1.5 rounded-lg">
+              <Text className="text-sm text-on-surface-variant font-medium">Impacto & Histórias</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => setModalDoacao(true)} className="px-3 py-1.5 rounded-lg">
+              <Text className="text-sm text-on-surface-variant font-medium">Como Apoiar</Text>
+            </TouchableOpacity>
+          </View>
+
           {/* Ações / Login */}
           <View className="flex-row items-center gap-3">
             {isLogged ? (
@@ -164,22 +183,22 @@ export default function LandingPage() {
       {/* CONTEÚDO PRINCIPAL ROLÁVEL */}
       <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
         {/* 2. HERO SECTION */}
-        <View className="px-4 sm:px-8 pt-8 pb-16 bg-gradient-to-b from-surface via-surface-container-low/40 to-background">
-          <View className="max-w-7xl mx-auto flex-col lg:flex-row items-center gap-10">
-            {/* Texto do Hero */}
-            <View className="flex-1 items-start">
+        <View className="w-full px-4 sm:px-8 pt-6 lg:pt-10 pb-16 bg-gradient-to-b from-surface via-surface-container-low/40 to-background">
+          <View className="w-full max-w-7xl mx-auto flex-col lg:flex-row items-center justify-between gap-8 lg:gap-12">
+            {/* Coluna de Texto do Hero */}
+            <View className="flex-1 w-full lg:max-w-[580px] flex-col items-start z-10">
               <View className="inline-flex flex-row items-center gap-2 px-3.5 py-1.5 rounded-full bg-secondary-container/30 text-on-secondary-container mb-6 shadow-sm">
                 <Text className="text-secondary font-bold text-xs uppercase tracking-wider">
                   🌊 Inclusão Social & Canoagem Adaptada
                 </Text>
               </View>
 
-              <Text className="text-3xl sm:text-5xl font-extrabold text-primary tracking-tight mb-4 leading-tight">
-                A água não impõe barreiras.{' '}
+              <Text className="text-3xl sm:text-5xl lg:text-5xl font-extrabold text-primary tracking-tight mb-6 leading-tight">
+                A água não impõe barreiras.{'\n'}
                 <Text className="text-tertiary-container">Ela liberta.</Text>
               </Text>
 
-              <Text className="text-base sm:text-lg text-on-surface-variant mb-8 leading-relaxed max-w-xl">
+              <Text className="text-base sm:text-lg text-on-surface-variant mb-8 leading-relaxed">
                 Promovemos autonomia, reabilitação motora e conexão oceânica através da canoa polinésia adaptada (Va'a) para pessoas com deficiências físicas, intelectuais e sensoriais. O mar pertence a todos nós.
               </Text>
 
@@ -187,7 +206,7 @@ export default function LandingPage() {
               <View className="flex-col sm:flex-row gap-4 w-full sm:w-auto">
                 <TouchableOpacity
                   onPress={() => setModalAluno(true)}
-                  className="px-7 py-4 rounded-xl bg-primary text-white shadow-md flex-row items-center justify-center gap-2"
+                  className="px-7 py-4 rounded-xl bg-primary text-white shadow-md flex-row items-center justify-center gap-2 hover:bg-primary-container"
                 >
                   <Text className="text-white font-bold text-base">Aulas Gratuitas (Inscrição)</Text>
                   <Text className="text-white font-bold text-base">→</Text>
@@ -195,7 +214,7 @@ export default function LandingPage() {
 
                 <TouchableOpacity
                   onPress={() => setModalDoacao(true)}
-                  className="px-7 py-4 rounded-xl bg-tertiary-container text-white shadow-md flex-row items-center justify-center gap-2"
+                  className="px-7 py-4 rounded-xl bg-tertiary-container text-white shadow-md flex-row items-center justify-center gap-2 hover:bg-tertiary"
                 >
                   <Text className="text-white text-base">❤️</Text>
                   <Text className="text-white font-bold text-base">Apoiar o Projeto</Text>
@@ -205,53 +224,56 @@ export default function LandingPage() {
               {/* Selos de Confiança */}
               <View className="flex-row items-center gap-3 mt-10 text-on-surface-variant text-xs">
                 <View className="flex-row -space-x-2">
-                  <View className="w-8 h-8 rounded-full bg-primary-container items-center justify-center">
+                  <View className="w-8 h-8 rounded-full bg-primary-container items-center justify-center border-2 border-surface">
                     <Text className="text-white text-xs font-bold">V6</Text>
                   </View>
-                  <View className="w-8 h-8 rounded-full bg-secondary items-center justify-center">
+                  <View className="w-8 h-8 rounded-full bg-secondary items-center justify-center border-2 border-surface">
                     <Text className="text-white text-xs font-bold">V1</Text>
                   </View>
-                  <View className="w-8 h-8 rounded-full bg-tertiary items-center justify-center">
+                  <View className="w-8 h-8 rounded-full bg-tertiary items-center justify-center border-2 border-surface">
                     <Text className="text-white text-xs font-bold">CREF</Text>
                   </View>
                 </View>
-                <Text className="text-on-surface-variant text-xs flex-1">
+                <Text className="text-on-surface-variant text-xs flex-1 leading-tight">
                   Acompanhamento contínuo por fisioterapeutas, educadores físicos e timoneiros certificados.
                 </Text>
               </View>
             </View>
 
-            {/* Imagem do Hero com Cartões Flutuantes */}
-            <View className="flex-1 w-full max-w-lg items-center relative">
-              <View className="rounded-3xl overflow-hidden shadow-2xl bg-surface-container-lowest p-2 w-full">
-                <Image
-                  source={{
-                    uri: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBGNMJuvOj7qvf34Ta4Ncj6L3pTpZfzLsaWXdhty-YYq2RsWKXRbNbeD1Fsuvoiuld7pZRhzD5xKRIxY9y_3BfNQ1RotIs5Is75JenYF0qFAIHesaHWlKm6Jq_FIAnUQNbafqswiOj9TDI5EDPN2YxZs8ssXGYI-VmdVWuuKgg9uMxLEgjmT1eb3Po33NwTKYBJuZHf-Qk4hsi-LsX4ViKzW73TpT8A63RSzg5Hr57Pqo5ogyeNmHMM7w',
-                  }}
-                  className="w-full h-80 sm:h-96 rounded-2xl"
-                  resizeMode="cover"
-                />
-              </View>
+            {/* Coluna Visual do Hero */}
+            <View className="flex-1 w-full lg:max-w-[500px] flex-col items-center lg:items-end justify-center relative mt-8 lg:mt-0">
+              {/* Moldura da Imagem */}
+              <View className="relative w-full rounded-3xl overflow-hidden shadow-xl bg-white p-2.5">
+                <View className="relative rounded-2xl overflow-hidden w-full h-[380px] sm:h-[440px]">
+                  <Image
+                    source={{
+                      uri: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBGNMJuvOj7qvf34Ta4Ncj6L3pTpZfzLsaWXdhty-YYq2RsWKXRbNbeD1Fsuvoiuld7pZRhzD5xKRIxY9y_3BfNQ1RotIs5Is75JenYF0qFAIHesaHWlKm6Jq_FIAnUQNbafqswiOj9TDI5EDPN2YxZs8ssXGYI-VmdVWuuKgg9uMxLEgjmT1eb3Po33NwTKYBJuZHf-Qk4hsi-LsX4ViKzW73TpT8A63RSzg5Hr57Pqo5ogyeNmHMM7w',
+                    }}
+                    className="w-full h-full"
+                    resizeMode="cover"
+                  />
 
-              {/* Badge flutuante 1: 100% Gratuito */}
-              <View className="absolute -bottom-4 left-4 bg-white dark:bg-gray-900 rounded-2xl p-3 shadow-lg flex-row items-center gap-3 border border-gray-100 dark:border-gray-800">
-                <View className="w-10 h-10 rounded-xl bg-secondary-container/40 items-center justify-center">
-                  <Text className="text-xl">🎗️</Text>
-                </View>
-                <View>
-                  <Text className="font-bold text-primary text-base leading-none">100% Gratuito</Text>
-                  <Text className="text-xs text-on-surface-variant mt-0.5">Para pessoas com deficiência</Text>
-                </View>
-              </View>
+                  {/* Badge Flutuante Interno Superior: Segurança Total */}
+                  <View className="absolute top-4 right-4 bg-white/95 rounded-2xl p-3 shadow-md flex-row items-center gap-2.5 hidden sm:flex">
+                    <View className="w-8 h-8 rounded-xl bg-tertiary-fixed/50 items-center justify-center">
+                      <Text className="text-base">🛡️</Text>
+                    </View>
+                    <View>
+                      <Text className="font-bold text-on-surface text-xs leading-tight">Segurança Total</Text>
+                      <Text className="text-[11px] text-on-surface-variant">Colete & Apoio náutico</Text>
+                    </View>
+                  </View>
 
-              {/* Badge flutuante 2: Segurança Total */}
-              <View className="absolute top-6 right-4 bg-white dark:bg-gray-900 rounded-2xl p-3 shadow-lg flex-row items-center gap-3 border border-gray-100 dark:border-gray-800 hidden sm:flex">
-                <View className="w-10 h-10 rounded-xl bg-tertiary-fixed/50 items-center justify-center">
-                  <Text className="text-xl">🛡️</Text>
-                </View>
-                <View>
-                  <Text className="font-bold text-on-surface text-sm leading-tight">Segurança Total</Text>
-                  <Text className="text-xs text-on-surface-variant">Colete & Apoio náutico</Text>
+                  {/* Badge Flutuante Interno Inferior: 100% Gratuito */}
+                  <View className="absolute bottom-4 left-4 bg-white/95 rounded-2xl p-3 shadow-md flex-row items-center gap-3">
+                    <View className="w-10 h-10 rounded-xl bg-secondary-container/40 items-center justify-center">
+                      <Text className="text-xl">🎗️</Text>
+                    </View>
+                    <View>
+                      <Text className="font-bold text-primary text-sm leading-none">100% Gratuito</Text>
+                      <Text className="text-xs text-on-surface-variant mt-0.5">Para pessoas com deficiência</Text>
+                    </View>
+                  </View>
                 </View>
               </View>
             </View>
