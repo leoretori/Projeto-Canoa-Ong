@@ -46,10 +46,10 @@ export default function MyReservationsScreen() {
 
       <View className="mb-6 flex-row justify-between items-center">
         <View>
-          <Text className="text-2xl font-bold text-gray-900 dark:text-white" accessibilityRole="header">
+          <Text className="text-2xl font-bold text-gray-900 dark:text-gray-50 dark:text-white" accessibilityRole="header">
             Minhas Remadas
           </Text>
-          <Text className="text-gray-500 dark:text-gray-400">
+          <Text className="text-gray-500 dark:text-gray-400 dark:text-gray-400">
             Acompanhe suas vagas confirmadas no Projeto Canoa Para Todos.
           </Text>
         </View>
@@ -66,13 +66,13 @@ export default function MyReservationsScreen() {
       {loading && reservations.length === 0 ? (
         <View className="py-12 items-center">
           <ActivityIndicator size="large" color="#0E7490" />
-          <Text className="text-gray-500 mt-2">Carregando suas reservas...</Text>
+          <Text className="text-gray-500 dark:text-gray-400 mt-2">Carregando suas reservas...</Text>
         </View>
       ) : reservations.length === 0 ? (
         <View className="bg-white dark:bg-gray-900 p-8 rounded-2xl border border-gray-100 dark:border-gray-800 items-center my-6">
           <Text className="text-4xl mb-2">🛶</Text>
-          <Text className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-1">Nenhuma remada agendada</Text>
-          <Text className="text-gray-500 text-center text-sm">
+          <Text className="text-lg font-bold text-gray-800 dark:text-gray-100 dark:text-gray-100 mb-1">Nenhuma remada agendada</Text>
+          <Text className="text-gray-500 dark:text-gray-400 text-center text-sm">
             Navegue até a aba "Agendar" para escolher seu próximo horário na água.
           </Text>
         </View>
@@ -86,7 +86,7 @@ export default function MyReservationsScreen() {
           >
             <View className="flex-row justify-between items-start mb-3 border-b border-gray-100 pb-3">
               <View>
-                <Text className="text-xs text-gray-400 font-medium uppercase tracking-wider">Status</Text>
+                <Text className="text-xs text-gray-400 dark:text-gray-500 font-medium uppercase tracking-wider">Status</Text>
                 <View className="flex-row items-center mt-0.5">
                   <View className="w-2 h-2 rounded-full bg-emerald-500 mr-2" />
                   <Text className="font-bold text-emerald-700">{res.status}</Text>
@@ -101,10 +101,10 @@ export default function MyReservationsScreen() {
             </View>
 
             <View className="mb-4">
-              <Text className="text-gray-700 text-sm">
-                <Text className="font-bold text-gray-900">Remador: </Text>{res.user_name}
+              <Text className="text-gray-700 dark:text-gray-300 text-sm">
+                <Text className="font-bold text-gray-900 dark:text-gray-50">Remador: </Text>{res.user_name}
               </Text>
-              <Text className="text-gray-500 text-xs mt-0.5">
+              <Text className="text-gray-500 dark:text-gray-400 text-xs mt-0.5">
                 Protocolo: {res.reservation_id}
               </Text>
               {res.notes && (

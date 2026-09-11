@@ -76,14 +76,14 @@ export default function RegisterScreen() {
         <View className="flex-1 justify-center px-6 py-12 items-center">
           <View className="w-full max-w-sm bg-white dark:bg-gray-900 p-8 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800">
             <Text className="text-2xl font-bold text-center text-primary-600 mb-2">Confirme seu e-mail</Text>
-            <Text className="text-center text-gray-500 mb-6">
+            <Text className="text-center text-gray-500 dark:text-gray-400 mb-6">
               Digite o código de 6 dígitos enviado para {email}
             </Text>
 
             <View className="mb-6">
-              <Text className="text-gray-700 font-medium mb-1">Código de confirmação</Text>
+              <Text className="text-gray-700 dark:text-gray-300 font-medium mb-1">Código de confirmação</Text>
               <TextInput
-                className="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-gray-800"
+                className="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-3 text-gray-800 dark:text-gray-100"
                 placeholder="000000"
                 value={confirmationCode}
                 onChangeText={setConfirmationCode}
@@ -105,7 +105,7 @@ export default function RegisterScreen() {
             </TouchableOpacity>
 
             <TouchableOpacity className="w-full items-center" onPress={() => router.back()}>
-              <Text className="text-gray-500 font-medium">Voltar</Text>
+              <Text className="text-gray-500 dark:text-gray-400 font-medium">Voltar</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -120,9 +120,9 @@ export default function RegisterScreen() {
           <Text className="text-2xl font-bold text-center text-primary-600 mb-6">Nova Conta</Text>
 
           <View className="mb-4">
-            <Text className="text-gray-700 font-medium mb-1">Nome Completo</Text>
+            <Text className="text-gray-700 dark:text-gray-300 font-medium mb-1">Nome Completo</Text>
             <TextInput
-              className="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-gray-800"
+              className="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-3 text-gray-800 dark:text-gray-100"
               placeholder="Ex: João Silva"
               value={name}
               onChangeText={setName}
@@ -130,9 +130,9 @@ export default function RegisterScreen() {
           </View>
 
           <View className="mb-4">
-            <Text className="text-gray-700 font-medium mb-1">E-mail</Text>
+            <Text className="text-gray-700 dark:text-gray-300 font-medium mb-1">E-mail</Text>
             <TextInput
-              className="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-gray-800"
+              className="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-3 text-gray-800 dark:text-gray-100"
               placeholder="Digite seu e-mail"
               value={email}
               onChangeText={setEmail}
@@ -142,9 +142,9 @@ export default function RegisterScreen() {
           </View>
 
           <View className="mb-6">
-            <Text className="text-gray-700 font-medium mb-1">Senha</Text>
+            <Text className="text-gray-700 dark:text-gray-300 font-medium mb-1">Senha</Text>
             <TextInput
-              className="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-gray-800"
+              className="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-3 text-gray-800 dark:text-gray-100"
               placeholder="Mínimo 8 caracteres"
               value={password}
               onChangeText={setPassword}
@@ -154,8 +154,8 @@ export default function RegisterScreen() {
 
           <View className="mb-8 p-4 bg-primary-50 border border-primary-100 rounded-lg flex-row items-center justify-between">
             <View className="flex-1 pr-4">
-              <Text className="text-gray-800 font-bold mb-1">Acessibilidade Módulo Va'aFlow</Text>
-              <Text className="text-xs text-gray-500">
+              <Text className="text-gray-800 dark:text-gray-100 font-bold mb-1">Acessibilidade Módulo Va'aFlow</Text>
+              <Text className="text-xs text-gray-500 dark:text-gray-400">
                 Marque se você for cadeirante ou tiver mobilidade reduzida para prepararmos o assento adaptado na Va'a.
               </Text>
             </View>
@@ -179,7 +179,7 @@ export default function RegisterScreen() {
             className="w-full items-center"
             onPress={() => router.back()}
           >
-            <Text className="text-gray-500 font-medium">Voltar para Login</Text>
+            <Text className="text-gray-500 dark:text-gray-400 font-medium">Voltar para Login</Text>
           </TouchableOpacity>
         </View>
       </View>

@@ -3,6 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, ActivityIndicator } from 'reac
 import { showAlert } from '../utils/alert';
 import { useRouter } from 'expo-router';
 import { signIn, isAuthenticated, forgotPassword, confirmNewPassword } from '../services/auth';
+import { ThemeToggle } from '../components/ThemeToggle';
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -105,13 +106,16 @@ export default function LoginScreen() {
 
   return (
     <View className="flex-1 justify-center items-center bg-gray-50 dark:bg-gray-950 px-6">
+      <View style={{ position: 'absolute', top: 50, right: 20 }}>
+        <ThemeToggle />
+      </View>
       <View className="w-full max-w-sm">
         <View className="items-center mb-6">
           <View className="w-20 h-20 rounded-full bg-primary-600 items-center justify-center mb-3 shadow-lg">
             <Text className="text-4xl">🛶</Text>
           </View>
           <Text className="text-3xl font-bold text-center text-primary-700 dark:text-primary-300">Va'aFlow</Text>
-          <Text className="text-center text-gray-500 dark:text-gray-400 mt-1">Projeto Canoa Para Todos</Text>
+          <Text className="text-center text-gray-500 dark:text-gray-400 dark:text-gray-400 mt-1">Projeto Canoa Para Todos</Text>
         </View>
 
         <View className="w-full bg-white dark:bg-gray-900 p-8 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800">
@@ -119,9 +123,9 @@ export default function LoginScreen() {
         {mode === 'login' && (
           <>
             <View className="mb-4">
-              <Text className="text-gray-700 font-medium mb-1">E-mail</Text>
+              <Text className="text-gray-700 dark:text-gray-300 font-medium mb-1">E-mail</Text>
               <TextInput
-                className="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-gray-800"
+                className="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-3 text-gray-800 dark:text-gray-100"
                 placeholder="Digite seu e-mail"
                 value={email}
                 onChangeText={setEmail}
@@ -131,9 +135,9 @@ export default function LoginScreen() {
             </View>
 
             <View className="mb-2">
-              <Text className="text-gray-700 font-medium mb-1">Senha</Text>
+              <Text className="text-gray-700 dark:text-gray-300 font-medium mb-1">Senha</Text>
               <TextInput
-                className="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-gray-800"
+                className="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-3 text-gray-800 dark:text-gray-100"
                 placeholder="Sua senha secreta"
                 value={password}
                 onChangeText={setPassword}
@@ -168,13 +172,13 @@ export default function LoginScreen() {
 
         {mode === 'forgot-request' && (
           <>
-            <Text className="text-gray-500 mb-4 text-sm text-center">
+            <Text className="text-gray-500 dark:text-gray-400 mb-4 text-sm text-center">
               Digite seu e-mail cadastrado para receber um código de redefinição de senha.
             </Text>
             <View className="mb-6">
-              <Text className="text-gray-700 font-medium mb-1">E-mail</Text>
+              <Text className="text-gray-700 dark:text-gray-300 font-medium mb-1">E-mail</Text>
               <TextInput
-                className="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-gray-800"
+                className="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-3 text-gray-800 dark:text-gray-100"
                 placeholder="Digite seu e-mail"
                 value={email}
                 onChangeText={setEmail}
@@ -190,20 +194,20 @@ export default function LoginScreen() {
               {loading ? <ActivityIndicator color="#ffffff" /> : <Text className="text-white font-bold text-lg">Enviar código</Text>}
             </TouchableOpacity>
             <TouchableOpacity className="w-full items-center" onPress={() => setMode('login')}>
-              <Text className="text-gray-500 font-medium">Voltar para login</Text>
+              <Text className="text-gray-500 dark:text-gray-400 font-medium">Voltar para login</Text>
             </TouchableOpacity>
           </>
         )}
 
         {mode === 'forgot-confirm' && (
           <>
-            <Text className="text-gray-500 mb-4 text-sm text-center">
+            <Text className="text-gray-500 dark:text-gray-400 mb-4 text-sm text-center">
               Digite o código recebido em {email} e sua nova senha.
             </Text>
             <View className="mb-4">
-              <Text className="text-gray-700 font-medium mb-1">Código</Text>
+              <Text className="text-gray-700 dark:text-gray-300 font-medium mb-1">Código</Text>
               <TextInput
-                className="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-gray-800"
+                className="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-3 text-gray-800 dark:text-gray-100"
                 placeholder="000000"
                 value={resetCode}
                 onChangeText={setResetCode}
@@ -212,9 +216,9 @@ export default function LoginScreen() {
               />
             </View>
             <View className="mb-6">
-              <Text className="text-gray-700 font-medium mb-1">Nova senha</Text>
+              <Text className="text-gray-700 dark:text-gray-300 font-medium mb-1">Nova senha</Text>
               <TextInput
-                className="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-gray-800"
+                className="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-3 text-gray-800 dark:text-gray-100"
                 placeholder="Mínimo 8 caracteres"
                 value={newPassword}
                 onChangeText={setNewPassword}
@@ -229,7 +233,7 @@ export default function LoginScreen() {
               {loading ? <ActivityIndicator color="#ffffff" /> : <Text className="text-white font-bold text-lg">Redefinir senha</Text>}
             </TouchableOpacity>
             <TouchableOpacity className="w-full items-center" onPress={() => setMode('login')}>
-              <Text className="text-gray-500 font-medium">Voltar para login</Text>
+              <Text className="text-gray-500 dark:text-gray-400 font-medium">Voltar para login</Text>
             </TouchableOpacity>
           </>
         )}

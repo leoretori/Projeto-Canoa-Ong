@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Tabs, useRouter } from 'expo-router';
-import { TouchableOpacity, Text, Platform } from 'react-native';
+import { TouchableOpacity, Text, Platform, View } from 'react-native';
 import { getCurrentUserRole, getCurrentUserEmail, signOut } from '../../services/auth';
 import { showAlert } from '../../utils/alert';
+import { ThemeToggle } from '../../components/ThemeToggle';
 
 export default function TabsLayout() {
   const router = useRouter();
@@ -45,14 +46,17 @@ export default function TabsLayout() {
           paddingTop: 8
         },
         headerRight: () => (
-          <TouchableOpacity onPress={handleLogout} style={{ marginRight: 16, alignItems: 'flex-end' }}>
-            {email ? (
-              <Text style={{ fontSize: 10, color: '#64748B' }} numberOfLines={1}>
-                {email}
-              </Text>
-            ) : null}
-            <Text style={{ fontSize: 13, color: '#DC2626', fontWeight: '600' }}>Sair</Text>
-          </TouchableOpacity>
+          <View style={{ flexDirection: 'row', alignItems: 'center', marginRight: 16, gap: 12 }}>
+            <ThemeToggle />
+            <TouchableOpacity onPress={handleLogout} style={{ alignItems: 'flex-end' }}>
+              {email ? (
+                <Text style={{ fontSize: 10, color: '#64748B' }} numberOfLines={1}>
+                  {email}
+                </Text>
+              ) : null}
+              <Text style={{ fontSize: 13, color: '#DC2626', fontWeight: '600' }}>Sair</Text>
+            </TouchableOpacity>
+          </View>
         ),
       }}
     >

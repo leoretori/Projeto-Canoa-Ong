@@ -80,10 +80,10 @@ export default function CalendarScreen() {
 
       <View className="mb-4 flex-row justify-between items-center">
         <View>
-          <Text className="text-2xl font-bold text-gray-900 dark:text-white" accessibilityRole="header">
+          <Text className="text-2xl font-bold text-gray-900 dark:text-gray-50 dark:text-white" accessibilityRole="header">
             Próximas Remadas
           </Text>
-          <Text className="text-gray-500 dark:text-gray-400">
+          <Text className="text-gray-500 dark:text-gray-400 dark:text-gray-400">
             Canoas Va'a com suporte a assentos adaptados.
           </Text>
         </View>
@@ -98,7 +98,7 @@ export default function CalendarScreen() {
       </View>
 
       <TextInput
-        className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl px-4 py-3 text-gray-800 dark:text-gray-100 mb-3"
+        className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl px-4 py-3 text-gray-800 dark:text-gray-100 dark:text-gray-100 mb-3"
         placeholder="Buscar por data (AAAA-MM-DD) ou local..."
         placeholderTextColor="#9CA3AF"
         value={searchText}
@@ -110,7 +110,7 @@ export default function CalendarScreen() {
         className="self-start mb-4 flex-row items-center gap-1.5"
         accessibilityRole="button"
       >
-        <Text className="text-xs text-gray-500 dark:text-gray-400 font-medium">
+        <Text className="text-xs text-gray-500 dark:text-gray-400 dark:text-gray-400 font-medium">
           {showPast ? '☑ Mostrando também remadas passadas' : '☐ Mostrar remadas passadas'}
         </Text>
       </TouchableOpacity>
@@ -118,13 +118,13 @@ export default function CalendarScreen() {
       {loading && sessions.length === 0 ? (
         <View className="py-12 items-center">
           <ActivityIndicator size="large" color="#0E7490" />
-          <Text className="text-gray-500 mt-2">Carregando calendário de remadas...</Text>
+          <Text className="text-gray-500 dark:text-gray-400 mt-2">Carregando calendário de remadas...</Text>
         </View>
       ) : visibleSessions.length === 0 ? (
         <View className="bg-white dark:bg-gray-900 p-8 rounded-2xl border border-gray-100 dark:border-gray-800 items-center my-6">
           <Text className="text-4xl mb-2">🛶</Text>
-          <Text className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-1">Nenhuma remada disponível</Text>
-          <Text className="text-gray-500 text-center text-sm">
+          <Text className="text-lg font-bold text-gray-800 dark:text-gray-100 dark:text-gray-100 mb-1">Nenhuma remada disponível</Text>
+          <Text className="text-gray-500 dark:text-gray-400 text-center text-sm">
             {showPast
               ? 'Ainda não há nenhuma remada cadastrada.'
               : 'Não há remadas futuras no momento. Toque em "Mostrar remadas passadas" para ver o histórico.'}
@@ -149,11 +149,11 @@ export default function CalendarScreen() {
                   <Text className="text-base">🛶</Text>
                   <Text className="text-lg font-bold text-primary-700 dark:text-primary-300">{session.date}</Text>
                 </View>
-                <Text className="text-gray-800 dark:text-gray-200 font-medium text-sm mt-0.5">{session.time} • {session.location}</Text>
+                <Text className="text-gray-800 dark:text-gray-100 dark:text-gray-200 font-medium text-sm mt-0.5">{session.time} • {session.location}</Text>
                 
                 <View className="flex-row items-center mt-2 gap-2 flex-wrap">
                   <View className="bg-gray-100 px-2.5 py-0.5 rounded-md">
-                    <Text className="text-xs text-gray-600 font-medium">
+                    <Text className="text-xs text-gray-600 dark:text-gray-400 font-medium">
                       Ocupação: {session.booked_seats}/{session.total_capacity}
                     </Text>
                   </View>
@@ -172,7 +172,7 @@ export default function CalendarScreen() {
                 </View>
 
                 {session.instructor_name && (
-                  <Text className="text-xs text-gray-400 mt-1">
+                  <Text className="text-xs text-gray-400 dark:text-gray-500 mt-1">
                     Instrutor(a): {session.instructor_name}
                   </Text>
                 )}
@@ -185,7 +185,7 @@ export default function CalendarScreen() {
                 accessibilityRole="button"
                 accessibilityLabel={isDisabled ? 'Remada indisponível' : `Agendar remada para ${session.date}`}
               >
-                <Text className={`font-bold text-sm ${isDisabled ? 'text-gray-400' : 'text-white'}`}>
+                <Text className={`font-bold text-sm ${isDisabled ? 'text-gray-400 dark:text-gray-500' : 'text-white'}`}>
                   {isCancelled ? 'Cancelada' : isPast ? 'Encerrada' : isFull ? 'Esgotado' : 'Agendar'}
                 </Text>
               </TouchableOpacity>
@@ -211,18 +211,18 @@ export default function CalendarScreen() {
       {/* Modal Acessível de Confirmação */}
       <Modal visible={modalVisible} transparent={true} animationType="fade">
         <View className="flex-1 bg-black/40 justify-center items-center px-6">
-          <View className="w-full max-w-sm bg-white p-6 rounded-2xl">
-            <Text className="text-xl font-bold text-gray-900 mb-2">Confirmar Reserva</Text>
+          <View className="w-full max-w-sm bg-white dark:bg-gray-900 p-6 rounded-2xl">
+            <Text className="text-xl font-bold text-gray-900 dark:text-gray-50 mb-2">Confirmar Reserva</Text>
             {selectedSession && (
-              <Text className="text-gray-600 mb-4 text-sm">
+              <Text className="text-gray-600 dark:text-gray-400 mb-4 text-sm">
                 Remada para {selectedSession.date} às {selectedSession.time} em {selectedSession.location}.
               </Text>
             )}
 
             <View className="bg-primary-50 border border-primary-100 p-4 rounded-xl flex-row items-center justify-between mb-6">
               <View className="flex-1 pr-3">
-                <Text className="font-bold text-gray-800 text-sm">♿ Assento Adaptado</Text>
-                <Text className="text-xs text-gray-500">
+                <Text className="font-bold text-gray-800 dark:text-gray-100 text-sm">♿ Assento Adaptado</Text>
+                <Text className="text-xs text-gray-500 dark:text-gray-400">
                   Marque se você for cadeirante ou necessitar de apoio especial para remar.
                 </Text>
               </View>
@@ -239,7 +239,7 @@ export default function CalendarScreen() {
                 onPress={() => setModalVisible(false)}
                 disabled={bookingLoading}
               >
-                <Text className="font-medium text-gray-700">Voltar</Text>
+                <Text className="font-medium text-gray-700 dark:text-gray-300">Voltar</Text>
               </TouchableOpacity>
 
               <TouchableOpacity 
