@@ -61,20 +61,25 @@ O **Va'aFlow** é uma solução de software desenvolvida no escopo do Programa "
 
 ---
 
-## 🎨 6. Design System Náutico (Google Stitch MCP)
+## 🎨 6. Design System Náutico & Acessibilidade (Canoa Para Todos)
+- **Logo Oficial:** Imagem oficial fornecida pela ONG integrada em `frontend/assets/images/cpt-logo.png` (círculo com remadores estilizados e tipografia da marca).
+- **Sede Operacional:** Praia Grande • São Sebastião - SP (DDD 12).
 - **Origem dos Protótipos:** Projeto Google Stitch `projects/16899639216138351319` (armazenados em `stitch_designs/`).
 - **Paleta de Tokens Náuticos:**
   - `Ocean Blue`: `#00687a`
   - `Dark Teal`: `#004e68`
   - `Warm Amber`: `#793200`
   - `Surface Water`: `#ebf5ff` / `#f8fafc`
-- **Recursos WCAG 2.1 AA Integrados:**
-  - Barra de acessibilidade assistiva com escalabilidade de fonte (`A-` / `A+`).
-  - Alternância de Alto Contraste ($\ge 7:1$).
-  - Cartão de embarque náutico com sinalização de esteira de areia e cadeira anfíbia para paratletas.
+- **Recursos de Acessibilidade Cidadã (WCAG 2.1 AAA & LIBRAS):**
+  - **Escala Dinâmica de Texto:** Botões `A-` e `A+` com 4 níveis (`85%`, `100%`, `115%`, `130%`).
+  - **Modo Escuro (Dark Mode):** Alternância completa com tema noturno oceânico (`#0b1320`, `#111c2e`), títulos em ciano claro (`#38bdf8`) e sincronização no `localStorage`.
+  - **Modo Alto Contraste (WCAG AAA):** Fundo preto absoluto (`#000000`), textos e bordas em amarelo `#ffff00` e textos secundários em branco puro (`#ffffff`).
+  - **VLibras Oficial:** Injeção dinâmica do script e do container do Governo Federal (`https://vlibras.gov.br/app/vlibras-plugin.js`) ativando o avatar 3D interativo na tela.
+  - **Central de Acolhimento em LIBRAS:** Modal com glossário náutico (*Canoa*, *Remo*, *Mar*, *Colete*).
+  - **Ergonomia Náutica:** Cartão de embarque náutico com sinalização de esteira de areia e cadeira anfíbia para paratletas.
 - **Telas em Produção:**
-  1. `src/app/index.tsx` (Portal Institucional, Hero Responsiva, Bento, Modais de Aluno/Voluntário/PIX)
-  2. `src/app/login.tsx` (Login Cognito com fallback dev)
+  1. `src/app/index.tsx` (Portal Institucional, Barra WCAG 2.1 AA, Hero Responsiva, Bento, Modais de Aluno/Voluntário/PIX e LIBRAS)
+  2. `src/app/login.tsx` (Login Cognito com logo oficial, Dark Mode e retorno ao portal)
   3. `src/app/(tabs)/index.tsx` (Calendário de Remadas com badges e modal de reserva)
   4. `src/app/(tabs)/my-reservations.tsx` (Métricas do remador, Cartão de Embarque Náutico, cancelamento atômico)
   5. `src/app/(tabs)/profile.tsx` (Prontuário de acessibilidade do atleta e contato de emergência)

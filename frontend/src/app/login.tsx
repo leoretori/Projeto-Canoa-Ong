@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ActivityIndicator, Image } from 'react-native';
 import { showAlert } from '../utils/alert';
 import { useRouter } from 'expo-router';
 import { signIn, isAuthenticated, forgotPassword, confirmNewPassword } from '../services/auth';
 import { ThemeToggle } from '../components/ThemeToggle';
+
+const CPT_LOGO = require('../../assets/images/cpt-logo.png');
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -121,11 +123,14 @@ export default function LoginScreen() {
 
       <View className="w-full max-w-sm">
         <View className="items-center mb-6">
-          <View className="w-20 h-20 rounded-full bg-primary items-center justify-center mb-3 shadow-lg">
-            <Text className="text-4xl">🛶</Text>
-          </View>
+          <Image
+            source={CPT_LOGO}
+            style={{ width: 88, height: 88, borderRadius: 44 }}
+            className="bg-white shadow-lg mb-3 border border-outline-variant/30"
+            resizeMode="contain"
+          />
           <Text className="text-3xl font-bold text-center text-primary dark:text-primary-fixed">Va'aFlow</Text>
-          <Text className="text-center text-on-surface-variant dark:text-gray-400 mt-1">Canoa Para Todos • Acesso ao Sistema</Text>
+          <Text className="text-center text-on-surface-variant dark:text-gray-400 mt-1">Canoa Para Todos • São Sebastião - SP</Text>
         </View>
 
         <View className="w-full bg-surface-container-lowest dark:bg-gray-900 p-8 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800">

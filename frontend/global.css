@@ -5,3 +5,169 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ==========================================================================
+   ACESSIBILIDADE: ESCALA DE FONTE DINÂMICA
+   ========================================================================== */
+html.font-scale-sm { font-size: 14px; }
+html.font-scale-md { font-size: 16px; }
+html.font-scale-lg { font-size: 18px; }
+html.font-scale-xl { font-size: 20px; }
+
+/* Garante renderização imediata de imagens no React Native Web */
+img {
+  opacity: 1 !important;
+}
+
+/* ==========================================================================
+   MODO ESCURO OCEÂNICO (DARK MODE)
+   ========================================================================== */
+html.dark,
+body.dark,
+.dark {
+  color-scheme: dark;
+  background-color: #0b1320 !important;
+  color: #f1f5f9 !important;
+}
+
+html.dark body,
+.dark .bg-surface,
+.dark .bg-surface-container-lowest,
+.dark .bg-white {
+  background-color: #111c2e !important;
+}
+
+.dark .bg-surface-container-low {
+  background-color: #0f192d !important;
+}
+
+.dark .bg-surface-container,
+.dark .bg-surface-container-high,
+.dark .bg-surface-container-highest {
+  background-color: #16233b !important;
+}
+
+.dark .text-on-surface,
+.dark .text-slate-900,
+.dark .text-gray-900 {
+  color: #f1f5f9 !important;
+}
+
+.dark .text-primary {
+  color: #38bdf8 !important; /* Ciano oceânico vibrante no escuro */
+}
+
+.dark .text-secondary {
+  color: #57dffe !important;
+}
+
+.dark .text-tertiary,
+.dark .text-tertiary-container {
+  color: #fdba74 !important; /* Âmbar luminoso no escuro */
+}
+
+.dark .text-on-surface-variant,
+.dark .text-slate-600,
+.dark .text-gray-600,
+.dark .text-slate-500 {
+  color: #cbd5e1 !important; /* Slate-300 de alta legibilidade */
+}
+
+.dark .border-outline-variant,
+.dark .border-outline-variant\/20,
+.dark .border-outline-variant\/30,
+.dark .border-outline-variant\/50,
+.dark .border-slate-100,
+.dark .border-slate-200,
+.dark .border-gray-100,
+.dark .border-gray-200 {
+  border-color: #243556 !important;
+}
+
+.dark .bg-primary-fixed,
+.dark .bg-blue-50,
+.dark .bg-sky-50 {
+  background-color: #132840 !important;
+}
+
+.dark input,
+.dark textarea {
+  background-color: #16233b !important;
+  color: #f1f5f9 !important;
+  border-color: #2e4368 !important;
+}
+
+/* ==========================================================================
+   MODO ALTO CONTRASTE (WCAG 2.1 AAA - Amarelo e Branco sobre Preto Puro)
+   ========================================================================== */
+html.high-contrast,
+body.high-contrast,
+.high-contrast {
+  color-scheme: dark;
+  background-color: #000000 !important;
+  color: #ffffff !important;
+}
+
+.high-contrast .bg-surface,
+.high-contrast .bg-surface-container-lowest,
+.high-contrast .bg-surface-container-low,
+.high-contrast .bg-surface-container,
+.high-contrast .bg-surface-container-high,
+.high-contrast .bg-surface-container-highest,
+.high-contrast .bg-white,
+.high-contrast .bg-blue-50,
+.high-contrast .bg-sky-50,
+.high-contrast .bg-primary-fixed {
+  background-color: #000000 !important;
+  border: 1px solid #ffff00 !important;
+}
+
+.high-contrast .text-on-surface,
+.high-contrast .text-primary,
+.high-contrast .text-secondary,
+.high-contrast .text-tertiary,
+.high-contrast .text-tertiary-container,
+.high-contrast .text-amber-700,
+.high-contrast .text-sky-700,
+.high-contrast .text-blue-700 {
+  color: #ffff00 !important;
+}
+
+.high-contrast .text-on-surface-variant,
+.high-contrast .text-slate-600,
+.high-contrast .text-gray-600,
+.high-contrast .text-slate-500,
+.high-contrast .text-slate-400,
+.high-contrast .text-gray-400 {
+  color: #ffffff !important;
+}
+
+.high-contrast .border-outline-variant,
+.high-contrast .border-outline-variant\/20,
+.high-contrast .border-outline-variant\/30,
+.high-contrast .border-outline-variant\/50,
+.high-contrast .border-slate-100,
+.high-contrast .border-slate-200,
+.high-contrast .border-gray-100,
+.high-contrast .border-gray-200 {
+  border-color: #ffff00 !important;
+}
+
+.high-contrast [role="button"],
+.high-contrast button {
+  border: 2px solid #ffff00 !important;
+  background-color: #000000 !important;
+}
+
+.high-contrast input,
+.high-contrast textarea {
+  background-color: #000000 !important;
+  color: #ffff00 !important;
+  border: 2px solid #ffff00 !important;
+}
+
+.high-contrast img,
+.high-contrast image {
+  filter: contrast(120%) brightness(110%);
+}
+
+

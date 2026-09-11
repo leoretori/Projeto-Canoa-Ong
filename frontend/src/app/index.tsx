@@ -12,6 +12,10 @@ import {
 import { useRouter } from 'expo-router';
 import { isAuthenticated, getCurrentUserRole, getCurrentUserEmail } from '../services/auth';
 import { showAlert } from '../utils/alert';
+import { ThemeToggle } from '../components/ThemeToggle';
+import { toggleVLibras } from '../utils/vlibras';
+
+const CPT_LOGO = require('../../assets/images/cpt-logo.png');
 
 export default function LandingPage() {
   const router = useRouter();
@@ -23,6 +27,8 @@ export default function LandingPage() {
 
   // Estados de acessibilidade
   const [highContrast, setHighContrast] = useState(false);
+  const [fontScale, setFontScale] = useState<'sm' | 'md' | 'lg' | 'xl'>('md');
+  const [modalLibras, setModalLibras] = useState(false);
 
   // Modais interativos
   const [modalAluno, setModalAluno] = useState(false);
@@ -48,7 +54,65 @@ export default function LandingPage() {
         getCurrentUserEmail().then(setUserEmail);
       }
     });
+
+    // Restaura configurações de acessibilidade salvas
+    if (Platform.OS === 'web' && typeof window !== 'undefined') {
+      const savedContrast = window.localStorage.getItem('vaaflow-high-contrast');
+      if (savedContrast === 'true') {
+        setHighContrast(true);
+        document.documentElement.classList.add('high-contrast');
+        document.body.classList.add('high-contrast');
+      }
+      const savedScale = window.localStorage.getItem('vaaflow-font-scale') as 'sm' | 'md' | 'lg' | 'xl' | null;
+      if (savedScale) {
+        setFontScale(savedScale);
+        document.documentElement.classList.add('font-scale-' + savedScale);
+      }
+    }
   }, []);
+
+  const alternarAltoContraste = () => {
+    const next = !highContrast;
+    setHighContrast(next);
+    if (Platform.OS === 'web' && typeof window !== 'undefined') {
+      window.localStorage.setItem('vaaflow-high-contrast', String(next));
+      document.documentElement.classList.toggle('high-contrast', next);
+      document.body.classList.toggle('high-contrast', next);
+    }
+  };
+
+  const diminuirFonte = () => {
+    const scales: ('sm' | 'md' | 'lg' | 'xl')[] = ['sm', 'md', 'lg', 'xl'];
+    const currentIndex = scales.indexOf(fontScale);
+    if (currentIndex > 0) {
+      const next = scales[currentIndex - 1];
+      setFontScale(next);
+      if (Platform.OS === 'web' && typeof window !== 'undefined') {
+        scales.forEach((s) => document.documentElement.classList.remove('font-scale-' + s));
+        document.documentElement.classList.add('font-scale-' + next);
+        window.localStorage.setItem('vaaflow-font-scale', next);
+      }
+    }
+  };
+
+  const aumentarFonte = () => {
+    const scales: ('sm' | 'md' | 'lg' | 'xl')[] = ['sm', 'md', 'lg', 'xl'];
+    const currentIndex = scales.indexOf(fontScale);
+    if (currentIndex < scales.length - 1) {
+      const next = scales[currentIndex + 1];
+      setFontScale(next);
+      if (Platform.OS === 'web' && typeof window !== 'undefined') {
+        scales.forEach((s) => document.documentElement.classList.remove('font-scale-' + s));
+        document.documentElement.classList.add('font-scale-' + next);
+        window.localStorage.setItem('vaaflow-font-scale', next);
+      }
+    }
+  };
+
+  const abrirLibras = () => {
+    setModalLibras(true);
+    toggleVLibras();
+  };
 
   const copiarPix = () => {
     const pix = '42.180.932/0001-85';
@@ -89,27 +153,69 @@ export default function LandingPage() {
   };
 
   return (
-    <View className={`flex-1 ${highContrast ? 'bg-black text-white' : 'bg-surface text-on-surface'} font-sans`}>
+    <View className={`flex-1 ${highContrast ? 'bg-black text-white high-contrast' : 'bg-surface text-on-surface'} font-sans`}>
       {/* 0. BARRA DE ACESSIBILIDADE CIDADÃ (WCAG 2.1 AA) */}
       <View className="bg-surface-container-low border-b border-outline-variant/30 px-4 py-2">
-        <View className="max-w-7xl mx-auto flex-row items-center justify-between w-full">
-          <Text className="text-xs text-on-surface-variant font-medium">
-            Acessibilidade Cidadã WCAG 2.1 AA
-          </Text>
-          <View className="flex-row items-center gap-3">
+        <View className="max-w-7xl mx-auto flex-row flex-wrap items-center justify-between gap-2 w-full">
+          <View className="flex-row items-center gap-2">
+            <Text className="text-xs text-on-surface-variant font-semibold">
+              Acessibilidade Cidadã WCAG 2.1 AA
+            </Text>
+            <Text className="text-[11px] text-primary font-medium hidden sm:flex">
+              • São Sebastião / SP
+            </Text>
+          </View>
+
+          <View className="flex-row items-center gap-2 sm:gap-3 flex-wrap">
+            {/* Redimensionamento de Texto */}
+            <View className="flex-row items-center bg-surface-container rounded-lg p-0.5 border border-outline-variant/30">
+              <TouchableOpacity
+                onPress={diminuirFonte}
+                accessibilityRole="button"
+                accessibilityLabel="Diminuir tamanho do texto"
+                className="px-2 py-0.5 rounded hover:bg-surface"
+              >
+                <Text className="text-xs font-bold text-primary">A-</Text>
+              </TouchableOpacity>
+              <Text className="text-[10px] px-1.5 font-bold text-on-surface-variant">
+                {fontScale === 'sm' ? '85%' : fontScale === 'md' ? '100%' : fontScale === 'lg' ? '115%' : '130%'}
+              </Text>
+              <TouchableOpacity
+                onPress={aumentarFonte}
+                accessibilityRole="button"
+                accessibilityLabel="Aumentar tamanho do texto"
+                className="px-2 py-0.5 rounded hover:bg-surface"
+              >
+                <Text className="text-xs font-bold text-primary">A+</Text>
+              </TouchableOpacity>
+            </View>
+
+            {/* Alternador Modo Escuro */}
+            <ThemeToggle showLabel />
+
+            {/* Alternador Alto Contraste */}
             <TouchableOpacity
-              onPress={() => setHighContrast(!highContrast)}
-              className="flex-row items-center gap-1 px-2 py-0.5 rounded bg-surface-container"
+              onPress={alternarAltoContraste}
+              accessibilityRole="button"
+              accessibilityLabel={highContrast ? 'Desativar Alto Contraste' : 'Ativar Alto Contraste'}
+              className={`flex-row items-center gap-1.5 px-2.5 py-1 rounded-lg border ${
+                highContrast ? 'bg-yellow-400 border-yellow-500' : 'bg-surface-container border-outline-variant/30'
+              }`}
             >
-              <Text className="text-xs font-semibold text-primary">
-                {highContrast ? 'Modo Padrão' : 'Alto Contraste'}
+              <Text className="text-xs">{highContrast ? '👁️' : '🕶️'}</Text>
+              <Text className={`text-xs font-semibold ${highContrast ? 'text-black font-bold' : 'text-primary'}`}>
+                {highContrast ? 'Contraste Normal' : 'Alto Contraste'}
               </Text>
             </TouchableOpacity>
 
+            {/* LIBRAS / VLibras Oficial */}
             <TouchableOpacity
-              onPress={() => showAlert('VLibras', 'Recurso de tradução em Língua Brasileira de Sinais ativado para este portal.')}
-              className="flex-row items-center gap-1 px-2 py-0.5 rounded bg-surface-container"
+              onPress={abrirLibras}
+              accessibilityRole="button"
+              accessibilityLabel="Abrir Guia em LIBRAS e Intérprete 3D"
+              className="flex-row items-center gap-1.5 px-2.5 py-1 rounded-lg bg-surface-container border border-outline-variant/30 hover:opacity-80"
             >
+              <Text className="text-xs">🤟</Text>
               <Text className="text-xs font-semibold text-primary">VLibras</Text>
             </TouchableOpacity>
           </View>
@@ -119,14 +225,17 @@ export default function LandingPage() {
       {/* 1. HEADER / NAVBAR PRINCIPAL */}
       <View className="bg-surface/95 border-b border-outline-variant/20 px-4 sm:px-8 py-3.5 z-40 sticky top-0">
         <View className="max-w-7xl mx-auto flex-row items-center justify-between w-full">
-          {/* Marca e Logo */}
+          {/* Marca e Logo Oficial */}
           <TouchableOpacity onPress={() => router.push('/')} className="flex-row items-center gap-3">
-            <View className="w-10 h-10 rounded-full bg-primary items-center justify-center shadow-sm">
-              <Text className="text-xl">🛶</Text>
-            </View>
+            <Image
+              source={CPT_LOGO}
+              style={{ width: 42, height: 42, borderRadius: 21 }}
+              className="bg-white shadow-sm border border-outline-variant/20"
+              resizeMode="contain"
+            />
             <View>
               <Text className="text-lg font-bold text-primary tracking-tight">Canoa Para Todos</Text>
-              <Text className="text-xs text-on-surface-variant leading-none">Inclusão sobre as águas</Text>
+              <Text className="text-xs text-on-surface-variant leading-none">São Sebastião • SP</Text>
             </View>
           </TouchableOpacity>
 
@@ -615,15 +724,20 @@ export default function LandingPage() {
           <View className="max-w-7xl mx-auto flex-col md:flex-row justify-between gap-8">
             {/* Info Institucional */}
             <View className="max-w-sm">
-              <View className="flex-row items-center gap-2 mb-2">
-                <Text className="text-2xl">🛶</Text>
+              <View className="flex-row items-center gap-3 mb-2">
+                <Image
+                  source={CPT_LOGO}
+                  style={{ width: 40, height: 40, borderRadius: 20 }}
+                  className="bg-white shadow-sm border border-outline-variant/20"
+                  resizeMode="contain"
+                />
                 <Text className="text-lg font-bold text-primary">Projeto Canoa Para Todos</Text>
               </View>
               <Text className="text-xs text-on-surface-variant leading-relaxed mb-3">
                 Promovendo emancipação motora, acolhimento social e conexão náutica através da canoagem polinésia (Va'a) 100% adaptada para pessoas com deficiência.
               </Text>
               <Text className="text-xs text-on-surface-variant">CNPJ: 42.180.932/0001-85</Text>
-              <Text className="text-xs text-on-surface-variant">Sede Náutica: Praia do Canto • Vitória - ES</Text>
+              <Text className="text-xs text-on-surface-variant font-medium">Sede Náutica: Praia Grande • São Sebastião - SP</Text>
             </View>
 
             {/* Links Rápidos */}
@@ -704,7 +818,7 @@ export default function LandingPage() {
                   <TextInput
                     value={alunoWhats}
                     onChangeText={setAlunoWhats}
-                    placeholder="(27) 99999-9999"
+                    placeholder="(12) 99999-9999"
                     keyboardType="phone-pad"
                     className="w-full bg-surface-container-low p-3 rounded-xl text-sm"
                   />
@@ -776,7 +890,7 @@ export default function LandingPage() {
                 <TextInput
                   value={voluntarioTel}
                   onChangeText={setVoluntarioTel}
-                  placeholder="(27) 99999-9999"
+                  placeholder="(12) 99999-9999"
                   keyboardType="phone-pad"
                   className="w-full bg-surface-container-low p-3 rounded-xl text-sm"
                 />
@@ -844,6 +958,75 @@ export default function LandingPage() {
               className="w-full py-3.5 rounded-xl bg-surface-container-high items-center"
             >
               <Text className="text-on-surface font-bold text-sm">Fechar</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
+      {/* 4. MODAL DE ACOLHIMENTO EM LIBRAS & GUIA NÁUTICO */}
+      <Modal
+        visible={modalLibras}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setModalLibras(false)}
+      >
+        <View className="flex-1 justify-center items-center bg-black/60 p-4">
+          <View className="bg-surface-container-lowest max-w-lg w-full p-6 rounded-2xl shadow-xl border border-outline-variant/30">
+            <View className="flex-row items-center justify-between mb-4 pb-3 border-b border-outline-variant/20">
+              <View className="flex-row items-center gap-2">
+                <Text className="text-2xl">🤟</Text>
+                <View>
+                  <Text className="text-lg font-bold text-primary">Acolhimento em LIBRAS</Text>
+                  <Text className="text-xs text-on-surface-variant">Língua Brasileira de Sinais • Canoa Para Todos</Text>
+                </View>
+              </View>
+              <TouchableOpacity onPress={() => setModalLibras(false)} className="p-1.5 rounded-lg bg-surface-container">
+                <Text className="text-sm font-bold text-on-surface-variant">✕</Text>
+              </TouchableOpacity>
+            </View>
+
+            <Text className="text-xs text-on-surface-variant leading-relaxed mb-4">
+              O Projeto Canoa Para Todos em São Sebastião/SP acolhe a comunidade surda com monitores capacitados em comunicação visual na esteira de praia e a bordo da canoa havaiana.
+            </Text>
+
+            {/* Dicionário Náutico Rápido em Libras */}
+            <Text className="text-xs font-bold text-primary mb-2">Glossário Náutico em LIBRAS:</Text>
+            <View className="gap-2.5 mb-5 bg-surface-container-low p-3.5 rounded-xl border border-outline-variant/20">
+              <View className="flex-row items-start gap-2">
+                <Text className="text-xs font-bold text-primary min-w-[110px]">🛶 Canoa (Va'a):</Text>
+                <Text className="text-xs text-on-surface flex-1">Mãos em concha unidas pelas laterais simulando o casco cortando as ondas.</Text>
+              </View>
+              <View className="flex-row items-start gap-2">
+                <Text className="text-xs font-bold text-primary min-w-[110px]">🪶 Remo (Hoe):</Text>
+                <Text className="text-xs text-on-surface flex-1">Duas mãos segurando a haste e realizando a puxada com rotação do tronco na água.</Text>
+              </View>
+              <View className="flex-row items-start gap-2">
+                <Text className="text-xs font-bold text-primary min-w-[110px]">🌊 Mar / Água:</Text>
+                <Text className="text-xs text-on-surface flex-1">Mão em letra "A" tocando o queixo ou movimento ondulatório com as palmas voltadas para baixo.</Text>
+              </View>
+              <View className="flex-row items-start gap-2">
+                <Text className="text-xs font-bold text-primary min-w-[110px]">🦺 Colete Salva-Vidas:</Text>
+                <Text className="text-xs text-on-surface flex-1">Mãos cruzadas sobre o peito ajustando as travas do colete homologado pela Marinha.</Text>
+              </View>
+            </View>
+
+            {/* Botão de acionamento do VLibras 3D */}
+            <TouchableOpacity
+              onPress={() => {
+                toggleVLibras();
+                setModalLibras(false);
+                showAlert('VLibras Ativado! 🤟', 'O intérprete virtual 3D oficial do Governo Federal foi carregado na lateral da página.');
+              }}
+              className="bg-primary py-3.5 px-4 rounded-xl items-center mb-2 shadow-sm"
+            >
+              <Text className="text-white font-bold text-sm">Abrir Intérprete Virtual 3D (VLibras Oficial)</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={() => setModalLibras(false)}
+              className="bg-surface-container py-2.5 px-4 rounded-xl items-center"
+            >
+              <Text className="text-xs font-semibold text-on-surface-variant">Fechar Guia</Text>
             </TouchableOpacity>
           </View>
         </View>

@@ -17,6 +17,11 @@ Este documento estabelece as etapas do projeto **Va'aFlow** para a entrega da so
 - [x] Teste de corrida (Race Condition) com 10 threads concorrentes disputando 1 assento adaptado.
 - [x] Validações de integridade de schemas e tratamento de `409 Conflict`.
 
+### Fase 3: Integração do Front-End Multiplataforma (Subagent 2)
+- [ ] Criação do cliente de API HTTP (`src/services/api.ts`).
+- [ ] Hooks customizados (`useSessions`, `useReservations`, `useAuth`).
+- [ ] Conexão das telas do Expo (Login, Registro com acessibilidade, Calendário e Painel Admin) aos microsserviços.
+- [ ] Substituição do boilerplate de `explore.tsx` por Histórico de Remadas do remador.
 ### Fase 3: Integração do Front-End Multiplataforma & Design Stitch (Subagent 2)
 - [x] Criação do cliente de API HTTP desacoplado (`src/services/api.ts`).
 - [x] Hooks customizados e tratamento de estados (`useSessions`, `useReservations`, `useAuth`).

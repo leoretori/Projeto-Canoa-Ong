@@ -8,28 +8,31 @@ Este documento estabelece as diretrizes de desenvolvimento da interface mantida 
 - **Core:** React Native + Expo (SDK recente).
 - **Roteamento:** Expo Router (File-based routing compatível com Web e Mobile).
 - **Estilização:** NativeWind (Tailwind CSS adaptado para primitivos do React Native).
+- **Data Fetching:** TanStack Query / Custom Fetch Hooks.
 - **Design System:** Baseado em protótipos de alta fidelidade extraídos do **Google Stitch** via MCP.
 - **Data Fetching:** Custom Hooks desacoplados (`useSessions`, `useReservations`, `useAuth`).
 
----
-
-## 🎨 Design System & Tokens Náuticos (Google Stitch)
-O projeto adota uma identidade visual marítima e acolhedora, com alto contraste e legibilidade:
+## 🎨 Design System & Identidade Visual (Canoa Para Todos)
+- **Logo Oficial:** Imagem oficial da ONG integrada em `assets/images/cpt-logo.png` (círculo com remadores e tipografia náutica).
+- **Sede Operacional:** Praia Grande • São Sebastião - SP (DDD 12).
 - **Cores Primárias:**
   - Azul Oceano Principal: `#00687a` (`bg-[#00687a]`, `text-[#00687a]`)
   - Azul Petróleo Noturno: `#004e68`
   - Terracota / Âmbar Quente: `#793200`
   - Fundo & Superfície Náutica: `#ebf5ff` e `#f8fafc`
-- **Tipografia e Ícones:** Vetoriais via `@expo/vector-icons` (Ionicons e FontAwesome5) para suportar leitores e escalabilidade de tela.
+- **Tipografia e Ícones:** Vetoriais via `@expo/vector-icons` (Ionicons e FontAwesome5) e Google Fonts ("Plus Jakarta Sans").
 
 ---
 
-## ♿ Acessibilidade Universal (WCAG 2.1 AA)
+## ♿ Acessibilidade Universal (WCAG 2.1 AAA & LIBRAS)
 A aplicação incorpora uma barra de ferramentas de acessibilidade persistente na Landing Page e cabeçalhos:
-1. **Redimensionamento Dinâmico de Fontes:** Botões `A-` e `A+` para ampliação imediata de textos para atletas com baixa visão.
-2. **Modo Alto Contraste:** Alternância para paleta com contraste $\ge 7:1$, atendendo ao nível AAA da WCAG em elementos de texto crítico.
-3. **Semântica Assistiva:** Uso estrito de `accessibilityRole` e `accessibilityLabel` em botões, campos de entrada e cards náuticos.
-4. **Alocação de Assentos Adaptados:** Badges com destaque de assentos livres e confirmação de suporte de solo (esteira de areia e cadeira anfíbia).
+1. **Redimensionamento Dinâmico de Fontes:** Botões `A-` e `A+` com 4 escalas (`85%`, `100%`, `115%`, `130%`).
+2. **Modo Escuro Oceânico (Dark Mode):** Alternância completa para paleta noturna oceânica profunda (`#0b1320`, `#111c2e`) com títulos em ciano luminoso (`#38bdf8`) e persistência no `localStorage`.
+3. **Modo Alto Contraste (WCAG 2.1 AAA):** Padrão internacional de acessibilidade com fundo preto absoluto (`#000000`), textos e bordas em amarelo vibrante (`#ffff00`) e textos secundários em branco (`#ffffff`), com contraste $\ge 15:1$.
+4. **LIBRAS (Língua Brasileira de Sinais):**
+   - Injeção dinâmica do widget governamental oficial **VLibras** (`https://vlibras.gov.br/app/vlibras-plugin.js`) com avatar 3D interativo na tela.
+   - Modal da Central de Acolhimento em LIBRAS com glossário náutico (*Canoa*, *Remo*, *Mar*, *Colete*).
+5. **Semântica Assistiva:** Uso estrito de `accessibilityRole` e `accessibilityLabel` em botões, inputs e cards náuticos.
 
 ---
 
@@ -53,6 +56,13 @@ A aplicação incorpora uma barra de ferramentas de acessibilidade persistente n
 2. **Desacoplamento RESTful:**
    - Consumo padronizado de endpoints via JSON.
    - Tratamento explícito de estados de requisição: `loading`, `error`, `success`, `idle`.
+
+---
+
+## ♿ Acessibilidade e Design System
+- Componentes com suporte nativo a leitores de tela (`accessibilityRole`, `accessibilityLabel`).
+- Feedback visual e tátil intuitivo para estados de reserva e confirmação.
+- Interface responsiva adaptável de telas mobile compactas até navegadores desktop modernos.
 
 ---
 
