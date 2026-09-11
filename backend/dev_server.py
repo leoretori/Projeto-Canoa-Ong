@@ -25,7 +25,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from common.dynamo_dal import DynamoDAL
 from handlers import users, sessions, reservations
 
-PORT = int(os.environ.get("PORT", 8000))
+PORT = int(os.environ.get("PORT", 3333))
 
 # Contexto global mock_aws mantido ativo durante a execução do servidor
 moto_context = mock_aws()
@@ -275,7 +275,7 @@ class LocalGatewayHandler(BaseHTTPRequestHandler):
 
 
 def run():
-    candidate_ports = [PORT, 8001, 8080, 5000, 3001] if PORT == 8000 else [PORT]
+    candidate_ports = [PORT, 3334, 4000, 5000, 8001] if PORT == 3333 else [PORT]
     httpd = None
     active_port = PORT
 
@@ -293,10 +293,11 @@ def run():
         return
 
     print(f"\n=======================================================")
-    print(f">> Va'aFlow Local Dev Server ativo em http://127.0.0.1:{active_port}")
+    print(f">> Va'aFlow Backend API ativo em http://127.0.0.1:{active_port}")
     print(f">> Emulacao DynamoDB (Moto) e Handlers Lambda carregados")
-    print(f">> Dados de demonstracao semeados para testes offline")
-    print(f">> Pressione Ctrl+C para encerrar.")
+    print(f">> [FRONT-END]: Abra outro terminal e rode 'npm run web'")
+    print(f">>              O app abrira no navegador em http://localhost:8081")
+    print(f">> Pressione Ctrl+C para encerrar o backend.")
     print(f"=======================================================\n")
     try:
         httpd.serve_forever()
