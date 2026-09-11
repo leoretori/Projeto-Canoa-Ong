@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { Platform } from 'react-native';
 import { onSessionExpired } from '../services/auth';
 import { CookieBanner } from '../components/CookieBanner';
+import { initAccessibility } from '../utils/accessibility';
 import '../../global.css'; // Carrega os estilos do NativeWind
 
 export { default as ErrorBoundary } from './error';
@@ -12,6 +13,8 @@ export default function RootLayout() {
   const router = useRouter();
 
   useEffect(() => {
+    initAccessibility();
+
     if (Platform.OS === 'web' && typeof document !== 'undefined') {
       document.documentElement.lang = 'pt-BR';
       document.title = "Canoa Para Todos • Va'a Inclusiva em São Sebastião - SP";
@@ -44,7 +47,7 @@ export default function RootLayout() {
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
         <meta name="theme-color" content="#0284c7" />
       </Head>
-      <Stack screenOptions={{ headerShown: false, animation: 'fade_from_bottom' }}>
+      <Stack screenOptions={{ headerShown: false, animation: 'fade_from_bottom', contentStyle: { backgroundColor: 'transparent' } }}>
         <Stack.Screen name="index" />
         <Stack.Screen name="login" />
         <Stack.Screen name="register" />

@@ -15,6 +15,14 @@ import { isAuthenticated, getCurrentUserRole, getCurrentUserEmail } from '../ser
 import { showAlert } from '../utils/alert';
 import { ThemeToggle } from '../components/ThemeToggle';
 import { toggleVLibras } from '../utils/vlibras';
+import {
+  getStoredContrast,
+  toggleContrast,
+  getStoredFontScale,
+  setStoredFontScale,
+  subscribeAccessibility,
+  FontScale,
+} from '../utils/accessibility';
 
 const CPT_LOGO = require('../../assets/images/cpt-logo.png');
 
@@ -28,7 +36,7 @@ export default function LandingPage() {
 
   // Estados de acessibilidade
   const [highContrast, setHighContrast] = useState(false);
-  const [fontScale, setFontScale] = useState<'sm' | 'md' | 'lg' | 'xl'>('md');
+  const [fontScale, setFontScale] = useState<FontScale>('md');
   const [modalLibras, setModalLibras] = useState(false);
 
   // Modais interativos
@@ -57,56 +65,38 @@ export default function LandingPage() {
     });
 
     // Restaura configurações de acessibilidade salvas
-    if (Platform.OS === 'web' && typeof window !== 'undefined') {
-      const savedContrast = window.localStorage.getItem('vaaflow-high-contrast');
-      if (savedContrast === 'true') {
-        setHighContrast(true);
-        document.documentElement.classList.add('high-contrast');
-        document.body.classList.add('high-contrast');
-      }
-      const savedScale = window.localStorage.getItem('vaaflow-font-scale') as 'sm' | 'md' | 'lg' | 'xl' | null;
-      if (savedScale) {
-        setFontScale(savedScale);
-        document.documentElement.classList.add('font-scale-' + savedScale);
-      }
-    }
+    setHighContrast(getStoredContrast());
+    setFontScale(getStoredFontScale());
+
+    const unsubscribe = subscribeAccessibility(() => {
+      setHighContrast(getStoredContrast());
+      setFontScale(getStoredFontScale());
+    });
+    return unsubscribe;
   }, []);
 
   const alternarAltoContraste = () => {
-    const next = !highContrast;
+    const next = toggleContrast();
     setHighContrast(next);
-    if (Platform.OS === 'web' && typeof window !== 'undefined') {
-      window.localStorage.setItem('vaaflow-high-contrast', String(next));
-      document.documentElement.classList.toggle('high-contrast', next);
-      document.body.classList.toggle('high-contrast', next);
-    }
   };
 
   const diminuirFonte = () => {
-    const scales: ('sm' | 'md' | 'lg' | 'xl')[] = ['sm', 'md', 'lg', 'xl'];
+    const scales: FontScale[] = ['sm', 'md', 'lg', 'xl'];
     const currentIndex = scales.indexOf(fontScale);
     if (currentIndex > 0) {
       const next = scales[currentIndex - 1];
       setFontScale(next);
-      if (Platform.OS === 'web' && typeof window !== 'undefined') {
-        scales.forEach((s) => document.documentElement.classList.remove('font-scale-' + s));
-        document.documentElement.classList.add('font-scale-' + next);
-        window.localStorage.setItem('vaaflow-font-scale', next);
-      }
+      setStoredFontScale(next);
     }
   };
 
   const aumentarFonte = () => {
-    const scales: ('sm' | 'md' | 'lg' | 'xl')[] = ['sm', 'md', 'lg', 'xl'];
+    const scales: FontScale[] = ['sm', 'md', 'lg', 'xl'];
     const currentIndex = scales.indexOf(fontScale);
     if (currentIndex < scales.length - 1) {
       const next = scales[currentIndex + 1];
       setFontScale(next);
-      if (Platform.OS === 'web' && typeof window !== 'undefined') {
-        scales.forEach((s) => document.documentElement.classList.remove('font-scale-' + s));
-        document.documentElement.classList.add('font-scale-' + next);
-        window.localStorage.setItem('vaaflow-font-scale', next);
-      }
+      setStoredFontScale(next);
     }
   };
 

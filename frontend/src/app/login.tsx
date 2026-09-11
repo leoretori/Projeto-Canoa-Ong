@@ -15,6 +15,14 @@ import { showAlert } from '../utils/alert';
 import { useRouter } from 'expo-router';
 import { signIn, isAuthenticated, forgotPassword, confirmNewPassword } from '../services/auth';
 import { ThemeToggle } from '../components/ThemeToggle';
+import {
+  getStoredContrast,
+  toggleContrast,
+  getStoredFontScale,
+  setStoredFontScale,
+  subscribeAccessibility,
+  FontScale,
+} from '../utils/accessibility';
 
 const CPT_LOGO = require('../../assets/images/cpt-logo.png');
 const LOGIN_HERO = require('../../assets/images/login-hero.jpg');
@@ -30,7 +38,7 @@ export default function LoginScreen() {
 
   // Acessibilidade & Modos
   const [highContrast, setHighContrast] = useState(false);
-  const [fontScale, setFontScale] = useState<'sm' | 'md' | 'lg'>('md');
+  const [fontScale, setFontScale] = useState<FontScale>('md');
 
   // Fluxo de "Esqueci minha senha"
   const [mode, setMode] = useState<'login' | 'forgot-request' | 'forgot-confirm'>('login');
@@ -51,6 +59,15 @@ export default function LoginScreen() {
         setCheckingSession(false);
       }
     });
+
+    setHighContrast(getStoredContrast());
+    setFontScale(getStoredFontScale());
+
+    const unsubscribe = subscribeAccessibility(() => {
+      setHighContrast(getStoredContrast());
+      setFontScale(getStoredFontScale());
+    });
+    return unsubscribe;
   }, []);
 
   const handleLogin = async () => {
@@ -167,12 +184,15 @@ export default function LoginScreen() {
         {/* Ferramentas de Acessibilidade */}
         <View className="flex-row items-center gap-2 sm:gap-3">
           <TouchableOpacity
-            onPress={() => setHighContrast(!highContrast)}
+            onPress={() => {
+              const next = toggleContrast();
+              setHighContrast(next);
+            }}
             className={`px-3 py-1 rounded-lg border ${
               highContrast ? 'bg-yellow-400 border-yellow-500' : 'bg-[#102231] border-[#24425a]'
             }`}
             accessibilityRole="button"
-            accessibilityLabel="Alternar Alto Contraste"
+            accessibilityLabel={highContrast ? 'Desativar Alto Contraste' : 'Ativar Alto Contraste'}
           >
             <Text className={`text-xs font-semibold ${highContrast ? 'text-black font-bold' : 'text-slate-200'}`}>
               {highContrast ? '👁️ Normal' : '🕶️ Alto Contraste'}
@@ -181,7 +201,11 @@ export default function LoginScreen() {
 
           <View className="flex-row items-center bg-[#102231] border border-[#24425a] rounded-lg p-0.5">
             <TouchableOpacity
-              onPress={() => setFontScale(fontScale === 'lg' ? 'md' : 'sm')}
+              onPress={() => {
+                const next: FontScale = fontScale === 'lg' ? 'md' : 'sm';
+                setFontScale(next);
+                setStoredFontScale(next);
+              }}
               className="px-2 py-0.5"
               accessibilityRole="button"
               accessibilityLabel="Diminuir texto"
@@ -189,7 +213,11 @@ export default function LoginScreen() {
               <Text className="text-xs font-bold text-[#2ec4b6]">A-</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              onPress={() => setFontScale(fontScale === 'sm' ? 'md' : 'lg')}
+              onPress={() => {
+                const next: FontScale = fontScale === 'sm' ? 'md' : 'lg';
+                setFontScale(next);
+                setStoredFontScale(next);
+              }}
               className="px-2 py-0.5"
               accessibilityRole="button"
               accessibilityLabel="Aumentar texto"
