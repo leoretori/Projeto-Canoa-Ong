@@ -29,6 +29,12 @@ Para viabilizar a sustentabilidade da iniciativa sem custos fixos de servidores:
 - A interface (React Native + Expo) atua exclusivamente como cliente de apresentação.
 - Toda regra de elegibilidade, cálculo de vagas e concorrência é centralizada nos microsserviços.
 
+### 2.3 Design System Inclusivo & Acessibilidade (Google Stitch & WCAG 2.1 AA)
+Para garantir usabilidade irrestrita para remadores com deficiência e baixa visão:
+- **Design System Marítimo:** Identidade visual concebida no Google Stitch com tokens náuticos de alto contraste (`#00687a`, `#004e68`, `#793200`).
+- **Barra de Acessibilidade Assistiva:** Ferramentas nativas no topo para redimensionamento escalável de fonte (`A-` / `A+`) e ativação do modo Alto Contraste com relação de luminância $\ge 7:1$.
+- **Ergonomia do Embarque Náutico:** O cartão de embarque digital sinaliza a presença de esteiras de areia plana e cadeiras anfíbias até a lâmina d'água, reduzindo a ansiedade do paratleta no dia da atividade.
+
 ---
 
 ## 3. Prevenção de Overbooking e Concorrência Atômica

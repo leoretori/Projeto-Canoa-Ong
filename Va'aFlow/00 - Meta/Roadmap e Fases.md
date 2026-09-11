@@ -17,11 +17,13 @@ Este documento estabelece as etapas do projeto **Va'aFlow** para a entrega da so
 - [x] Teste de corrida (Race Condition) com 10 threads concorrentes disputando 1 assento adaptado.
 - [x] Validações de integridade de schemas e tratamento de `409 Conflict`.
 
-### Fase 3: Integração do Front-End Multiplataforma (Subagent 2)
-- [ ] Criação do cliente de API HTTP (`src/services/api.ts`).
-- [ ] Hooks customizados (`useSessions`, `useReservations`, `useAuth`).
-- [ ] Conexão das telas do Expo (Login, Registro com acessibilidade, Calendário e Painel Admin) aos microsserviços.
-- [ ] Substituição do boilerplate de `explore.tsx` por Histórico de Remadas do remador.
+### Fase 3: Integração do Front-End Multiplataforma & Design Stitch (Subagent 2)
+- [x] Criação do cliente de API HTTP desacoplado (`src/services/api.ts`).
+- [x] Hooks customizados e tratamento de estados (`useSessions`, `useReservations`, `useAuth`).
+- [x] Integração completa dos designs extraídos do **Google Stitch** via MCP para o Design System.
+- [x] Implementação das 6 telas completas (Landing Page com WCAG 2.1 AA, Login, Calendário, Minhas Remadas, Perfil do Paratleta e Painel Admin).
+- [x] Substituição do template padrão por Histórico do Atleta com Mosaico de Conquistas e Cartão de Embarque.
+- [x] Validação responsiva (Mobile e Desktop) e correção visual da Hero Section.
 
 ### Fase 4: Infraestrutura em Nuvem & Entregáveis Acadêmicos (Subagents 1 e 6)
 - [ ] Preenchimento do `BudgetAlertEmail` real no `samconfig.toml`.

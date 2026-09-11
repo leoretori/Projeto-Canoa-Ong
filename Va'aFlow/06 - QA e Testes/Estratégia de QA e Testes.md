@@ -25,6 +25,11 @@ Este documento define o plano de validação e garantia de qualidade conduzido p
 ### 3. Testes de Idempotência e Rollback
 - Repetição de requisições de cancelamento ou alteração com validação de status consistente.
 
+### 4. Validação Contínua do Front-End & UI
+- **Tipagem Estática:** `npx tsc --noEmit` para garantir zero anomalias de tipos no Expo/TypeScript.
+- **Exportação Web Estática:** `npx expo export --platform web` para validar o empacotamento completo de rotas.
+- **Validação de Responsividade e Overflow:** Testes visuais via Chrome DevTools cobrindo viewport Mobile (390px) e Desktop (1280px+).
+
 ---
 
 ## 🔗 Links Relacionados

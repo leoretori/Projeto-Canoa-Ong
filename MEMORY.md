@@ -59,3 +59,40 @@ O **Va'aFlow** é uma solução de software desenvolvida no escopo do Programa "
 - **Sessão / Remada:** `PK: SESSION#{sessionId}`, `SK: METADATA`, `GSI1PK: SESSIONS`, `GSI1SK: {date}#{time}`
 - **Reserva do Atleta:** `PK: SESSION#{sessionId}`, `SK: RES#{userId}`, `GSI1PK: USER#{userId}`, `GSI1SK: RES#{sessionId}`
 
+---
+
+## 🎨 6. Design System Náutico (Google Stitch MCP)
+- **Origem dos Protótipos:** Projeto Google Stitch `projects/16899639216138351319` (armazenados em `stitch_designs/`).
+- **Paleta de Tokens Náuticos:**
+  - `Ocean Blue`: `#00687a`
+  - `Dark Teal`: `#004e68`
+  - `Warm Amber`: `#793200`
+  - `Surface Water`: `#ebf5ff` / `#f8fafc`
+- **Recursos WCAG 2.1 AA Integrados:**
+  - Barra de acessibilidade assistiva com escalabilidade de fonte (`A-` / `A+`).
+  - Alternância de Alto Contraste ($\ge 7:1$).
+  - Cartão de embarque náutico com sinalização de esteira de areia e cadeira anfíbia para paratletas.
+- **Telas em Produção:**
+  1. `src/app/index.tsx` (Portal Institucional, Hero Responsiva, Bento, Modais de Aluno/Voluntário/PIX)
+  2. `src/app/login.tsx` (Login Cognito com fallback dev)
+  3. `src/app/(tabs)/index.tsx` (Calendário de Remadas com badges e modal de reserva)
+  4. `src/app/(tabs)/my-reservations.tsx` (Métricas do remador, Cartão de Embarque Náutico, cancelamento atômico)
+  5. `src/app/(tabs)/profile.tsx` (Prontuário de acessibilidade do atleta e contato de emergência)
+  6. `src/app/(tabs)/admin.tsx` (Painel do Instrutor, frota, feed de atividade recente e roster com exportação CSV)
+
+---
+
+## 💻 7. Ambiente Local e Servidor de Desenvolvimento
+- **Servidor Local Mock:** `backend/dev_server.py` utiliza `moto` para emular o DynamoDB em memória e carrega os handlers Lambda nativamente.
+- **Porta do Servidor:** Padrão `8000`, configurável via variável de ambiente `PORT` (ex: `PORT=8001`).
+- **Front-End:** Executado via Expo Metro (`npx expo start --web` ou `npm run dev`), porta padrão `8081`.
+
+---
+
+## 🏁 8. Status Atual de Entregas
+- **Fase 1 (Back-End & DynamoDB):** Concluída com contratos Pydantic v2 e transações atômicas.
+- **Fase 2 (QA & Testes):** Concluída com 9/9 testes unitários e de concorrência multithread passando (`pytest`).
+- **Fase 3 (Front-End & Stitch UI):** Concluída com 6 telas compilando sem erros (`npx tsc --noEmit` = 0 erros; `expo export` = 13 rotas estáticas).
+- **Fase 4 (Deploy SAM & Entregáveis):** Pronta para provisionamento e empacotamento final de documentação acadêmica.
+
+
