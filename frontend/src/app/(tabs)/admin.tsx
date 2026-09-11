@@ -165,10 +165,10 @@ export default function AdminScreen() {
 
       <View className="mb-6 flex-row justify-between items-center">
         <View>
-          <Text className="text-2xl font-bold text-gray-900 dark:text-white" accessibilityRole="header">
+          <Text className="text-2xl font-bold text-gray-900 dark:text-gray-50 dark:text-white" accessibilityRole="header">
             Painel do Instrutor
           </Text>
-          <Text className="text-gray-500 dark:text-gray-400">
+          <Text className="text-gray-500 dark:text-gray-400 dark:text-gray-400">
             Controle de frota, horários e assentos adaptados.
           </Text>
         </View>
@@ -189,13 +189,13 @@ export default function AdminScreen() {
       {loading && sessions.length === 0 ? (
         <View className="py-12 items-center">
           <ActivityIndicator size="large" color="#0E7490" />
-          <Text className="text-gray-500 mt-2">Carregando painel...</Text>
+          <Text className="text-gray-500 dark:text-gray-400 mt-2">Carregando painel...</Text>
         </View>
       ) : sessions.length === 0 ? (
         <View className="bg-white dark:bg-gray-900 p-8 rounded-2xl border border-gray-100 dark:border-gray-800 items-center my-6">
           <Text className="text-4xl mb-2">🗓️</Text>
-          <Text className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-1">Nenhuma remada cadastrada</Text>
-          <Text className="text-gray-500 text-center text-sm mb-4">
+          <Text className="text-lg font-bold text-gray-800 dark:text-gray-100 dark:text-gray-100 mb-1">Nenhuma remada cadastrada</Text>
+          <Text className="text-gray-500 dark:text-gray-400 text-center text-sm mb-4">
             Toque em "+ Nova Remada" para abrir o calendário para os atletas.
           </Text>
         </View>
@@ -209,20 +209,20 @@ export default function AdminScreen() {
             >
               <View className="flex-row justify-between mb-3 border-b border-gray-100 pb-3 items-center">
                 <View>
-                  <Text className="text-lg font-bold text-gray-900">{session.date} - {session.time}</Text>
-                  <Text className="text-xs text-gray-500">{session.location} • {session.canoe_type}</Text>
+                  <Text className="text-lg font-bold text-gray-900 dark:text-gray-50">{session.date} - {session.time}</Text>
+                  <Text className="text-xs text-gray-500 dark:text-gray-400">{session.location} • {session.canoe_type}</Text>
                 </View>
                 <View className={`px-2.5 py-1 rounded-full ${session.status === 'FULL' ? 'bg-rose-100' : session.status === 'CANCELLED' ? 'bg-gray-200' : 'bg-emerald-100'}`}>
-                  <Text className={`text-xs font-bold ${session.status === 'FULL' ? 'text-rose-700' : session.status === 'CANCELLED' ? 'text-gray-600' : 'text-emerald-700'}`}>
+                  <Text className={`text-xs font-bold ${session.status === 'FULL' ? 'text-rose-700' : session.status === 'CANCELLED' ? 'text-gray-600 dark:text-gray-400' : 'text-emerald-700'}`}>
                     {session.status}
                   </Text>
                 </View>
               </View>
               
               <View className="flex-row justify-between mb-4">
-                <View className="bg-gray-50 p-3 rounded-xl flex-1 mr-2">
-                  <Text className="text-xs text-gray-500">Capacidade Geral</Text>
-                  <Text className="text-lg font-bold text-gray-800 dark:text-gray-100">{session.booked_seats} / {session.total_capacity}</Text>
+                <View className="bg-gray-50 dark:bg-gray-800 p-3 rounded-xl flex-1 mr-2">
+                  <Text className="text-xs text-gray-500 dark:text-gray-400">Capacidade Geral</Text>
+                  <Text className="text-lg font-bold text-gray-800 dark:text-gray-100 dark:text-gray-100">{session.booked_seats} / {session.total_capacity}</Text>
                 </View>
                 <View className="bg-primary-50 p-3 rounded-xl flex-1 ml-2">
                   <Text className="text-xs text-primary-700">♿ Assentos Adaptados</Text>
@@ -239,7 +239,7 @@ export default function AdminScreen() {
                   {rosterLoading === session.session_id ? (
                     <ActivityIndicator size="small" color="#0E7490" />
                   ) : (rosterCache[session.session_id]?.length ?? 0) === 0 ? (
-                    <Text className="text-gray-400 text-sm text-center py-2">Ninguém inscrito ainda.</Text>
+                    <Text className="text-gray-400 dark:text-gray-500 text-sm text-center py-2">Ninguém inscrito ainda.</Text>
                   ) : (
                     <>
                       {rosterCache[session.session_id].map((res) => (
@@ -248,8 +248,8 @@ export default function AdminScreen() {
                           className="flex-row justify-between items-center py-2 border-b border-gray-50 dark:border-gray-800 last:border-0"
                         >
                           <View className="flex-1 pr-2">
-                            <Text className="text-sm font-semibold text-gray-800 dark:text-gray-100">{res.user_name}</Text>
-                            <Text className="text-xs text-gray-400">{res.user_email}</Text>
+                            <Text className="text-sm font-semibold text-gray-800 dark:text-gray-100 dark:text-gray-100">{res.user_name}</Text>
+                            <Text className="text-xs text-gray-400 dark:text-gray-500">{res.user_email}</Text>
                           </View>
                           {res.requires_adapted_seat && (
                             <View className="bg-primary-50 border border-primary-200 px-2 py-0.5 rounded-full">
@@ -265,7 +265,7 @@ export default function AdminScreen() {
                           exportRosterToCsv(session, rosterCache[session.session_id]);
                         }}
                       >
-                        <Text className="text-xs font-bold text-gray-600 dark:text-gray-300">⬇ Exportar lista (CSV)</Text>
+                        <Text className="text-xs font-bold text-gray-600 dark:text-gray-400 dark:text-gray-300">⬇ Exportar lista (CSV)</Text>
                       </TouchableOpacity>
                     </>
                   )}
@@ -278,7 +278,7 @@ export default function AdminScreen() {
                 className="flex-1 py-2.5 bg-gray-100 rounded-lg items-center"
                 onPress={() => openEditModal(session)}
               >
-                <Text className="text-xs font-bold text-gray-700">Editar</Text>
+                <Text className="text-xs font-bold text-gray-700 dark:text-gray-300">Editar</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 className={`flex-1 py-2.5 rounded-lg items-center ${session.status === 'CANCELLED' ? 'bg-emerald-50' : 'bg-rose-50'}`}
@@ -315,16 +315,16 @@ export default function AdminScreen() {
       {/* Modal de Criação/Edição de Remada */}
       <Modal visible={modalVisible} animationType="slide" transparent={true}>
         <View className="flex-1 bg-black/50 justify-end">
-          <View className="bg-white p-6 rounded-t-3xl max-h-[85%]">
-            <Text className="text-xl font-bold text-gray-900 mb-4">
+          <View className="bg-white dark:bg-gray-900 p-6 rounded-t-3xl max-h-[85%]">
+            <Text className="text-xl font-bold text-gray-900 dark:text-gray-50 mb-4">
               {editingSession ? 'Editar Remada' : 'Cadastrar Nova Remada'}
             </Text>
 
             <ScrollView className="space-y-4 mb-4">
               <View>
-                <Text className="text-xs font-bold text-gray-700 mb-1">Data (YYYY-MM-DD)</Text>
+                <Text className="text-xs font-bold text-gray-700 dark:text-gray-300 mb-1">Data (YYYY-MM-DD)</Text>
                 <TextInput
-                  className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 text-gray-800"
+                  className="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-2.5 text-gray-800 dark:text-gray-100"
                   value={form.date}
                   onChangeText={(v) => setForm((f) => ({ ...f, date: v }))}
                   placeholder="2026-10-28"
@@ -332,9 +332,9 @@ export default function AdminScreen() {
               </View>
 
               <View className="mt-3">
-                <Text className="text-xs font-bold text-gray-700 mb-1">Horário (HH:MM)</Text>
+                <Text className="text-xs font-bold text-gray-700 dark:text-gray-300 mb-1">Horário (HH:MM)</Text>
                 <TextInput
-                  className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 text-gray-800"
+                  className="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-2.5 text-gray-800 dark:text-gray-100"
                   value={form.time}
                   onChangeText={(v) => setForm((f) => ({ ...f, time: v }))}
                   placeholder="06:00"
@@ -342,9 +342,9 @@ export default function AdminScreen() {
               </View>
 
               <View className="mt-3">
-                <Text className="text-xs font-bold text-gray-700 mb-1">Local de Saída</Text>
+                <Text className="text-xs font-bold text-gray-700 dark:text-gray-300 mb-1">Local de Saída</Text>
                 <TextInput
-                  className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 text-gray-800"
+                  className="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-2.5 text-gray-800 dark:text-gray-100"
                   value={form.location}
                   onChangeText={(v) => setForm((f) => ({ ...f, location: v }))}
                 />
@@ -352,9 +352,9 @@ export default function AdminScreen() {
 
               <View className="flex-row gap-3 mt-3">
                 <View className="flex-1">
-                  <Text className="text-xs font-bold text-gray-700 mb-1">Vagas Totais (máx. 12)</Text>
+                  <Text className="text-xs font-bold text-gray-700 dark:text-gray-300 mb-1">Vagas Totais (máx. 12)</Text>
                   <TextInput
-                    className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 text-gray-800"
+                    className="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-2.5 text-gray-800 dark:text-gray-100"
                     value={form.totalCapacity}
                     onChangeText={(v) => setForm((f) => ({ ...f, totalCapacity: v }))}
                     keyboardType="numeric"
@@ -372,9 +372,9 @@ export default function AdminScreen() {
               </View>
 
               <View className="mt-3">
-                <Text className="text-xs font-bold text-gray-700 mb-1">Nome do(a) Instrutor(a)</Text>
+                <Text className="text-xs font-bold text-gray-700 dark:text-gray-300 mb-1">Nome do(a) Instrutor(a)</Text>
                 <TextInput
-                  className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 text-gray-800"
+                  className="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-2.5 text-gray-800 dark:text-gray-100"
                   value={form.instructorName}
                   onChangeText={(v) => setForm((f) => ({ ...f, instructorName: v }))}
                 />
@@ -387,7 +387,7 @@ export default function AdminScreen() {
                 onPress={() => setModalVisible(false)}
                 disabled={creating}
               >
-                <Text className="text-gray-700 font-medium">Cancelar</Text>
+                <Text className="text-gray-700 dark:text-gray-300 font-medium">Cancelar</Text>
               </TouchableOpacity>
 
               <TouchableOpacity
@@ -435,7 +435,7 @@ function RecentActivitySection() {
   return (
     <View className="bg-white dark:bg-gray-900 rounded-2xl mb-6 shadow-sm border border-gray-100 dark:border-gray-800 overflow-hidden">
       <TouchableOpacity onPress={() => setExpanded((v) => !v)} className="p-4 flex-row justify-between items-center">
-        <Text className="font-bold text-gray-800 dark:text-gray-100">🔔 Atividade Recente</Text>
+        <Text className="font-bold text-gray-800 dark:text-gray-100 dark:text-gray-100">🔔 Atividade Recente</Text>
         <Text className="text-primary-700 dark:text-primary-300 text-xs font-bold">{expanded ? '▲' : '▼'}</Text>
       </TouchableOpacity>
 
@@ -444,15 +444,15 @@ function RecentActivitySection() {
           {loadingActivity ? (
             <ActivityIndicator size="small" color="#0E7490" />
           ) : activity.length === 0 ? (
-            <Text className="text-gray-400 text-sm text-center py-2">Nenhuma inscrição recente.</Text>
+            <Text className="text-gray-400 dark:text-gray-500 text-sm text-center py-2">Nenhuma inscrição recente.</Text>
           ) : (
             activity.map((res) => (
               <View key={res.reservation_id} className="py-2 border-t border-gray-50 dark:border-gray-800">
-                <Text className="text-sm text-gray-700 dark:text-gray-200">
+                <Text className="text-sm text-gray-700 dark:text-gray-300 dark:text-gray-200">
                   <Text className="font-semibold">{res.user_name}</Text> se inscreveu
                   {res.requires_adapted_seat ? ' (♿ assento adaptado)' : ''}
                 </Text>
-                <Text className="text-xs text-gray-400">{new Date(res.created_at).toLocaleString('pt-BR')}</Text>
+                <Text className="text-xs text-gray-400 dark:text-gray-500">{new Date(res.created_at).toLocaleString('pt-BR')}</Text>
               </View>
             ))
           )}
@@ -501,9 +501,9 @@ function UserManagementSection() {
   const roleOptions: AdminUser['role'][] = ['ATHLETE', 'INSTRUCTOR', 'ADMIN'];
 
   return (
-    <View className="bg-white rounded-2xl mb-6 shadow-sm border border-gray-100 overflow-hidden">
+    <View className="bg-white dark:bg-gray-900 rounded-2xl mb-6 shadow-sm border border-gray-100 dark:border-gray-800 overflow-hidden">
       <TouchableOpacity onPress={toggle} className="p-4 flex-row justify-between items-center">
-        <Text className="font-bold text-gray-800">👤 Gerenciar Usuários (Admin)</Text>
+        <Text className="font-bold text-gray-800 dark:text-gray-100">👤 Gerenciar Usuários (Admin)</Text>
         <Text className="text-primary-700 text-xs font-bold">{expanded ? '▲' : '▼'}</Text>
       </TouchableOpacity>
 
@@ -514,17 +514,17 @@ function UserManagementSection() {
           ) : (
             users.map((u) => (
               <View key={u.user_id} className="py-3 border-t border-gray-50">
-                <Text className="text-sm font-semibold text-gray-800">{u.name}</Text>
-                <Text className="text-xs text-gray-400 mb-2">{u.email}</Text>
+                <Text className="text-sm font-semibold text-gray-800 dark:text-gray-100">{u.name}</Text>
+                <Text className="text-xs text-gray-400 dark:text-gray-500 mb-2">{u.email}</Text>
                 <View className="flex-row gap-2">
                   {roleOptions.map((r) => (
                     <TouchableOpacity
                       key={r}
                       onPress={() => setRole(u.user_id, r)}
                       disabled={updatingUserId === u.user_id}
-                      className={`px-3 py-1.5 rounded-full border ${u.role === r ? 'bg-primary-700 border-primary-700' : 'bg-gray-50 border-gray-200'}`}
+                      className={`px-3 py-1.5 rounded-full border ${u.role === r ? 'bg-primary-700 border-primary-700' : 'bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700'}`}
                     >
-                      <Text className={`text-xs font-medium ${u.role === r ? 'text-white' : 'text-gray-600'}`}>{r}</Text>
+                      <Text className={`text-xs font-medium ${u.role === r ? 'text-white' : 'text-gray-600 dark:text-gray-400'}`}>{r}</Text>
                     </TouchableOpacity>
                   ))}
                 </View>

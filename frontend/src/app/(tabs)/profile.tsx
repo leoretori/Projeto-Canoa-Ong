@@ -65,7 +65,7 @@ export default function ProfileScreen() {
 
   if (loading) {
     return (
-      <View className="flex-1 justify-center items-center bg-gray-50">
+      <View className="flex-1 justify-center items-center bg-gray-50 dark:bg-gray-800">
         <ActivityIndicator size="large" color="#0E7490" />
       </View>
     );
@@ -73,23 +73,23 @@ export default function ProfileScreen() {
 
   return (
     <ScrollView className="flex-1 bg-gray-50 dark:bg-gray-950 px-4 py-6" accessibilityLabel="Tela de Perfil">
-      <Text className="text-2xl font-bold text-gray-900 dark:text-white mb-1" accessibilityRole="header">
+      <Text className="text-2xl font-bold text-gray-900 dark:text-gray-50 dark:text-white mb-1" accessibilityRole="header">
         Meu Perfil
       </Text>
-      <Text className="text-gray-500 mb-6">
+      <Text className="text-gray-500 dark:text-gray-400 mb-6">
         Esses dados ajudam a equipe do CPT a preparar seu embarque.
       </Text>
 
       <View className="bg-white dark:bg-gray-900 p-5 rounded-2xl mb-4 shadow-sm border border-gray-100 dark:border-gray-800">
-        <Text className="text-xs text-gray-400 uppercase font-bold mb-1">Nome</Text>
-        <Text className="text-gray-800 font-medium mb-4">{profile?.name}</Text>
+        <Text className="text-xs text-gray-400 dark:text-gray-500 uppercase font-bold mb-1">Nome</Text>
+        <Text className="text-gray-800 dark:text-gray-100 font-medium mb-4">{profile?.name}</Text>
 
-        <Text className="text-xs text-gray-400 uppercase font-bold mb-1">E-mail</Text>
-        <Text className="text-gray-800 font-medium mb-4">{profile?.email}</Text>
+        <Text className="text-xs text-gray-400 dark:text-gray-500 uppercase font-bold mb-1">E-mail</Text>
+        <Text className="text-gray-800 dark:text-gray-100 font-medium mb-4">{profile?.email}</Text>
 
-        <Text className="text-xs text-gray-400 uppercase font-bold mb-1">Telefone</Text>
+        <Text className="text-xs text-gray-400 dark:text-gray-500 uppercase font-bold mb-1">Telefone</Text>
         <TextInput
-          className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 text-gray-800 mb-2"
+          className="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-2.5 text-gray-800 dark:text-gray-100 mb-2"
           placeholder="(11) 99999-9999"
           value={phone}
           onChangeText={setPhone}
@@ -100,8 +100,8 @@ export default function ProfileScreen() {
       <View className="bg-white dark:bg-gray-900 p-5 rounded-2xl mb-4 shadow-sm border border-gray-100 dark:border-gray-800">
         <View className="flex-row items-center justify-between mb-4">
           <View className="flex-1 pr-3">
-            <Text className="font-bold text-gray-800">♿ Necessidade de Acessibilidade</Text>
-            <Text className="text-xs text-gray-500">
+            <Text className="font-bold text-gray-800 dark:text-gray-100">♿ Necessidade de Acessibilidade</Text>
+            <Text className="text-xs text-gray-500 dark:text-gray-400">
               Ativando, seus agendamentos já vêm com assento adaptado pré-marcado.
             </Text>
           </View>
@@ -114,17 +114,17 @@ export default function ProfileScreen() {
 
         {hasNeeds && (
           <View className="mb-2">
-            <Text className="text-xs text-gray-500 mb-2">Tipo</Text>
+            <Text className="text-xs text-gray-500 dark:text-gray-400 mb-2">Tipo</Text>
             <View className="flex-row flex-wrap gap-2">
               {ACCESSIBILITY_TYPES.filter((t) => t.value !== 'NONE').map((t) => (
                 <TouchableOpacity
                   key={t.value}
                   onPress={() => setAccessType(t.value)}
                   className={`px-3 py-2 rounded-full border ${
-                    accessType === t.value ? 'bg-primary-700 border-primary-700' : 'bg-gray-50 border-gray-200'
+                    accessType === t.value ? 'bg-primary-700 border-primary-700' : 'bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700'
                   }`}
                 >
-                  <Text className={`text-xs font-medium ${accessType === t.value ? 'text-white' : 'text-gray-600'}`}>
+                  <Text className={`text-xs font-medium ${accessType === t.value ? 'text-white' : 'text-gray-600 dark:text-gray-400'}`}>
                     {t.label}
                   </Text>
                 </TouchableOpacity>
@@ -133,11 +133,11 @@ export default function ProfileScreen() {
           </View>
         )}
 
-        <Text className="text-xs text-gray-400 uppercase font-bold mb-1 mt-4">
+        <Text className="text-xs text-gray-400 dark:text-gray-500 uppercase font-bold mb-1 mt-4">
           Observações para a equipe de embarque
         </Text>
         <TextInput
-          className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 text-gray-800"
+          className="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-2.5 text-gray-800 dark:text-gray-100"
           placeholder="Ex: uso cadeira de rodas manual, preciso de apoio para transferência"
           value={notes}
           onChangeText={setNotes}
