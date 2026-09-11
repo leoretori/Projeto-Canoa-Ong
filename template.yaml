@@ -1,0 +1,319 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  Va'aFlow - SaaS Serverless de Gestão Inclusiva de Remadas Va'a.
+  Gerenciado pelo Subagent 1 (Infra/Líder).
+
+Globals:
+  Function:
+    Timeout: 10
+    MemorySize: 256
+    Runtime: python3.12
+    Architectures:
+      - x86_64
+    Environment:
+      Variables:
+        TABLE_NAME: !Ref VaaFlowTable
+        USER_POOL_ID: !Ref VaaFlowUserPool
+        APP_CLIENT_ID: !Ref VaaFlowUserPoolClient
+        LOG_LEVEL: INFO
+
+Parameters:
+  Stage:
+    Type: String
+    Default: dev
+    Description: Ambiente de deploy (dev, staging, prod)
+  BudgetAlertEmail:
+    Type: String
+    Default: "" # TODO: BACKLOG - Preencher com e-mail real da gestão do Va'aFlow
+    Description: Email para receber os alertas de contenção de custos (US$ 1,00)
+
+Resources:
+  # ============================================================================
+  # 1. AWS BUDGET ALERT (US$ 1,00 OBRIGATÓRIO)
+  # ============================================================================
+  VaaFlowMonthlyBudget:
+    Type: AWS::Budgets::Budget
+    Properties:
+      Budget:
+        BudgetName: !Sub "VaaFlow-StrictMonthlyBudget-${Stage}"
+        BudgetLimit:
+          Amount: 1.00
+          Unit: USD
+        TimeUnit: MONTHLY
+        BudgetType: COST
+      NotificationsWithSubscribers:
+        - Notification:
+            NotificationType: ACTUAL
+            ComparisonOperator: GREATER_THAN
+            Threshold: 80
+            ThresholdType: PERCENTAGE
+          Subscribers:
+            - SubscriptionType: EMAIL
+              Address: !Ref BudgetAlertEmail
+        - Notification:
+            NotificationType: ACTUAL
+            ComparisonOperator: GREATER_THAN
+            Threshold: 100
+            ThresholdType: PERCENTAGE
+          Subscribers:
+            - SubscriptionType: EMAIL
+              Address: !Ref BudgetAlertEmail
+            - SubscriptionType: SNS
+              Address: !Ref BudgetAlertTopic
+        - Notification:
+            NotificationType: FORECASTED
+            ComparisonOperator: GREATER_THAN
+            Threshold: 100
+            ThresholdType: PERCENTAGE
+          Subscribers:
+            - SubscriptionType: EMAIL
+              Address: !Ref BudgetAlertEmail
+
+  # ============================================================================
+  # 2. AMAZON COGNITO (AUTENTICAÇÃO & ACESSIBILIDADE)
+  # ============================================================================
+  VaaFlowUserPool:
+    Type: AWS::Cognito::UserPool
+    Properties:
+      UserPoolName: !Sub "vaaflow-user-pool-${Stage}"
+      UsernameAttributes:
+        - email
+      AutoVerifiedAttributes:
+        - email
+      Policies:
+        PasswordPolicy:
+          MinimumLength: 8
+          RequireLowercase: true
+          RequireNumbers: true
+          RequireSymbols: false
+          RequireUppercase: true
+      Schema:
+        - Name: email
+          AttributeDataType: String
+          Required: true
+          Mutable: true
+        - Name: name
+          AttributeDataType: String
+          Required: true
+          Mutable: true
+        - Name: accessibility_needs
+          AttributeDataType: String
+          Required: false
+          Mutable: true
+        - Name: role
+          AttributeDataType: String
+          Required: false
+          Mutable: true
+
+  VaaFlowUserPoolClient:
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      ClientName: !Sub "vaaflow-client-${Stage}"
+      UserPoolId: !Ref VaaFlowUserPool
+      GenerateSecret: false
+      ExplicitAuthFlows:
+        - ALLOW_USER_SRP_AUTH
+        - ALLOW_USER_PASSWORD_AUTH
+        - ALLOW_REFRESH_TOKEN_AUTH
+      PreventUserExistenceErrors: ENABLED
+
+  # ============================================================================
+  # 3. AMAZON DYNAMODB (SINGLE TABLE DESIGN)
+  # ============================================================================
+  VaaFlowTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub "VaaFlow-${Stage}"
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: PK
+          AttributeType: S
+        - AttributeName: SK
+          AttributeType: S
+        - AttributeName: GSI1PK
+          AttributeType: S
+        - AttributeName: GSI1SK
+          AttributeType: S
+      KeySchema:
+        - AttributeName: PK
+          KeyType: HASH
+        - AttributeName: SK
+          KeyType: RANGE
+      GlobalSecondaryIndexes:
+        - IndexName: GSI1
+          KeySchema:
+            - AttributeName: GSI1PK
+              KeyType: HASH
+            - AttributeName: GSI1SK
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: false
+      SSESpecification:
+        SSEEnabled: true
+
+  # ============================================================================
+  # 4. API GATEWAY HTTP REST
+  # ============================================================================
+  VaaFlowApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      Name: !Sub "vaaflow-api-${Stage}"
+      StageName: !Ref Stage
+      Cors:
+        AllowMethods: "'GET,POST,PUT,PATCH,DELETE,OPTIONS'"
+        AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+        AllowOrigin: "'*'"
+      Auth:
+        DefaultAuthorizer: CognitoAuth
+        Authorizers:
+          CognitoAuth:
+            UserPoolArn: !GetAtt VaaFlowUserPool.Arn
+            Identity:
+              Header: Authorization
+
+  # ============================================================================
+  # 5. AWS LAMBDA FUNCTIONS
+  # ============================================================================
+  UsersFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: backend/
+      Handler: handlers.users.handler
+      Description: Gerencia perfis e requisitos de acessibilidade dos remadores
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref VaaFlowTable
+      Events:
+        GetUserProfile:
+          Type: Api
+          Properties:
+            RestApiId: !Ref VaaFlowApi
+            Path: /users/me
+            Method: GET
+        UpdateUserProfile:
+          Type: Api
+          Properties:
+            RestApiId: !Ref VaaFlowApi
+            Path: /users/me
+            Method: PUT
+
+  SessionsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: backend/
+      Handler: handlers.sessions.handler
+      Description: Calendário de sessões, controle de capacidade e gestão de horários
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref VaaFlowTable
+      Events:
+        ListSessions:
+          Type: Api
+          Properties:
+            RestApiId: !Ref VaaFlowApi
+            Path: /sessions
+            Method: GET
+        CreateSession:
+          Type: Api
+          Properties:
+            RestApiId: !Ref VaaFlowApi
+            Path: /sessions
+            Method: POST
+        GetSessionDetails:
+          Type: Api
+          Properties:
+            RestApiId: !Ref VaaFlowApi
+            Path: /sessions/{sessionId}
+            Method: GET
+        UpdateSessionStatus:
+          Type: Api
+          Properties:
+            RestApiId: !Ref VaaFlowApi
+            Path: /sessions/{sessionId}/status
+            Method: PATCH
+
+  ReservationsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: backend/
+      Handler: handlers.reservations.handler
+      Description: Agendamento atômico de vagas, travas de concorrência e aprovações
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref VaaFlowTable
+      Events:
+        CreateReservation:
+          Type: Api
+          Properties:
+            RestApiId: !Ref VaaFlowApi
+            Path: /sessions/{sessionId}/reservations
+            Method: POST
+        ListUserReservations:
+          Type: Api
+          Properties:
+            RestApiId: !Ref VaaFlowApi
+            Path: /reservations/me
+            Method: GET
+        CancelReservation:
+          Type: Api
+          Properties:
+            RestApiId: !Ref VaaFlowApi
+            Path: /sessions/{sessionId}/reservations/{userId}
+            Method: DELETE
+
+  # ============================================================================
+  # 6. BUDGET KILL-SWITCH (bloqueia a API automaticamente ao estourar o budget)
+  # ============================================================================
+  BudgetAlertTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: !Sub "vaaflow-budget-alert-${Stage}"
+
+  BudgetAlertEmailSubscription:
+    Type: AWS::SNS::Subscription
+    Properties:
+      Protocol: email
+      TopicArn: !Ref BudgetAlertTopic
+      Endpoint: !Ref BudgetAlertEmail
+
+  KillSwitchFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub "vaaflow-budget-killswitch-${Stage}"
+      CodeUri: infra/killswitch/
+      Handler: killswitch.handler
+      Description: Zera o throttling da API quando o budget de US$1 estoura (100%)
+      Timeout: 30
+      Policies:
+        - Statement:
+            - Effect: Allow
+              Action:
+                - apigateway:PATCH
+                - apigateway:GET
+              Resource: "*"
+      Environment:
+        Variables:
+          API_ID: !Ref VaaFlowApi
+          STAGE_NAME: !Ref Stage
+      Events:
+        BudgetTrigger:
+          Type: SNS
+          Properties:
+            Topic: !Ref BudgetAlertTopic
+
+Outputs:
+  ApiUrl:
+    Description: URL base do Amazon API Gateway
+    Value: !Sub "https://${VaaFlowApi}.execute-api.${AWS::Region}.amazonaws.com/${Stage}"
+  UserPoolId:
+    Description: ID do User Pool Cognito
+    Value: !Ref VaaFlowUserPool
+  UserPoolClientId:
+    Description: ID do Client Cognito para o Front-end
+    Value: !Ref VaaFlowUserPoolClient
+  DynamoTableName:
+    Description: Nome da tabela DynamoDB Single Table
+    Value: !Ref VaaFlowTable
