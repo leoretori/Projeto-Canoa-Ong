@@ -303,34 +303,36 @@ export default function CalendarScreen() {
                         </Text>
                       </View>
 
-                      <View className="w-full h-2.5 rounded-full bg-surface-container overflow-hidden">
+                      <View className="w-full h-2.5 rounded-full bg-surface-container dark:bg-[#07151f] overflow-hidden border border-outline-variant/20 dark:border-[#244a66]/50">
                         <View 
-                          className={`h-full rounded-full ${isFull ? 'bg-amber-600' : 'bg-secondary'}`} 
+                          className={`h-full rounded-full ${isFull ? 'bg-amber-600' : 'bg-primary dark:bg-[#2ec4b6]'}`} 
                           style={{ width: `${Math.max(5, occupancyPercent)}%` }} 
                         />
                       </View>
 
-                      <View className="flex-row items-center gap-1 px-2.5 py-1 rounded-lg bg-surface-container-high self-start lg:self-end mt-0.5">
+                      <View className="flex-row items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-container-high dark:bg-[#132636] border border-outline-variant/20 dark:border-[#2ec4b6]/30 self-start lg:self-end mt-0.5">
                         <Text className="text-xs">♿</Text>
-                        <Text className="text-[11px] font-bold text-primary">
+                        <Text className="text-[11px] font-bold text-primary dark:text-[#2ec4b6]">
                           {freeAdaptedSeats > 0 ? `${freeAdaptedSeats} Assentos Adaptados livres` : 'Assentos adaptados preenchidos'}
                         </Text>
                       </View>
                     </View>
 
                     <TouchableOpacity 
-                      className={`h-12 px-6 rounded-xl flex-row items-center justify-center gap-2 shadow-sm transition-all ${
-                        isDisabled ? 'bg-surface-container-high' : 'bg-primary hover:bg-primary-container'
+                      className={`h-12 px-7 rounded-xl flex-row items-center justify-center gap-2 shadow-md transition-all ${
+                        isDisabled 
+                          ? 'bg-surface-container-high dark:bg-[#152d3f]' 
+                          : 'bg-[#ff7849] hover:bg-[#e06538] active:scale-[0.98]'
                       }`}
                       disabled={isDisabled}
                       onPress={() => openBookingModal(session)}
                       accessibilityRole="button"
                       accessibilityLabel={isDisabled ? 'Remada indisponível' : `Agendar remada para ${session.date}`}
                     >
-                      <Text className={`font-bold text-sm ${isDisabled ? 'text-outline' : 'text-on-primary'}`}>
+                      <Text className={`font-extrabold text-sm ${isDisabled ? 'text-outline dark:text-slate-500' : 'text-white'}`}>
                         {isCancelled ? 'Cancelada' : isPast ? 'Encerrada' : isFull ? 'Esgotado' : 'Agendar Minha Vaga'}
                       </Text>
-                      {!isDisabled && <Text className="text-white text-sm font-bold">→</Text>}
+                      {!isDisabled && <Text className="text-white text-sm font-extrabold">→</Text>}
                     </TouchableOpacity>
                   </View>
                 </View>

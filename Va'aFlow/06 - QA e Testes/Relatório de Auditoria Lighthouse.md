@@ -1,4 +1,4 @@
-﻿# 🏆 Relatório de Auditoria Lighthouse e Indicadores de Qualidade
+# 🏆 Relatório de Auditoria Lighthouse e Indicadores de Qualidade
 
 Este documento consolida os resultados da auditoria de desempenho, acessibilidade, boas práticas e SEO executada no ambiente web do **Canoa Para Todos (Va'aFlow)** através das ferramentas do Google Chrome DevTools e Lighthouse.
 

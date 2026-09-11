@@ -1,5 +1,7 @@
+# 🧠 Central de Governança & Guia de Leitura dos Agentes
 # 🧠 Central de Governança & Bússola Operacional (MAIN)
 
+Este documento é a **Bússola de Operação (MAIN)** do cofre Obsidian para o projeto **Va'aFlow**.
 > **Projeto:** SaaS Serverless Va'aFlow — *Canoa Para Todos (CPT)*  
 > **Instituição:** Extensão Universitária UniSENAI / SENAI São Caetano do Sul  
 > **Orientação:** Prof. Dr. Fabio Xavier de Melo  
@@ -8,15 +10,23 @@
 
 ---
 
+## 🎯 Regras de Ouro de Documentação
+1. **Limite Estrito:** Nenhum arquivo `.md` pode ultrapassar 200 linhas.
 ## 🎯 Regras de Ouro da Documentação (AGENTS.md)
 1. **Limite Estrito:** Nenhum arquivo `.md` no cofre `/Va'aFlow/` pode ultrapassar **200 linhas**.
 2. **Encoding:** Salve sempre em UTF-8 sem BOM.
+3. **Links:** Use links no padrão `[[Nome do Arquivo]]`.
 3. **Links Bidirecionais:** Use o padrão do Obsidian `[[Caminho/Arquivo|Rótulo]]`.
 4. **Governança de Custos:** O alerta de US$ 1,00 no AWS Budgets e o kill-switch são invioláveis.
 5. **Dumb Client:** O Front-end não implementa validações ou cálculos de disponibilidade.
 
 ---
 
+## 🧭 Acesso Rápido
+- 🗺️ [[00 - Meta/Índice Geral|Índice Geral da Base de Conhecimento]]
+- 👥 [[00 - Meta/Governança e Squad|Governança e Matriz de Subagents]]
+- 📜 [[00 - Meta/Contrato de Integração|Contrato Central de Integração]]
+- 🏛️ [[01 - Visão Geral/Visão Geral da Arquitetura|Visão Geral da Arquitetura]]
 ## 🧭 Mapa Rápido dos Domínios de Conhecimento
 
 | Domínio | Pasta no Cofre | Descrição do Conteúdo |

@@ -63,10 +63,22 @@ A aplicação incorpora uma barra de ferramentas de acessibilidade persistente n
 
 ---
 
+## ♿ Acessibilidade e Design System
+- Componentes com suporte nativo a leitores de tela (`accessibilityRole`, `accessibilityLabel`).
+- Feedback visual e tátil intuitivo para estados de reserva e confirmação.
+- Interface responsiva adaptável de telas mobile compactas até navegadores desktop modernos.
 ## 🔗 Navegação
 - [[03 - Front-End/Design System e Telas Stitch|Design System e Telas Stitch]]
 - [[03 - Front-End/Acessibilidade WCAG e VLibras|Acessibilidade WCAG e VLibras]]
 - [[06 - QA e Testes/Relatório de Auditoria Lighthouse|Relatório Lighthouse]]
 - [[00 - Meta/MAIN|Central de Governança]]
+
+---
+
+## 🔗 Links Relacionados
+- [[00 - Meta/Governança e Squad|Governança e Squad]]
+- [[00 - Meta/Contrato de Integração|Contrato de Integração]]
+- [[07 - Documentação Acadêmica/Relatório Técnico de Engenharia|Relatório Técnico de Engenharia]]
+- [[00 - Meta/Índice Geral|Índice Geral]]
 
 

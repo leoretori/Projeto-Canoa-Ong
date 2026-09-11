@@ -11,28 +11,39 @@
 [![Lighthouse SEO](https://img.shields.io/badge/Lighthouse%20SEO-100%2F100-brightgreen.svg)](https://developer.chrome.com/docs/lighthouse/)
 [![WCAG 2.1 AAA](https://img.shields.io/badge/Acessibilidade-WCAG%202.1%20AAA-blue.svg)](https://www.w3.org/WAI/standards-guidelines/wcag/)
 
+Sistema SaaS Serverless de agendamento de remadas inclusivas para o **Projeto Canoa Para Todos (CPT)**, extensão universitária do **UniSENAI / SENAI São Caetano do Sul** sob orientação do **Prof. Dr. Fabio Xavier de Melo**.
 Desenvolvido no âmbito do programa de extensão universitária do **UniSENAI / SENAI São Caetano do Sul**, sob orientação do **Prof. Dr. Fabio Xavier de Melo**.  
 **Autores / Discentes:** Leonardo Retori Apolonio e Murilo Lameira  
 **Base Náutica:** Praia Grande • São Sebastião - SP (DDD 12)  
 **Canal Oficial:** [Comunidade WhatsApp do CPT](https://chat.whatsapp.com/GR1tEIaQrurAatkbZdYpbv?mode=ac_t)
 
+O sistema prioriza **acessibilidade** (controle rigoroso de assentos adaptados para atletas cadeirantes e pessoas com mobilidade reduzida) com **garantia de atomicidade e proteção contra overbooking** em ambiente Serverless.
+
 ---
 
 ## 🏛️ Arquitetura do Sistema
 
+```
 O Va'aFlow opera sob uma arquitetura **100% Serverless** desenhada para custo zero no Free Tier e escalabilidade elástica:
 
 ```text
 [ Usuário: Web / iOS / Android ]
+               │  (HTTPS / REST)
                │  (HTTPS / REST / JWT SRP)
                ▼
    [ Amazon API Gateway + AWS Cognito Authorizer ]
+               │  (Auth JWT / Rate Limit / CORS)
    ├── Rate Limiting & Throttling
    ├── CORS Habilitado
    └── Validação de Claims (custom:role: ATHLETE | INSTRUCTOR | ADMIN)
                │
                ▼
 [ AWS Lambda Functions (Python 3.12 + Pydantic v2) ]
+  ├── UsersFunction: /users/me
+  ├── SessionsFunction: /sessions, /sessions/{id}, /sessions/{id}/status
+  ├── ReservationsFunction: /sessions/{id}/reservations, /reservations/me, /reservations/recent
+  ├── AdminFunction: /admin/users (gestão de roles — só ADMIN)
+  └── KillSwitchFunction: acionada via SNS quando o budget estoura
    ├── SessionsFunction:    /sessions, /sessions/{id}, /sessions/{id}/status, /health
    ├── ReservationsFunction:/sessions/{id}/reservations, /reservations/me, /reservations/recent
    ├── UsersFunction:       /users/me (perfil e prontuário de acessibilidade)
@@ -41,13 +52,23 @@ O Va'aFlow opera sob uma arquitetura **100% Serverless** desenhada para custo ze
                │
                ▼
    [ Amazon DynamoDB (Single Table Design) ]
+   └── TransactWriteItems (Travas Atômicas de Assentos Adaptados)
    └── TransactWriteItems (Travas Atômicas contra Overbooking de Vagas Adaptadas e Gerais)
 ```
 
 ---
 
+## ✨ Funcionalidades
 ## ✨ Funcionalidades Principais
 
+- **Autenticação real via Cognito:** login, cadastro com confirmação por e-mail, recuperação de senha
+- **Controle de acesso por role:** `ATHLETE` / `INSTRUCTOR` / `ADMIN`, aplicado tanto na UI quanto na API
+- **Painel do Instrutor:** criar, editar e cancelar/reabrir remadas; ver quem se inscreveu; exportar lista em CSV
+- **Gestão de usuários (Admin):** promover/rebaixar roles direto pelo app, sem precisar do Console AWS
+- **Perfil do atleta:** necessidades de acessibilidade pré-preenchidas automaticamente no agendamento
+- **Busca e paginação** no calendário de remadas
+- **Dark mode** e identidade visual própria
+- **Contenção de custos automática:** AWS Budget de US$1 + kill-switch que bloqueia a API sozinho
 - **Autenticação Segura via Amazon Cognito:** Login, cadastro com e-mail verificado, recuperação de senha e fluxo SRP seguro sem expor credenciais.
 - **Controle de Acesso por Papel (RBAC):**
   - `ATHLETE`: Agenda remadas, escolhe vaga adaptada e consulta histórico náutico.
@@ -66,8 +87,54 @@ O Va'aFlow opera sob uma arquitetura **100% Serverless** desenhada para custo ze
 
 ---
 
+## 📁 Estrutura de Pastas
 ## 🎨 Telas em Produção (Google Stitch Design System)
 
+```text
+.
+├── AGENTS.md                  # Diretrizes técnicas do projeto
+├── README.md                  # Guia geral de inicialização do projeto
+├── template.yaml              # Infraestrutura como Código (AWS SAM)
+├── samconfig.toml             # Parâmetros de deploy do AWS SAM
+├── pyproject.toml             # Config de pytest, black e ruff
+├── Makefile                   # Comandos padronizados (test, build, deploy...)
+├── .env.example                # Modelo de variáveis de ambiente locais
+├── .github/workflows/          # CI: testes + validação do template.yaml
+├── infra/
+│   └── killswitch/
+│       └── killswitch.py      # Lambda que zera a API ao estourar o budget de US$1
+├── backend/                   # Microsserviços e lógica de domínio
+│   ├── common/
+│   │   ├── dynamo_dal.py      # Camada DAL DynamoDB (Single Table & Transações Atômicas)
+│   │   ├── models.py          # Schemas Pydantic v2 (Acessibilidade, Sessões e Reservas)
+│   │   └── responses.py       # Padronização de respostas REST com CORS
+│   ├── handlers/
+│   │   ├── users.py           # Handler Lambda de Usuários e Perfis
+│   │   ├── sessions.py        # Handler Lambda de Calendário de Remadas (CRUD completo)
+│   │   ├── reservations.py    # Handler Lambda de Reservas com travas 409 Conflict
+│   │   └── admin.py           # Gestão de roles de usuário via Cognito (só ADMIN)
+│   └── requirements.txt
+├── frontend/                  # Aplicativo React Native (Expo)
+│   ├── src/app/               # Rotas Expo Router (Login, Registro, Calendário, Perfil, Admin)
+│   ├── src/services/
+│   │   ├── api.ts             # Cliente HTTP da API
+│   │   └── auth.ts            # Autenticação Cognito (login, cadastro, recuperação de senha)
+│   ├── src/utils/alert.ts     # Helper de alerta cross-platform (web + mobile)
+│   ├── package.json
+│   └── tailwind.config.js
+├── tests/                     # Suíte de testes de QA e Concorrência
+│   ├── test_concurrency_reservation.py # Teste multithread de Race Conditions no DynamoDB
+│   └── test_handlers_and_models.py     # Testes de integração dos handlers e Pydantic
+└── Va'aFlow/                  # Cofre Obsidian (Organizado por Pastas e Cores de Domínio)
+    ├── 00 - Meta/             # 🟣 Governança, Contratos e Roadmap
+    ├── 01 - Visão Geral/      # ⚪ Visão Geral da Arquitetura
+    ├── 02 - Infraestrutura/   # 🟠 AWS SAM, IaC e Backlog
+    ├── 03 - Front-End/        # 🔷 React Native, Expo e UI/UX
+    ├── 04 - Back-End/         # 🟢 Lambdas Python 3.12 e Pydantic v2
+    ├── 05 - Banco de Dados/   # 🔵 DynamoDB Single Table e Concorrência
+    ├── 06 - QA e Testes/      # 🔴 pytest e Simulações de Race Condition
+    └── 07 - Documentação Acadêmica/ # 🟡 Entregáveis e Relatórios UniSENAI
+```
 Os protótipos de alta fidelidade foram extraídos do **Google Stitch** via MCP (`stitch_designs/`) e transformados em componentes nativos:
 
 | Rota / Arquivo | Tela / Propósito | Destaques de Implementação |
@@ -90,12 +157,16 @@ Os protótipos de alta fidelidade foram extraídos do **Google Stitch** via MCP 
 - Node.js 20+ e npm
 - AWS CLI e AWS SAM CLI (opcional para deploy)
 
+### 2. Rodando os Testes do Back-End & Concorrência
 ### 2. Rodar a Suíte de Testes de Concorrência (pytest)
 ```bash
+make install   # instala dependências (Python + Node)
+make test      # roda a suíte completa de testes
 # Executa todos os testes de unidade, schemas Pydantic e corrida multithread
 pytest tests/ -v
 ```
 
+### 3. Executando o Front-End (Expo)
 ### 3. Iniciar o Servidor Local de Desenvolvimento (Offline / Moto)
 O servidor local emula o Amazon API Gateway e o DynamoDB em memória sem exigir credenciais da AWS:
 ```bash
@@ -107,18 +178,28 @@ npm run server
 ```bash
 cd frontend
 
+# Instalar dependências (caso não tenha instalado)
 # Instalar dependências
 npm install
 
+# Rodar em modo Web
+npm run web
 # Iniciar o servidor de desenvolvimento web (porta padrão 8081)
 npx expo start --web
 
+# Ou abrir no emulador Android / Expo Go
+npm run android
 # Testar no celular físico na mesma rede Wi-Fi (abre QR Code e IP da LAN)
 npx expo start --host lan
 ```
 
 ---
 
+## 🔒 Regras de Negócio Críticas
+- **Capacidade da Canoa (OC6):** Padrão de até 6 remadores por sessão.
+- **Controle de Assentos Adaptados:** Cota parametrizada (padrão até 2 assentos adaptados por canoa).
+- **Sem Overbooking Concorrente:** Múltiplas requisições simultâneas disputando a última vaga são resolvidas atomicamente pelo DynamoDB. Uma requisição obtém `201 Created` e as demais recebem `409 Conflict`.
+- **Controle de Custos:** Alerta do AWS Budgets cravado em **US$ 1,00/mês**, com kill-switch automático (`infra/killswitch/`) que zera o throttling da API ao atingir 100% do budget.
 ## 📁 Estrutura de Pastas
 
 ```text
@@ -168,6 +249,11 @@ npx expo start --host lan
 
 ---
 
+## 🤝 Colaboradores e Autores
+- **Projeto de Extensão:** Canoa Para Todos (CPT) — UniSENAI São Caetano do Sul
+- **Integrantes**  Leonardo Retori Apolonio e Murilo Lameira
+- **Docente Responsável:** Prof. Dr. Fabio Xavier de Melo
+- **Repositório:** [https://github.com/leoretori/Projeto-Canoa-Ong](https://github.com/leoretori/Projeto-Canoa-Ong)
 ## 🏆 Indicadores de Qualidade e Prontidão
 
 - **Testes Backend:** **9 de 9 testes aprovados (100% pass)** em **2.68s** (`pytest`).

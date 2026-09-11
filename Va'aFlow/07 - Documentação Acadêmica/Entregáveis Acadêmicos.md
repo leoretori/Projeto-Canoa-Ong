@@ -1,5 +1,7 @@
+# 🎓 Subagent 6: Entregáveis Acadêmicos & Documentação
 # 🎓 Subagent 6: Entregáveis Acadêmicos & Documentação UniSENAI
 
+Este documento estabelece o escopo e o padrão dos relatórios acadêmicos sob responsabilidade do **Subagent 6 (Documentação Acadêmica)**.
 Este documento consolida o escopo e o checklist dos relatórios acadêmicos sob responsabilidade do **Subagent 6 (Documentação Acadêmica)** para o projeto de extensão universitária.
 
 > **Instituição:** UniSENAI São Caetano do Sul  
@@ -10,8 +12,13 @@ Este documento consolida o escopo e o checklist dos relatórios acadêmicos sob 
 
 ---
 
+## 📚 Entregáveis Chave do Projeto
 ## 📚 Matriz de Entregáveis Acadêmicos Concluídos
 
+1. **Relatório Técnico de Engenharia de Software:**
+   - Justificativa arquitetural do modelo Serverless (custo, elasticidade e escalabilidade).
+   - Diagrama de blocos e modelagem de dados NoSQL (Single Table Design).
+   - Discussão sobre isolamento de responsabilidades e desacoplamento do front-end.
 | # | Documento Acadêmico | Nota no Cofre | Status |
 | :-: | :--- | :--- | :---: |
 | **1** | **Relatório Técnico de Engenharia de Software** | [[07 - Documentação Acadêmica/Relatório Técnico de Engenharia\|Relatório Técnico]] | ✅ Concluído |
@@ -20,8 +27,16 @@ Este documento consolida o escopo e o checklist dos relatórios acadêmicos sob 
 | **4** | **Auditoria de Segurança da Informação e LGPD** | [[07 - Documentação Acadêmica/Auditoria de Segurança e LGPD\|Segurança e LGPD]] | ✅ Concluído |
 | **5** | **Relatório de QA, Concorrência Multithread e Lighthouse** | [[06 - QA e Testes/Relatório de Auditoria Lighthouse\|Relatório Lighthouse]] | ✅ Concluído |
 
+2. **Procedimentos de Teste e Evidências:**
+   - Descrição metodológica dos testes unitários e de integração.
+   - Demonstração dos testes de concorrência com cenários de estresse.
+   - Cobertura de código e análise de falhas controladas.
 ---
 
+3. **Manual de Recomendações e Uso Seguro:**
+   - Melhores práticas operacionais na nuvem AWS.
+   - Orientações sobre segurança, tokenização Cognito e prevenção de custos via Budget Alert.
+   - Guia de usabilidade e acessibilidade para atletas e gestores.
 ## 🎯 Conformidade com os ODS da Agenda 2030
 
 1. **ODS 10 (Redução das Desigualdades):** Inclusão de paratletas, acessibilidade WCAG 2.1 AA/AAA, avatar VLibras e cotas atômicas de vagas adaptadas.
@@ -29,6 +44,10 @@ Este documento consolida o escopo e o checklist dos relatórios acadêmicos sob 
 
 ---
 
+## 📏 Padrões de Redação Acadêmica
+- Formato Markdown padrão GitHub.
+- Clareza conceitual, referências a padrões de projeto e normas da engenharia de software.
+- Respeito ao limite estrito de 200 linhas por documento no cofre Obsidian.
 ## 📏 Padrões Editoriais do Cofre Obsidian
 - Formato Markdown padrão GitHub Flavored Markdown (GFM).
 - **Regra de Ouro Inviolável:** Máximo de **200 linhas** por nota.
@@ -37,6 +56,7 @@ Este documento consolida o escopo e o checklist dos relatórios acadêmicos sob 
 
 ---
 
+## 🔗 Links Relacionados
 ## 🔗 Navegação
 - [[07 - Documentação Acadêmica/Relatório Técnico de Engenharia|Relatório Técnico de Engenharia]]
 - [[00 - Meta/Governança e Squad|Governança e Squad]]

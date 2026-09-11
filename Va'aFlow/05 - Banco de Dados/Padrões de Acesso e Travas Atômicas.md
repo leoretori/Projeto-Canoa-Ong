@@ -1,4 +1,4 @@
-﻿# ⚓ Padrões de Acesso e Travas Atômicas contra Overbooking
+# ⚓ Padrões de Acesso e Travas Atômicas contra Overbooking
 
 > **Regra Crítica de Segurança Náutica:** A integridade de alocação de assentos na canoa havaiana não pode depender de locks em memória de servidor, devendo ser resolvida por garantias transacionais ACID no banco de dados.
 

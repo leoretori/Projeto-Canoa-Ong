@@ -19,57 +19,57 @@ img {
 }
 
 /* ==========================================================================
-   MODO ESCURO OCEÂNICO (DARK MODE)
+   MODO ESCURO OCEÂNICO (DARK MODE - GOOGLE STITCH PALETTE)
    ========================================================================== */
 html.dark,
 body.dark,
 .dark {
   color-scheme: dark;
-  background-color: #0b1320 !important;
-  color: #f1f5f9 !important;
+  background-color: #07151f !important;
+  color: #f6f9ff !important;
 }
 
 html.dark body,
 .dark .bg-surface,
 .dark .bg-surface-container-lowest,
 .dark .bg-white {
-  background-color: #111c2e !important;
+  background-color: #112435 !important;
 }
 
 .dark .bg-surface-container-low {
-  background-color: #0f192d !important;
+  background-color: #0b1924 !important;
 }
 
 .dark .bg-surface-container,
 .dark .bg-surface-container-high,
 .dark .bg-surface-container-highest {
-  background-color: #16233b !important;
+  background-color: #152d3f !important;
 }
 
 .dark .text-on-surface,
 .dark .text-slate-900,
 .dark .text-gray-900 {
-  color: #f1f5f9 !important;
+  color: #f6f9ff !important;
 }
 
 .dark .text-primary {
-  color: #38bdf8 !important; /* Ciano oceânico vibrante no escuro */
+  color: #2ec4b6 !important; /* Turquesa Stitch no escuro */
 }
 
 .dark .text-secondary {
-  color: #57dffe !important;
+  color: #55e0d2 !important;
 }
 
 .dark .text-tertiary,
 .dark .text-tertiary-container {
-  color: #fdba74 !important; /* Âmbar luminoso no escuro */
+  color: #ff7849 !important; /* Coral Stitch no escuro */
 }
 
 .dark .text-on-surface-variant,
 .dark .text-slate-600,
 .dark .text-gray-600,
 .dark .text-slate-500 {
-  color: #cbd5e1 !important; /* Slate-300 de alta legibilidade */
+  color: #9cb5c9 !important; /* Text-muted Stitch de alta legibilidade */
 }
 
 .dark .border-outline-variant,
@@ -80,20 +80,20 @@ html.dark body,
 .dark .border-slate-200,
 .dark .border-gray-100,
 .dark .border-gray-200 {
-  border-color: #243556 !important;
+  border-color: #244a66 !important;
 }
 
 .dark .bg-primary-fixed,
 .dark .bg-blue-50,
 .dark .bg-sky-50 {
-  background-color: #132840 !important;
+  background-color: #004c46 !important;
 }
 
 .dark input,
 .dark textarea {
-  background-color: #16233b !important;
-  color: #f1f5f9 !important;
-  border-color: #2e4368 !important;
+  background-color: #132636 !important;
+  color: #f6f9ff !important;
+  border-color: #244a66 !important;
 }
 
 /* ==========================================================================
