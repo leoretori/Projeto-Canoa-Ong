@@ -37,7 +37,7 @@ export default function TabsLayout() {
   return (
     <Tabs 
       screenOptions={{ 
-        tabBarActiveTintColor: '#0E7490',
+        tabBarActiveTintColor: '#004e68',
         tabBarInactiveTintColor: '#64748B',
         tabBarStyle: {
           borderTopColor: '#E2E8F0',
@@ -45,6 +45,14 @@ export default function TabsLayout() {
           paddingBottom: 8,
           paddingTop: 8
         },
+        headerLeft: () => (
+          <TouchableOpacity 
+            onPress={() => router.push('/')}
+            style={{ marginLeft: 16, paddingHorizontal: 10, paddingVertical: 4, borderRadius: 8, backgroundColor: '#ebf5ff' }}
+          >
+            <Text style={{ fontSize: 12, fontWeight: '600', color: '#004e68' }}>← Portal</Text>
+          </TouchableOpacity>
+        ),
         headerRight: () => (
           <View style={{ flexDirection: 'row', alignItems: 'center', marginRight: 16, gap: 12 }}>
             <ThemeToggle />
