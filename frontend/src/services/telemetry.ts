@@ -48,3 +48,4 @@ export async function checkBackendHealth(apiUrl: string): Promise<boolean> {
     return false;
   }
 }
+

@@ -14,3 +14,4 @@ Disallow: /api/
 
 # Localização do Mapa do Site
 Sitemap: https://canoaparatodos.org/sitemap.xml
+

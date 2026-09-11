@@ -187,6 +187,16 @@
   },
   "active": "5b2902614b8fabc0",
   "lastOpenFiles": [
+    "07 - Documentação Acadêmica/Auditoria de Segurança e LGPD.md",
+    "06 - QA e Testes/Relatório de Auditoria Lighthouse.md",
+    "06 - QA e Testes/Testes de Concorrência e Race Conditions.md",
+    "05 - Banco de Dados/Padrões de Acesso e Travas Atômicas.md",
+    "04 - Back-End/Dev Server e Emulação Moto.md",
+    "04 - Back-End/Contratos Pydantic e Endpoints REST.md",
+    "03 - Front-End/Acessibilidade WCAG e VLibras.md",
+    "03 - Front-End/Design System e Telas Stitch.md",
+    "02 - Infraestrutura/Orçamento e Kill-Switch FinOps.md",
+    "01 - Visão Geral/Missão e Impacto Social CPT.md",
     "02 - Infraestrutura/Infraestrutura e SAM.md",
     "00 - Meta/Roadmap e Fases.md",
     "07 - Documentação Acadêmica/Manual de Uso e Recomendações de Segurança.md",
@@ -210,17 +220,8 @@
     "01 - Arquitetura/Backlog de Infraestrutura AWS.md",
     "00 - Meta/Índice Geral.md",
     "01 - Arquitetura/Entregáveis Acadêmicos.md",
-    "01 - Arquitetura/Estratégia de QA e Testes.md",
-    "01 - Arquitetura/Modelagem DynamoDB.md",
-    "01 - Arquitetura/Back-End e Microsserviços.md",
-    "01 - Arquitetura/Front-End Multiplataforma.md",
-    "01 - Arquitetura/Infraestrutura e SAM.md",
-    "01 - Arquitetura/Visão Geral da Arquitetura.md",
     "01 - Arquitetura",
-    "00 - Meta/Contrato de Integração.md",
-    "00 - Meta/Governança e Squad.md",
     "gemini-scribe/Prompts",
-    "gemini-scribe",
-    "00 - Meta/MAIN.md"
+    "gemini-scribe"
   ]
 }

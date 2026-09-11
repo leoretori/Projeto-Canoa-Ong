@@ -46,6 +46,10 @@ A aplicação incorpora uma barra de ferramentas de acessibilidade persistente n
 | `src/app/(tabs)/my-reservations.tsx` | Minhas Remadas (Histórico & Ativas) | Mosaico do atleta (km remados, assiduidade), Cartão de Embarque Náutico, modal com Guia de Embarque e cancelamento seguro. |
 | `src/app/(tabs)/profile.tsx` | Prontuário & Perfil do Paratleta | Contatos de emergência, toggle de vaga adaptada pré-alocada, seletor de mobilidade e experiência aquática. |
 | `src/app/(tabs)/admin.tsx` | Painel Operacional do Timoneiro | Cards de frota ativa, feed de atividade recente, roster expansível com download de chamada em CSV e gestão de papéis ADMIN. |
+| `src/app/+not-found.tsx` | Página 404 Náutica | "Remada Fora de Rota", logo oficial, retorno à base e suporte WhatsApp. |
+| `src/app/error.tsx` | Error Boundary (500) | Captura de falhas não tratadas, tentativa de reconexão e relato ao suporte. |
+| `src/app/+html.tsx` | Shell HTML & SEO Head | Tags OpenGraph, Twitter Cards, idioma pt-BR e verificação do Search Console. |
+| `src/components/CookieBanner.tsx` | Consentimento LGPD | Escolha entre Essenciais e Analíticos, injeção GA4 e persistência em storage. |
 
 ---
 
@@ -59,17 +63,10 @@ A aplicação incorpora uma barra de ferramentas de acessibilidade persistente n
 
 ---
 
-## ♿ Acessibilidade e Design System
-- Componentes com suporte nativo a leitores de tela (`accessibilityRole`, `accessibilityLabel`).
-- Feedback visual e tátil intuitivo para estados de reserva e confirmação.
-- Interface responsiva adaptável de telas mobile compactas até navegadores desktop modernos.
-
----
-
-## 🔗 Links Relacionados
-- [[00 - Meta/Governança e Squad|Governança e Squad]]
-- [[00 - Meta/Contrato de Integração|Contrato de Integração]]
-- [[07 - Documentação Acadêmica/Relatório Técnico de Engenharia|Relatório Técnico de Engenharia]]
-- [[00 - Meta/Índice Geral|Índice Geral]]
+## 🔗 Navegação
+- [[03 - Front-End/Design System e Telas Stitch|Design System e Telas Stitch]]
+- [[03 - Front-End/Acessibilidade WCAG e VLibras|Acessibilidade WCAG e VLibras]]
+- [[06 - QA e Testes/Relatório de Auditoria Lighthouse|Relatório Lighthouse]]
+- [[00 - Meta/MAIN|Central de Governança]]
 
 
