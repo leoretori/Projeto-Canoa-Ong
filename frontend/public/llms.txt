@@ -1,0 +1,14 @@
+﻿# Canoa Para Todos - Va'aFlow
+
+> Projeto social e esportivo inclusivo de Canoa Polinésia (Va'a) em São Sebastião - SP. Democratizando o mar para pessoas com deficiência e a comunidade caiçara.
+
+## Informações do Projeto
+- **Nome**: Canoa Para Todos (Va'aFlow)
+- **Localização**: Praia Grande • São Sebastião - SP, Brasil
+- **Comunidade WhatsApp**: https://chat.whatsapp.com/GR1tEIaQrurAatkbZdYpbv?mode=ac_t
+- **Objetivo**: Inclusão social, reabilitação física e integração comunitária através do esporte a remo com canoas adaptadas.
+
+## Funcionalidades da Plataforma
+- Agendamento de remadas com garantia de vagas adaptadas e convencionais.
+- Triagem de acessibilidade e acompanhamento de instrutores certificados.
+- Sistema de alta disponibilidade e conformidade com LGPD e WCAG 2.1 AA.

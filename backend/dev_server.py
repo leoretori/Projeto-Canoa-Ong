@@ -25,7 +25,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from common.dynamo_dal import DynamoDAL
 from handlers import users, sessions, reservations
 
-PORT = int(os.environ.get("PORT", 8000))
+PORT = int(os.environ.get("PORT", 3333))
 
 # Contexto global mock_aws mantido ativo durante a execução do servidor
 moto_context = mock_aws()
@@ -89,7 +89,7 @@ class LocalGatewayHandler(BaseHTTPRequestHandler):
         self.send_response(200)
         self.send_header("Access-Control-Allow-Origin", "*")
         self.send_header("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS")
-        self.send_header("Access-Control-Allow-Headers", "Content-Type, Authorization, X-User-Id, X-User-Name, X-User-Email")
+        self.send_header("Access-Control-Allow-Headers", "Content-Type, Authorization, X-User-Id, X-User-Name, X-User-Email, X-User-Role")
         self.end_headers()
 
     def do_OPTIONS(self):
@@ -107,6 +107,24 @@ class LocalGatewayHandler(BaseHTTPRequestHandler):
         user_id = self.headers.get("X-User-Id", "atleta-local-001")
         user_name = self.headers.get("X-User-Name", "Atleta UniSENAI")
         user_email = self.headers.get("X-User-Email", "atleta@cpt.org")
+        user_role = self.headers.get("X-User-Role", "ATHLETE")
+
+        # Se houver token JWT na Authorization, tenta extrair claims locais
+        auth_header = self.headers.get("Authorization", "")
+        if auth_header and "." in auth_header:
+            try:
+                import base64
+                parts = auth_header.split(".")
+                if len(parts) >= 2:
+                    padding = "=" * ((4 - len(parts[1]) % 4) % 4)
+                    payload_raw = base64.urlsafe_b64decode(parts[1] + padding)
+                    payload = json.loads(payload_raw.decode("utf-8"))
+                    user_id = payload.get("sub", user_id)
+                    user_name = payload.get("name", user_name)
+                    user_email = payload.get("email", user_email)
+                    user_role = payload.get("custom:role", user_role)
+            except Exception:
+                pass
 
         event = {
             "httpMethod": method,
@@ -120,7 +138,8 @@ class LocalGatewayHandler(BaseHTTPRequestHandler):
                     "claims": {
                         "sub": user_id,
                         "name": user_name,
-                        "email": user_email
+                        "email": user_email,
+                        "custom:role": user_role
                     }
                 }
             }
@@ -146,9 +165,12 @@ class LocalGatewayHandler(BaseHTTPRequestHandler):
                     "PATCH /sessions/{sessionId}/status - Atualizar status",
                     "POST /sessions/{sessionId}/reservations - Agendamento atomico de vaga",
                     "GET  /reservations/me - Listar minhas reservas",
+                    "GET  /reservations/recent - Feed de atividade recente",
                     "DELETE /sessions/{sessionId}/reservations/{userId} - Cancelar reserva",
                     "GET  /users/me - Perfil do remador",
-                    "PUT  /users/me - Atualizar necessidades de acessibilidade"
+                    "PUT  /users/me - Atualizar necessidades de acessibilidade",
+                    "GET  /admin/users - Gestão de usuários (Admin)",
+                    "PATCH /admin/users/{userId}/role - Alterar role (Admin)"
                 ]
             }
             self.wfile.write(json.dumps(welcome, ensure_ascii=False, indent=2).encode("utf-8"))
@@ -162,7 +184,11 @@ class LocalGatewayHandler(BaseHTTPRequestHandler):
         elif path == "/reservations/me" and method == "GET":
             response = reservations.handler(event, None)
 
-        # 3. Rota de Criação de Reserva: POST /sessions/{sessionId}/reservations
+        # 2b. Atividade Recente
+        elif path == "/reservations/recent" and method == "GET":
+            response = reservations.handler(event, None)
+
+        # 3. Rota de Criação de Reserva e Listagem de Inscritos: /sessions/{sessionId}/reservations
         elif match := re.match(r"^/sessions/([^/]+)/reservations$", path):
             event["pathParameters"] = {"sessionId": match.group(1)}
             response = reservations.handler(event, None)
@@ -181,10 +207,35 @@ class LocalGatewayHandler(BaseHTTPRequestHandler):
             event["pathParameters"] = {"sessionId": match.group(1)}
             response = sessions.handler(event, None)
 
-        # 7. Rota de Detalhes da Sessão: GET /sessions/{sessionId}
+        # 7. Rota de Detalhes da Sessão: GET ou PUT /sessions/{sessionId}
         elif match := re.match(r"^/sessions/([^/]+)$", path):
             event["pathParameters"] = {"sessionId": match.group(1)}
             response = sessions.handler(event, None)
+
+        # 8. Rota de Usuários Admin: GET /admin/users
+        elif path == "/admin/users" and method == "GET":
+            mock_admin_users = [
+                {"user_id": "user-local-admin", "name": "Coordenador Geral", "email": "admin@cpt.org", "role": "ADMIN", "status": "CONFIRMED", "enabled": True},
+                {"user_id": "user-local-instrutor", "name": "Mestre Kaique", "email": "instrutor@cpt.org", "role": "INSTRUCTOR", "status": "CONFIRMED", "enabled": True},
+                {"user_id": "user-local-atleta", "name": "Remador UniSENAI", "email": "remador@cpt.org", "role": "ATHLETE", "status": "CONFIRMED", "enabled": True}
+            ]
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json")
+            self.send_header("Access-Control-Allow-Origin", "*")
+            self.end_headers()
+            self.wfile.write(json.dumps(mock_admin_users).encode("utf-8"))
+            return
+
+        # 9. Rota de Alteração de Role Admin: PATCH /admin/users/{userId}/role
+        elif match := re.match(r"^/admin/users/([^/]+)/role$", path):
+            body_json = json.loads(body_raw) if body_raw else {}
+            new_role = body_json.get("role", "ATHLETE")
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json")
+            self.send_header("Access-Control-Allow-Origin", "*")
+            self.end_headers()
+            self.wfile.write(json.dumps({"user_id": match.group(1), "role": new_role}).encode("utf-8"))
+            return
 
         else:
             self.send_response(404)
@@ -224,7 +275,7 @@ class LocalGatewayHandler(BaseHTTPRequestHandler):
 
 
 def run():
-    candidate_ports = [PORT, 8001, 8080, 5000, 3001] if PORT == 8000 else [PORT]
+    candidate_ports = [PORT, 3334, 4000, 5000, 8001] if PORT == 3333 else [PORT]
     httpd = None
     active_port = PORT
 
@@ -242,10 +293,11 @@ def run():
         return
 
     print(f"\n=======================================================")
-    print(f">> Va'aFlow Local Dev Server ativo em http://127.0.0.1:{active_port}")
+    print(f">> Va'aFlow Backend API ativo em http://127.0.0.1:{active_port}")
     print(f">> Emulacao DynamoDB (Moto) e Handlers Lambda carregados")
-    print(f">> Dados de demonstracao semeados para testes offline")
-    print(f">> Pressione Ctrl+C para encerrar.")
+    print(f">> [FRONT-END]: Abra outro terminal e rode 'npm run web'")
+    print(f">>              O app abrira no navegador em http://localhost:8081")
+    print(f">> Pressione Ctrl+C para encerrar o backend.")
     print(f"=======================================================\n")
     try:
         httpd.serve_forever()

@@ -1,45 +1,42 @@
-/**
- * Alternância manual de tema (claro/escuro).
- * Gerenciado pelo Subagent 2 (Front-End/UI).
- * NativeWind segue a preferência do sistema por padrão — este componente
- * permite ao usuário sobrepor essa escolha, com persistência no navegador.
- */
+import React, { useState, useEffect } from 'react';
+import { TouchableOpacity, Text } from 'react-native';
+import { getStoredTheme, toggleTheme, subscribeAccessibility, ThemeMode } from '../utils/accessibility';
 
-import React, { useEffect } from 'react';
-import { TouchableOpacity, Text, Platform } from 'react-native';
-import { useColorScheme } from 'nativewind';
+interface ThemeToggleProps {
+  showLabel?: boolean;
+}
 
-const STORAGE_KEY = 'vaaflow-theme-preference';
+export function ThemeToggle({ showLabel = false }: ThemeToggleProps) {
+  const [theme, setTheme] = useState<ThemeMode>('light');
 
-export function ThemeToggle() {
-  const { colorScheme, setColorScheme } = useColorScheme();
-
-  // Restaura a preferência salva (web) na primeira renderização.
   useEffect(() => {
-    if (Platform.OS === 'web') {
-      const saved = window.localStorage.getItem(STORAGE_KEY);
-      if (saved === 'light' || saved === 'dark') {
-        setColorScheme(saved);
-      }
-    }
+    setTheme(getStoredTheme());
+    const unsubscribe = subscribeAccessibility(() => {
+      setTheme(getStoredTheme());
+    });
+    return unsubscribe;
   }, []);
 
   const handleToggle = () => {
-    const next = colorScheme === 'dark' ? 'light' : 'dark';
-    setColorScheme(next);
-    if (Platform.OS === 'web') {
-      window.localStorage.setItem(STORAGE_KEY, next);
-    }
+    const next = toggleTheme();
+    setTheme(next);
   };
+
+  const isDark = theme === 'dark';
 
   return (
     <TouchableOpacity
       onPress={handleToggle}
       accessibilityRole="button"
-      accessibilityLabel={colorScheme === 'dark' ? 'Mudar para tema claro' : 'Mudar para tema escuro'}
-      className="px-2 py-1"
+      accessibilityLabel={isDark ? 'Mudar para tema claro' : 'Mudar para tema escuro'}
+      className="flex-row items-center gap-1.5 px-2.5 py-1 rounded-lg bg-surface-container hover:opacity-80 border border-outline-variant/30"
     >
-      <Text className="text-base">{colorScheme === 'dark' ? '☀️' : '🌙'}</Text>
+      <Text className="text-sm">{isDark ? '☀️' : '🌙'}</Text>
+      {showLabel && (
+        <Text className="text-xs font-semibold text-primary">
+          {isDark ? 'Modo Claro' : 'Modo Escuro'}
+        </Text>
+      )}
     </TouchableOpacity>
   );
 }

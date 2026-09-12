@@ -30,6 +30,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Setup AWS SAM CLI
+        uses: aws-actions/setup-sam@v2
+        with:
+          use-installer: true
+
       - name: Set up Python 3.12
         uses: actions/setup-python@v5
         with:
@@ -37,6 +42,16 @@ jobs:
 
       - name: Instalar AWS SAM CLI
         run: pip install aws-sam-cli
+      - name: Instalar cfn-lint
+        run: pip install cfn-lint
 
       - name: Validar template.yaml
         run: sam validate --lint
+      - name: Validar CloudFormation com cfn-lint
+        run: cfn-lint template.yaml
+
+      - name: Validar template.yaml com SAM CLI
+        env:
+          AWS_DEFAULT_REGION: us-east-1
+        run: sam validate --lint --region us-east-1
+

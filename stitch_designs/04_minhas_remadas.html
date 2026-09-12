@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "on-tertiary-fixed-variant": "#783200", "surface": "#f6f9ff", "background": "#f6f9ff", "on-tertiary": "#ffffff", "on-error-container": "#93000a", "secondary-container": "#57dffe", "tertiary": "#793200", "on-surface-variant": "#40484d", "surface-container": "#e0f0ff", "on-secondary-fixed": "#001f26", "tertiary-fixed": "#ffdbca", "error-container": "#ffdad6", "tertiary-container": "#9f4400", "on-surface": "#0e1d28", "on-primary": "#ffffff", "inverse-surface": "#23323e", "surface-container-high": "#daeafa", "on-tertiary-container": "#ffd0ba", "on-error": "#ffffff", "surface-container-low": "#ebf5ff", "surface-variant": "#d5e4f4", "on-tertiary-fixed": "#341100", "outline": "#70787e", "on-primary-fixed-variant": "#004d67", "primary-fixed-dim": "#88cff5", "surface-bright": "#f6f9ff", "on-secondary-container": "#006172", "on-primary-fixed": "#001e2b", "surface-dim": "#ccdceb", "secondary-fixed": "#acedff", "inverse-primary": "#88cff5", "on-background": "#0e1d28", "primary-container": "#086788", "secondary": "#00687a", "surface-tint": "#056687", "surface-container-lowest": "#ffffff", "on-primary-container": "#ade1ff", "primary-fixed": "#c1e8ff", "on-secondary": "#ffffff", "surface-container-highest": "#d5e4f4", "inverse-on-surface": "#e6f2ff", "tertiary-fixed-dim": "#ffb690", "on-secondary-fixed-variant": "#004e5c", "error": "#ba1a1a", "outline-variant": "#bfc8ce", "secondary-fixed-dim": "#4cd7f6", "primary": "#004e68" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "space-xl": "2.5rem", "margin-sm": "1rem", "space-sm": "0.5rem", "gutter-sm": "1rem", "space-lg": "1.5rem", "space-xs": "0.25rem", "gutter": "1.5rem", "margin": "2rem", "space-md": "1rem" }, "fontFamily": { "body-md": [ "Plus Jakarta Sans" ], "headline-lg": [ "Plus Jakarta Sans" ], "body-sm": [ "Plus Jakarta Sans" ], "label-md": [ "Plus Jakarta Sans" ], "label-sm": [ "Plus Jakarta Sans" ], "headline-md": [ "Plus Jakarta Sans" ], "headline-sm": [ "Plus Jakarta Sans" ], "headline-lg-mobile": [ "Plus Jakarta Sans" ], "display-lg": [ "Plus Jakarta Sans" ], "display-sm": [ "Plus Jakarta Sans" ], "label-lg": [ "Plus Jakarta Sans" ], "body-lg": [ "Plus Jakarta Sans" ] }, "fontSize": { "body-md": [ "1rem", { "lineHeight": "1.625rem", "fontWeight": "400" } ], "headline-lg": [ "2rem", { "lineHeight": "2.5rem", "letterSpacing": "-0.015em", "fontWeight": "700" } ], "body-sm": [ "0.875rem", { "lineHeight": "1.375rem", "fontWeight": "500" } ], "label-md": [ "0.875rem", { "lineHeight": "1.25rem", "letterSpacing": "0.02em", "fontWeight": "600" } ], "label-sm": [ "0.75rem", { "lineHeight": "1rem", "letterSpacing": "0.04em", "fontWeight": "700" } ], "headline-md": [ "1.5rem", { "lineHeight": "2rem", "fontWeight": "600" } ], "headline-sm": [ "1.25rem", { "lineHeight": "1.75rem", "fontWeight": "600" } ], "headline-lg-mobile": [ "1.625rem", { "lineHeight": "2.125rem", "letterSpacing": "-0.01em", "fontWeight": "700" } ], "display-lg": [ "3.5rem", { "lineHeight": "4rem", "letterSpacing": "-0.03em", "fontWeight": "800" } ], "display-sm": [ "2.5rem", { "lineHeight": "3rem", "letterSpacing": "-0.02em", "fontWeight": "700" } ], "label-lg": [ "1rem", { "lineHeight": "1.5rem", "letterSpacing": "0.01em", "fontWeight": "700" } ], "body-lg": [ "1.125rem", { "lineHeight": "1.875rem", "fontWeight": "400" } ] } } } };</script></head><body class="bg-surface font-body-md text-on-surface min-h-screen flex flex-col antialiased"><header class="fixed top-0 left-0 right-0 z-50 bg-surface/95 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="bg-surface-container-high py-1 px-margin"><div class="max-w-7xl mx-auto flex items-center justify-between font-label-sm text-label-sm text-on-surface-variant"><div class="flex items-center gap-space-md"><span class="flex items-center gap-space-xs text-primary font-bold"><span class="material-symbols-outlined text-[16px]">accessibility_new</span>Acessibilidade Universal</span><span class="hidden sm:inline text-outline-variant">|</span><span class="hidden sm:inline">Atalho de Teclado: Alt + 1 (Conteúdo)</span></div><div class="flex items-center gap-space-md"><button class="flex items-center gap-1 hover:text-on-surface transition-colors py-1 px-2 rounded hover:bg-surface-container" type="button"><span class="material-symbols-outlined text-[15px]">contrast</span>Alto Contraste</button><div class="flex items-center bg-surface-container rounded px-1.5 py-0.5 gap-2"><button aria-label="Diminuir Fonte" class="hover:text-primary font-bold transition-colors" type="button">A-</button><span class="text-outline-variant">•</span><button aria-label="Aumentar Fonte" class="hover:text-primary font-bold transition-colors" type="button">A+</button></div><a class="flex items-center gap-1 text-primary hover:text-on-surface transition-colors font-bold" href="#"><span class="material-symbols-outlined text-[15px]">sign_language</span>VLibras</a></div></div></div><div class="h-20 max-w-7xl mx-auto px-margin flex items-center justify-between"><div class="flex items-center gap-space-lg"><a class="flex items-center gap-space-md focus:outline-none focus:ring-2 focus:ring-tertiary-container rounded-xl" href="#"><div class="w-11 h-11 rounded-xl bg-primary flex items-center justify-center text-on-primary shadow-sm"><span class="material-symbols-outlined text-[24px]">kayaking</span></div><div><span class="font-headline-sm text-headline-sm text-primary leading-tight block">Canoa Para Todos</span><span class="font-body-sm text-body-sm text-on-surface-variant block">Portal de Remadas Inclusivas</span></div></a><nav class="hidden lg:flex items-center gap-space-xs ml-space-md p-1 bg-surface-container-low rounded-xl" data-active-classes="bg-primary-container text-on-primary font-bold rounded-xl shadow-[0_2px_8px_rgba(8,103,136,0.15)]"><a class="px-space-md py-2 rounded-xl text-on-surface-variant hover:text-on-surface hover:bg-surface-container font-label-md text-label-md transition-all" data-path="agendar-remadas" href="#">Calendário de Remadas</a><a aria-current="page" class="px-space-md py-2 transition-all bg-primary-container text-on-primary font-bold rounded-xl shadow-[0_2px_8px_rgba(8,103,136,0.15)]" data-path="minhas-remadas" href="#">Minhas Remadas</a><a class="px-space-md py-2 rounded-xl text-on-surface-variant hover:text-on-surface hover:bg-surface-container font-label-md text-label-md transition-all" data-path="meu-perfil-atleta" href="#">Meu Perfil &amp; Acessibilidade</a><a class="px-space-md py-2 rounded-xl text-on-surface-variant hover:text-on-surface hover:bg-surface-container font-label-md text-label-md transition-all" data-path="painel-do-instrutor" href="#">Painel do Instrutor</a></nav></div><div class="flex items-center gap-space-md"><div class="hidden md:flex flex-col text-right"><span class="font-label-md text-label-md text-on-surface leading-tight">Instrutor Kaique</span><div class="flex items-center justify-end gap-1"><span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-[11px] font-bold bg-secondary-container text-on-secondary-container">Instrutor / Paratleta</span></div></div><div class="relative flex items-center gap-space-sm"><img alt="Profile" class="w-8 h-8 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida/AEtjO1X7YFh7LzB-qgM4grZz7NO_6Snf5a2uX8_hgIithecSYWOzy3EPtE0LGivXtwVDV7VGGmXnWG5HIj54Q-mTvPOCG4sW3rR3TI2WEr71MwN8t-bxWVnSN2Mg6m9KMrQ1qZofVL6rchZL7i0VuF32l2p9kghz2zvSfGqCrbhLBFxYsoGGIXBoE4Yv5VR3xx293V6lEejqeb6hesHC74H_WLSTjEBFB-PmkOwAGaqcGM0irDA_3-cimz3Z6HimHuk38s8wCOqXoMZ5SVE"/><a class="hidden sm:flex items-center gap-1 py-1.5 px-3 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-label-sm text-label-sm" data-path="login-portal" href="#"><span class="material-symbols-outlined text-[18px]">logout</span><span>Sair</span></a></div></div></div></header><main class="w-full flex-1 pt-28 pb-space-xl bg-surface"><div class="max-w-7xl mx-auto px-margin"><div class="flex flex-col w-full">
+<!-- Interactive Toast Notification -->
+<div class="fixed bottom-8 right-8 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none flex items-center gap-space-sm bg-primary text-on-primary px-space-lg py-space-md rounded-xl shadow-xl" id="actionToast">
+<span class="material-symbols-outlined text-secondary-container">check_circle</span>
+<span class="font-label-md text-label-md" id="toastMessage">Informações atualizadas com sucesso!</span>
+</div>
+<!-- Hero Header Banner with Visual Depth -->
+<section class="relative w-full rounded-2xl overflow-hidden bg-surface-container-low shadow-sm mb-space-xl">
+<div class="absolute inset-0 z-0">
+<img alt="Projeto Canoa Para Todos" class="w-full h-full object-cover object-center opacity-25 mix-blend-multiply filter contrast-125" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCUH5RPApnQQp0Ea16OKuHmdCK3pI9IHWeD6fvM9BmHO6BuVF9m4SaZ2c83Hw6PWtpA5sopA1_U_R0P6WftaFUD3NaM8GJMzNXImNTppCEpRKaHh0PJbyLL13OyPDuqcMrfqP2rPgBQLF8Uvz4Y7lgwtOl1GPkGBAxbmgntCignPu0Fd24aDtTYJIcebYKAfhpALJaUVO_Y2PFjnR3C9wymyCg3yLIdE-ddCuFPbvbLtr_ZjbL0ufNRpqYF4_lxWmxcrmk"/>
+<div class="absolute inset-0 bg-gradient-to-r from-surface-container-lowest via-surface-container-low/90 to-surface-container/60"></div>
+</div>
+<div class="relative z-10 px-space-lg py-space-xl md:p-space-xl flex flex-col md:flex-row md:items-center md:justify-between gap-space-lg">
+<div class="max-w-2xl">
+<div class="flex items-center gap-space-xs mb-space-xs">
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold tracking-wide uppercase bg-secondary-container text-on-secondary-container shadow-xs">
+<span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
+            Temporada 2026 Ativa
+          </span>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-medium">Assentos 100% Adaptados</span>
+</div>
+<h1 class="font-display-sm text-display-sm text-primary tracking-tight font-extrabold mb-space-xs">
+          Minhas Remadas
+        </h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant font-normal leading-relaxed">
+          Acompanhe suas vagas confirmadas, histórico e detalhes de embarque no Projeto Canoa Para Todos.
+        </p>
+</div>
+<div class="flex items-center gap-space-sm">
+<button class="group flex items-center gap-space-xs bg-surface-container-lowest hover:bg-surface-container-high text-primary font-label-md text-label-md px-space-lg py-3 rounded-xl shadow-sm transition-all duration-200 active:scale-95" id="btnRefresh" type="button">
+<span class="material-symbols-outlined text-[20px] transition-transform duration-500 group-hover:rotate-180">sync</span>
+<span>Atualizar Vagas</span>
+</button>
+<a class="flex items-center gap-space-xs bg-primary hover:bg-on-primary-fixed-variant text-on-primary font-label-md text-label-md px-space-lg py-3 rounded-xl shadow-md transition-all active:scale-95" href="#">
+<span class="material-symbols-outlined text-[20px]">calendar_month</span>
+<span class="hidden sm:inline">Nova Remada</span>
+</a>
+</div>
+</div>
+</section>
+<!-- Atleta Statistics Bar (Summary Mosaic) -->
+<section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-space-md mb-space-xl">
+<div class="bg-surface-container-lowest p-space-lg rounded-2xl shadow-sm flex items-center gap-space-md relative overflow-hidden">
+<div class="w-14 h-14 rounded-xl bg-surface-container flex items-center justify-center text-primary shrink-0">
+<span class="material-symbols-outlined text-[28px]" style="font-variation-settings: 'FILL' 1;">kayaking</span>
+</div>
+<div class="min-w-0">
+<span class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Distância Total</span>
+<div class="flex items-baseline gap-1">
+<span class="font-display-sm text-headline-lg text-on-surface font-extrabold">32</span>
+<span class="font-label-md text-label-md text-primary font-bold">km</span>
+</div>
+<span class="block font-body-sm text-body-sm text-on-surface-variant truncate">Raias oceânicas abertas</span>
+</div>
+<div class="absolute -bottom-4 -right-4 w-20 h-20 rounded-full bg-surface-container/40 pointer-events-none"></div>
+</div>
+<div class="bg-surface-container-lowest p-space-lg rounded-2xl shadow-sm flex items-center gap-space-md relative overflow-hidden">
+<div class="w-14 h-14 rounded-xl bg-secondary-container/30 flex items-center justify-center text-secondary shrink-0">
+<span class="material-symbols-outlined text-[28px]" style="font-variation-settings: 'FILL' 1;">verified</span>
+</div>
+<div class="min-w-0">
+<span class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Vivências</span>
+<div class="flex items-baseline gap-1">
+<span class="font-display-sm text-headline-lg text-on-surface font-extrabold">4</span>
+<span class="font-label-md text-label-md text-secondary font-bold">concluídas</span>
+</div>
+<span class="block font-body-sm text-body-sm text-on-surface-variant truncate">Va'a OC6 e Canoagem Inclusiva</span>
+</div>
+<div class="absolute -bottom-4 -right-4 w-20 h-20 rounded-full bg-secondary-fixed/20 pointer-events-none"></div>
+</div>
+<div class="bg-surface-container-lowest p-space-lg rounded-2xl shadow-sm flex items-center gap-space-md relative overflow-hidden">
+<div class="w-14 h-14 rounded-xl bg-surface-container-high flex items-center justify-center text-primary-container shrink-0">
+<span class="material-symbols-outlined text-[28px]" style="font-variation-settings: 'FILL' 1;">history_toggle_off</span>
+</div>
+<div class="min-w-0">
+<span class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Assiduidade</span>
+<div class="flex items-baseline gap-1">
+<span class="font-display-sm text-headline-lg text-on-surface font-extrabold">100</span>
+<span class="font-label-md text-label-md text-primary-container font-bold">%</span>
+</div>
+<span class="block font-body-sm text-body-sm text-on-surface-variant truncate">0 cancelamentos registrados</span>
+</div>
+<div class="absolute -bottom-4 -right-4 w-20 h-20 rounded-full bg-surface-variant/30 pointer-events-none"></div>
+</div>
+<div class="bg-surface-container-lowest p-space-lg rounded-2xl shadow-sm flex items-center gap-space-md relative overflow-hidden">
+<div class="w-14 h-14 rounded-xl bg-tertiary-fixed flex items-center justify-center text-tertiary-container shrink-0">
+<span class="material-symbols-outlined text-[28px]" style="font-variation-settings: 'FILL' 1;">accessible_forward</span>
+</div>
+<div class="min-w-0">
+<span class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Suporte Ativo</span>
+<div class="flex items-baseline gap-1">
+<span class="font-display-sm text-headline-lg text-tertiary-container font-extrabold">Nível 2</span>
+</div>
+<span class="block font-body-sm text-body-sm text-on-surface-variant truncate">Esteira + Cadeira Anfíbia</span>
+</div>
+<div class="absolute -bottom-4 -right-4 w-20 h-20 rounded-full bg-tertiary-fixed-dim/30 pointer-events-none"></div>
+</div>
+</section>
+<!-- Secondary Navigation Tabs -->
+<div class="flex items-center justify-between border-b border-outline-variant/30 mb-space-lg">
+<div class="flex gap-space-md" role="tablist">
+<button aria-selected="true" class="relative py-space-md font-label-lg text-label-lg text-primary font-bold flex items-center gap-2 border-b-2 border-primary transition-all" id="tabUpcoming" role="tab" type="button">
+<span>Próximas Remadas Confirmadas</span>
+<span class="px-2 py-0.5 rounded-full text-xs font-bold bg-primary-container text-on-primary">1</span>
+</button>
+<button aria-selected="false" class="relative py-space-md font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface font-semibold flex items-center gap-2 transition-all" id="tabHistory" role="tab" type="button">
+<span>Histórico de Remadas</span>
+<span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-surface-container-highest text-on-surface-variant">4</span>
+</button>
+</div>
+<div class="hidden sm:flex items-center gap-2 text-on-surface-variant font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-[18px] text-secondary">water_drop</span>
+<span>Condição do Mar: <strong>Ondas calmas (0.4m)</strong></span>
+</div>
+</div>
+<!-- UPCOMING TAB CONTENT -->
+<div class="flex flex-col gap-space-xl" id="viewUpcoming">
+<!-- Active Confirmed Paddle Card -->
+<article class="bg-surface-container-lowest rounded-2xl shadow-md overflow-hidden relative transition-all duration-300 hover:shadow-xl">
+<!-- Top Accent Bar representing oceanic buoyancy -->
+<div class="h-2 w-full bg-gradient-to-r from-primary via-secondary to-secondary-container"></div>
+<div class="p-space-lg md:p-space-xl flex flex-col gap-space-lg">
+<!-- Status & Badge Ribbon -->
+<div class="flex flex-wrap items-center justify-between gap-space-sm">
+<div class="flex items-center gap-space-sm flex-wrap">
+<span class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full font-label-md text-label-md font-bold bg-secondary-container/40 text-on-secondary-container">
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+              VAGA CONFIRMADA
+            </span>
+<span class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full font-label-sm text-label-sm font-semibold bg-surface-container text-primary">
+<span class="material-symbols-outlined text-[16px]">water</span>
+              Canoa Havaiana OC6 Adaptada
+            </span>
+<span class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full font-label-sm text-label-sm font-semibold bg-tertiary-fixed text-on-tertiary-fixed-variant">
+<span class="material-symbols-outlined text-[16px]">accessibility</span>
+              Encosto Lombar Fixado
+            </span>
+</div>
+<div class="flex items-center gap-1 text-on-surface-variant font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[18px]">confirmation_number</span>
+<span>Reserva: #CPT-2026-8841</span>
+</div>
+</div>
+<!-- Main Schedule & Geography Bento Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-lg items-stretch">
+<!-- Time & Place Panel -->
+<div class="lg:col-span-7 flex flex-col justify-between bg-surface-container-low p-space-lg rounded-xl">
+<div class="flex flex-col gap-space-md">
+<div class="flex items-start gap-space-md">
+<div class="w-12 h-12 rounded-xl bg-primary text-on-primary flex items-center justify-center shrink-0 shadow-sm">
+<span class="material-symbols-outlined text-[24px]">event</span>
+</div>
+<div>
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-primary font-bold">Data &amp; Horário de Saída</span>
+<h3 class="font-headline-md text-headline-md text-on-surface font-bold mt-0.5">
+                    Domingo, 25 de Outubro de 2026
+                  </h3>
+<div class="flex items-center gap-space-xs mt-1 text-on-surface-variant font-label-md text-label-md">
+<span class="material-symbols-outlined text-[18px] text-tertiary-container">schedule</span>
+<span>Saída ao Mar: <strong>06:00</strong></span>
+<span class="text-outline-variant">•</span>
+<span class="text-tertiary font-semibold">Chegada recomendada: 05:30</span>
+</div>
+</div>
+</div>
+<div class="flex items-start gap-space-md">
+<div class="w-12 h-12 rounded-xl bg-secondary text-on-secondary flex items-center justify-center shrink-0 shadow-sm">
+<span class="material-symbols-outlined text-[24px]">pin_drop</span>
+</div>
+<div>
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-secondary font-bold">Ponto de Encontro &amp; Guarderia</span>
+<h4 class="font-headline-sm text-headline-sm text-on-surface font-semibold mt-0.5">
+                    Base Náutica Praia Grande
+                  </h4>
+<p class="font-body-md text-body-md text-on-surface-variant">
+                    Av. Beira Mar, Raia 1 • São Sebastião - SP
+                  </p>
+<span class="inline-flex items-center gap-1 text-[13px] text-primary font-semibold mt-1">
+<span class="material-symbols-outlined text-[16px]">accessible</span>
+                    Acesso 100% plano com esteira de praia até a lâmina d'água
+                  </span>
+</div>
+</div>
+</div>
+<!-- Pre-embarkation Alert Card -->
+<div class="mt-space-md p-space-md rounded-xl bg-surface-container flex items-center gap-space-sm text-on-surface">
+<span class="material-symbols-outlined text-primary text-[22px] shrink-0">info</span>
+<p class="font-body-sm text-body-sm leading-relaxed">
+                Recomendamos protetor solar resistente à água, garrafa térmica acessível com cordão e lycra UV. Nossos coletes homologados pela Marinha com tiras de resgate estarão regulados para o seu porte.
+              </p>
+</div>
+</div>
+<!-- Technical Specs & Crew Allocation -->
+<div class="lg:col-span-5 flex flex-col justify-between bg-surface p-space-lg rounded-xl">
+<div>
+<h4 class="font-label-lg text-label-lg text-primary font-bold mb-space-md flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px]">airline_seat_recline_extra</span>
+                Tripulação &amp; Posto de Remada
+              </h4>
+<div class="flex flex-col gap-space-sm">
+<!-- Assento -->
+<div class="p-space-md rounded-xl bg-surface-container-low flex items-start gap-space-sm">
+<div class="w-9 h-9 rounded-lg bg-surface-container-high flex items-center justify-center text-primary font-bold text-sm shrink-0">
+                    B3
+                  </div>
+<div>
+<span class="block font-label-md text-label-md text-on-surface font-bold">Assento Reservado: Banco 3</span>
+<span class="block font-body-sm text-body-sm text-on-surface-variant">Equipado com encosto anatômico de polímero acolchoado e cintas peitorais de soltura rápida.</span>
+</div>
+</div>
+<!-- Apoio -->
+<div class="p-space-md rounded-xl bg-surface-container-low flex items-start gap-space-sm">
+<div class="w-9 h-9 rounded-lg bg-secondary-container flex items-center justify-center text-on-secondary-container shrink-0">
+<span class="material-symbols-outlined text-[18px]">volunteer_activism</span>
+</div>
+<div>
+<span class="block font-label-md text-label-md text-on-surface font-bold">Equipe de Apoio Designada</span>
+<span class="block font-body-sm text-body-sm text-on-surface-variant">Voluntário André (especialista em transferência segura e esteira de praia).</span>
+</div>
+</div>
+<!-- Timoneiro -->
+<div class="p-space-md rounded-xl bg-surface-container-low flex items-start gap-space-sm">
+<div class="w-9 h-9 rounded-lg bg-primary text-on-primary flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[18px]">sports</span>
+</div>
+<div>
+<span class="block font-label-md text-label-md text-on-surface font-bold">Instrutor Timoneiro Responsável</span>
+<span class="block font-body-sm text-body-sm text-on-surface-variant">Mestre Kaique (Certificação Internacional Va'a &amp; Paracanoagem).</span>
+</div>
+</div>
+</div>
+</div>
+<div class="pt-space-md mt-space-md flex items-center justify-between font-label-sm text-label-sm text-on-surface-variant">
+<span>Nível de Esforço: <strong>Leve / Terapêutico</strong></span>
+<span>Duração: <strong>1h45m</strong></span>
+</div>
+</div>
+</div>
+<!-- Action Bar with Clear Accessibility Guidance -->
+<div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-space-md pt-space-md border-t border-surface-container-high">
+<div class="flex flex-wrap items-center gap-space-sm">
+<button class="flex-1 sm:flex-none flex items-center justify-center gap-space-xs bg-primary hover:bg-on-primary-fixed-variant text-on-primary font-label-md text-label-md px-space-lg py-3.5 rounded-xl shadow-sm transition-all active:scale-95" id="btnOrientacoes" type="button">
+<span class="material-symbols-outlined text-[20px]">assignment_turned_in</span>
+<span>Ver Orientações de Embarque</span>
+</button>
+<button class="flex-1 sm:flex-none flex items-center justify-center gap-space-xs bg-surface-container hover:bg-surface-container-high text-primary font-label-md text-label-md px-space-md py-3.5 rounded-xl transition-all active:scale-95" id="btnShare" type="button">
+<span class="material-symbols-outlined text-[20px]">share</span>
+<span>Compartilhar Reserva</span>
+</button>
+</div>
+<div>
+<button class="flex items-center justify-center gap-space-xs text-error hover:bg-error-container/30 px-space-md py-3 rounded-xl font-label-md text-label-md transition-colors" id="btnOpenCancelModal" type="button">
+<span class="material-symbols-outlined text-[18px]">event_busy</span>
+<span>Cancelar Reserva</span>
+</button>
+</div>
+</div>
+</div>
+</article>
+<!-- Visual Anchor / Real Oceanic Scene Bento Detail -->
+<div class="bg-surface-container-lowest p-space-lg rounded-2xl shadow-sm grid grid-cols-1 md:grid-cols-3 gap-space-lg items-center">
+<div class="md:col-span-1 h-52 rounded-xl overflow-hidden relative shadow-inner">
+<img class="w-full h-full object-cover" data-alt="Close-up of wooden Polynesian canoe paddle submerged in turquoise sea water with warm morning sunlight reflections and inclusive outdoor rowing gear" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCWV6ZHi1rvLnF0t6FY2GQtLuMxtNMgEGNlPpiQrurU4E4r7SeF6rnGyjpkKX6SkxmDxGFt6xNJ1FHaQ9Z1gzTM_PAsfSaR7vFTRG12mcu3sDjaM8I5eSJ4m6O70V13pOaefEGOTSUyBxg2sdeznusmt4zZdil_-nVJMbWPXAgUi5gsZzWXSy14W5Lz_TRLmLX3T9TjtOIwue1IX3sy73rxn83d4gbjw1BngroM8SI2OPWAxZ-MSc2JYg"/>
+<div class="absolute inset-0 bg-gradient-to-t from-inverse-surface/80 via-transparent to-transparent flex items-end p-space-md">
+<span class="text-surface font-label-md text-label-md font-bold flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[18px] text-secondary-container">navigation</span>
+            Trajeto Raia das Tartarugas
+          </span>
+</div>
+</div>
+<div class="md:col-span-2 flex flex-col gap-space-sm">
+<div class="inline-flex items-center gap-1 text-primary font-label-sm text-label-sm font-bold uppercase tracking-wider">
+<span class="material-symbols-outlined text-[16px]">waves</span>
+          Segurança e Protocolo Náutico
+        </div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-bold">
+          Remada Guiada em Águas Abrigadas
+        </h3>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+          Esta vivência contempla o circuito de 4.5km pelo canal abrigado, ideal para relaxamento, ativação muscular rítmica e contato direto com a vida marinha local. Contamos com bote motorizado de apoio a 30 metros de distância durante 100% da expedição.
+        </p>
+<div class="flex items-center gap-space-md pt-space-xs text-on-surface font-label-md text-label-md">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-secondary text-[20px]">wb_sunny</span>
+<span>26°C Sol entre nuvens</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-primary text-[20px]">air</span>
+<span>Vento Sul 6 nós (Calmo)</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- HISTÓRICO TAB CONTENT (Default Hidden for Tab Switching) -->
+<div class="hidden flex-col gap-space-md" id="viewHistory">
+<div class="bg-surface-container-lowest rounded-2xl shadow-sm overflow-hidden">
+<div class="p-space-lg border-b border-surface-container flex items-center justify-between">
+<div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-bold">Histórico de Vivências no Mar</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Registro das suas últimas expedições concluídas com o Projeto</p>
+</div>
+<span class="font-label-sm text-label-sm font-bold text-primary bg-surface-container px-3 py-1 rounded-full">
+          4 Atividades Registradas
+        </span>
+</div>
+<div class="divide-y divide-surface-container">
+<!-- Item 1 -->
+<div class="p-space-lg flex flex-col md:flex-row md:items-center justify-between gap-space-md hover:bg-surface-container-low transition-colors">
+<div class="flex items-center gap-space-md">
+<div class="w-12 h-12 rounded-xl bg-surface-container flex items-center justify-center text-primary shrink-0">
+<span class="material-symbols-outlined text-[24px]">surfing</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<h4 class="font-label-lg text-label-lg text-on-surface font-bold">Travessia da Enseada Norte</h4>
+<span class="px-2 py-0.5 rounded text-[11px] font-bold bg-secondary-container/40 text-on-secondary-container">Concluída</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">12 de Outubro de 2026 • 8.5 km • Instrutora Marina</p>
+</div>
+</div>
+<div class="flex items-center gap-space-md">
+<div class="text-right hidden sm:block">
+<span class="font-label-sm text-label-sm text-on-surface font-bold block">Assento B2</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant block">1h50m de água</span>
+</div>
+<button class="p-2 text-primary hover:bg-surface-container rounded-lg transition-colors" title="Ver Diário de Bordo" type="button">
+<span class="material-symbols-outlined text-[20px]">chevron_right</span>
+</button>
+</div>
+</div>
+<!-- Item 2 -->
+<div class="p-space-lg flex flex-col md:flex-row md:items-center justify-between gap-space-md hover:bg-surface-container-low transition-colors">
+<div class="flex items-center gap-space-md">
+<div class="w-12 h-12 rounded-xl bg-surface-container flex items-center justify-center text-primary shrink-0">
+<span class="material-symbols-outlined text-[24px]">kayaking</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<h4 class="font-label-lg text-label-lg text-on-surface font-bold">Remada da Alvorada &amp; Respiração</h4>
+<span class="px-2 py-0.5 rounded text-[11px] font-bold bg-secondary-container/40 text-on-secondary-container">Concluída</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">28 de Setembro de 2026 • 7.0 km • Mestre Kaique</p>
+</div>
+</div>
+<div class="flex items-center gap-space-md">
+<div class="text-right hidden sm:block">
+<span class="font-label-sm text-label-sm text-on-surface font-bold block">Assento B3</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant block">1h30m de água</span>
+</div>
+<button class="p-2 text-primary hover:bg-surface-container rounded-lg transition-colors" title="Ver Diário de Bordo" type="button">
+<span class="material-symbols-outlined text-[20px]">chevron_right</span>
+</button>
+</div>
+</div>
+<!-- Item 3 -->
+<div class="p-space-lg flex flex-col md:flex-row md:items-center justify-between gap-space-md hover:bg-surface-container-low transition-colors">
+<div class="flex items-center gap-space-md">
+<div class="w-12 h-12 rounded-xl bg-surface-container flex items-center justify-center text-primary shrink-0">
+<span class="material-symbols-outlined text-[24px]">wb_twilight</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<h4 class="font-label-lg text-label-lg text-on-surface font-bold">Circuito Ilha das Cabras</h4>
+<span class="px-2 py-0.5 rounded text-[11px] font-bold bg-secondary-container/40 text-on-secondary-container">Concluída</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">14 de Setembro de 2026 • 9.5 km • Equipe Guarderia</p>
+</div>
+</div>
+<div class="flex items-center gap-space-md">
+<div class="text-right hidden sm:block">
+<span class="font-label-sm text-label-sm text-on-surface font-bold block">Assento B3</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant block">2h10m de água</span>
+</div>
+<button class="p-2 text-primary hover:bg-surface-container rounded-lg transition-colors" title="Ver Diário de Bordo" type="button">
+<span class="material-symbols-outlined text-[20px]">chevron_right</span>
+</button>
+</div>
+</div>
+<!-- Item 4 -->
+<div class="p-space-lg flex flex-col md:flex-row md:items-center justify-between gap-space-md hover:bg-surface-container-low transition-colors">
+<div class="flex items-center gap-space-md">
+<div class="w-12 h-12 rounded-xl bg-surface-container flex items-center justify-center text-primary shrink-0">
+<span class="material-symbols-outlined text-[24px]">school</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<h4 class="font-label-lg text-label-lg text-on-surface font-bold">Batismo e Ambientação Náutica</h4>
+<span class="px-2 py-0.5 rounded text-[11px] font-bold bg-secondary-container/40 text-on-secondary-container">Concluída</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">30 de Agosto de 2026 • 7.0 km • Mestre Kaique</p>
+</div>
+</div>
+<div class="flex items-center gap-space-md">
+<div class="text-right hidden sm:block">
+<span class="font-label-sm text-label-sm text-on-surface font-bold block">Assento B4</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant block">1h15m de água</span>
+</div>
+<button class="p-2 text-primary hover:bg-surface-container rounded-lg transition-colors" title="Ver Diário de Bordo" type="button">
+<span class="material-symbols-outlined text-[20px]">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- ACOLHEDOR EMPTY STATE (Stylized Showcase) -->
+<section class="mt-space-xl bg-surface-container-lowest rounded-2xl p-space-xl shadow-sm text-center relative overflow-hidden">
+<div class="max-w-xl mx-auto flex flex-col items-center">
+<!-- Nautical Decorative Icon Artwork -->
+<div class="relative w-24 h-24 mb-space-md flex items-center justify-center">
+<div class="absolute inset-0 rounded-full bg-secondary-fixed/30 animate-ping opacity-25"></div>
+<div class="w-20 h-20 rounded-full bg-surface-container flex items-center justify-center text-primary shadow-sm">
+<svg class="w-10 h-10 text-primary" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24">
+<path d="M2 18h20"></path>
+<path d="M4 14c2.5-1.5 5.5-1.5 8 0s5.5 1.5 8 0"></path>
+<path d="M7 10l5-6 5 6"></path>
+<circle cx="12" cy="7" fill="currentColor" r="1"></circle>
+</svg>
+</div>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface font-bold mb-space-xs">
+        Deseja agendar sua próxima remada?
+      </h3>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed mb-space-lg">
+        Acesse nosso Calendário de Remadas para reservar seu assento no mar com toda a nossa equipe de acolhimento, esteiras acessíveis e instrutores prontos para navegar com você.
+      </p>
+<div class="flex flex-col sm:flex-row items-center gap-space-md w-full sm:w-auto">
+<a class="w-full sm:w-auto flex items-center justify-center gap-2 bg-primary hover:bg-on-primary-fixed-variant text-on-primary font-label-md text-label-md px-space-xl py-3.5 rounded-xl shadow-md transition-all active:scale-95" href="#">
+<span class="material-symbols-outlined text-[20px]">calendar_today</span>
+<span>Abrir Calendário de Remadas</span>
+</a>
+<a class="w-full sm:w-auto flex items-center justify-center gap-2 bg-surface-container hover:bg-surface-container-high text-primary font-label-md text-label-md px-space-lg py-3.5 rounded-xl transition-all" href="#">
+<span class="material-symbols-outlined text-[20px]">support_agent</span>
+<span>Falar com Monitoria</span>
+</a>
+</div>
+</div>
+</section>
+<!-- MODAL: Orientações de Embarque -->
+<div class="fixed inset-0 z-50 flex items-center justify-center p-space-md bg-inverse-surface/60 backdrop-blur-xs hidden" id="modalOrientacoes">
+<div class="bg-surface-container-lowest rounded-2xl max-w-lg w-full p-space-xl shadow-2xl relative transform transition-all">
+<div class="flex items-center justify-between mb-space-md">
+<div class="flex items-center gap-2 text-primary font-bold">
+<span class="material-symbols-outlined text-[24px]">assignment_turned_in</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Guia Rápido de Embarque</h3>
+</div>
+<button class="p-1 rounded-lg text-on-surface-variant hover:bg-surface-container" id="btnCloseOrientacoes" type="button">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<div class="flex flex-col gap-space-md font-body-md text-body-md text-on-surface-variant">
+<div class="flex gap-space-sm items-start">
+<span class="w-6 h-6 rounded-full bg-secondary-container text-on-secondary-container font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">1</span>
+<p><strong class="text-on-surface">Chegada às 05:30:</strong> Recepção no galpão náutico com aferição de coletes e hidratação.</p>
+</div>
+<div class="flex gap-space-sm items-start">
+<span class="w-6 h-6 rounded-full bg-secondary-container text-on-secondary-container font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">2</span>
+<p><strong class="text-on-surface">Esteira Adaptada:</strong> Condução via esteira rígida até o nível seguro de transbordo no mar.</p>
+</div>
+<div class="flex gap-space-sm items-start">
+<span class="w-6 h-6 rounded-full bg-secondary-container text-on-secondary-container font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">3</span>
+<p><strong class="text-on-surface">Ajuste do Assento B3:</strong> Nossos voluntários calibram as almofadas ergonômicas e tiras lombares antes da partida.</p>
+</div>
+</div>
+<div class="mt-space-lg pt-space-md border-t border-surface-container flex justify-end">
+<button class="bg-primary hover:bg-on-primary-fixed-variant text-on-primary font-label-md text-label-md px-space-lg py-2.5 rounded-xl shadow-sm" id="btnConfirmOrientacoes" type="button">
+          Entendido, Obrigado!
+        </button>
+</div>
+</div>
+</div>
+<!-- MODAL: Cancelar Reserva (Confirmação Segura) -->
+<div class="fixed inset-0 z-50 flex items-center justify-center p-space-md bg-inverse-surface/60 backdrop-blur-xs hidden" id="modalCancel">
+<div class="bg-surface-container-lowest rounded-2xl max-w-md w-full p-space-xl shadow-2xl relative transform transition-all">
+<div class="flex items-center gap-space-sm text-error mb-space-sm">
+<div class="w-10 h-10 rounded-full bg-error-container flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[24px]">warning</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-bold">Cancelar Remada?</h3>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant mb-space-md leading-relaxed">
+        Tem certeza de que deseja liberar sua vaga para <strong class="text-on-surface">Domingo, 25 de Outubro</strong>? Como nossos assentos adaptados são concorridos, sua vaga será disponibilizada imediatamente para a lista de espera inclusiva.
+      </p>
+<div class="flex items-center justify-end gap-space-sm pt-space-md border-t border-surface-container">
+<button class="px-space-md py-2.5 rounded-xl font-label-md text-label-md text-on-surface-variant hover:bg-surface-container transition-colors" id="btnCloseCancel" type="button">
+          Manter Minha Vaga
+        </button>
+<button class="bg-error text-on-error hover:bg-red-800 font-label-md text-label-md px-space-lg py-2.5 rounded-xl shadow-sm transition-all active:scale-95" id="btnConfirmCancel" type="button">
+          Sim, Cancelar
+        </button>
+</div>
+</div>
+</div>
+<script>
+    // Tab Switching Behavior
+    const tabUpcoming = document.getElementById('tabUpcoming');
+    const tabHistory = document.getElementById('tabHistory');
+    const viewUpcoming = document.getElementById('viewUpcoming');
+    const viewHistory = document.getElementById('viewHistory');
+
+    function switchTab(showUpcoming) {
+      if (showUpcoming) {
+        viewUpcoming.classList.remove('hidden');
+        viewUpcoming.classList.add('flex');
+        viewHistory.classList.add('hidden');
+        viewHistory.classList.remove('flex');
+
+        tabUpcoming.classList.add('text-primary', 'font-bold', 'border-b-2', 'border-primary');
+        tabUpcoming.classList.remove('text-on-surface-variant', 'font-semibold', 'border-b-0');
+        tabUpcoming.setAttribute('aria-selected', 'true');
+
+        tabHistory.classList.remove('text-primary', 'font-bold', 'border-b-2', 'border-primary');
+        tabHistory.classList.add('text-on-surface-variant', 'font-semibold');
+        tabHistory.setAttribute('aria-selected', 'false');
+      } else {
+        viewUpcoming.classList.add('hidden');
+        viewUpcoming.classList.remove('flex');
+        viewHistory.classList.remove('hidden');
+        viewHistory.classList.add('flex');
+
+        tabHistory.classList.add('text-primary', 'font-bold', 'border-b-2', 'border-primary');
+        tabHistory.classList.remove('text-on-surface-variant', 'font-semibold');
+        tabHistory.setAttribute('aria-selected', 'true');
+
+        tabUpcoming.classList.remove('text-primary', 'font-bold', 'border-b-2', 'border-primary');
+        tabUpcoming.classList.add('text-on-surface-variant', 'font-semibold');
+        tabUpcoming.setAttribute('aria-selected', 'false');
+      }
+    }
+
+    tabUpcoming?.addEventListener('click', () => switchTab(true));
+    tabHistory?.addEventListener('click', () => switchTab(false));
+
+    // Toast Notification helper
+    const toast = document.getElementById('actionToast');
+    const toastMsg = document.getElementById('toastMessage');
+
+    function showToast(text) {
+      if (!toast) return;
+      toastMsg.textContent = text;
+      toast.classList.remove('translate-y-20', 'opacity-0', 'pointer-events-none');
+      setTimeout(() => {
+        toast.classList.add('translate-y-20', 'opacity-0', 'pointer-events-none');
+      }, 3200);
+    }
+
+    // Refresh Button Animation
+    const btnRefresh = document.getElementById('btnRefresh');
+    btnRefresh?.addEventListener('click', () => {
+      showToast('Buscando atualizações de maré e vagas em tempo real...');
+    });
+
+    // Share Button
+    const btnShare = document.getElementById('btnShare');
+    btnShare?.addEventListener('click', () => {
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText('Minha remada confirmada no Projeto Canoa Para Todos! Domingo, 25 de Outubro às 06h00 na Praia Grande, São Sebastião.');
+      }
+      showToast('Dados da remada copiados para sua área de transferência!');
+    });
+
+    // Modal: Orientações
+    const modalOrientacoes = document.getElementById('modalOrientacoes');
+    const btnOrientacoes = document.getElementById('btnOrientacoes');
+    const btnCloseOrientacoes = document.getElementById('btnCloseOrientacoes');
+    const btnConfirmOrientacoes = document.getElementById('btnConfirmOrientacoes');
+
+    btnOrientacoes?.addEventListener('click', () => modalOrientacoes?.classList.remove('hidden'));
+    btnCloseOrientacoes?.addEventListener('click', () => modalOrientacoes?.classList.add('hidden'));
+    btnConfirmOrientacoes?.addEventListener('click', () => modalOrientacoes?.classList.add('hidden'));
+
+    // Modal: Cancelar Reserva
+    const modalCancel = document.getElementById('modalCancel');
+    const btnOpenCancel = document.getElementById('btnOpenCancelModal');
+    const btnCloseCancel = document.getElementById('btnCloseCancel');
+    const btnConfirmCancel = document.getElementById('btnConfirmCancel');
+
+    btnOpenCancel?.addEventListener('click', () => modalCancel?.classList.remove('hidden'));
+    btnCloseCancel?.addEventListener('click', () => modalCancel?.classList.add('hidden'));
+    btnConfirmCancel?.addEventListener('click', () => {
+      modalCancel?.classList.add('hidden');
+      showToast('Sua solicitação de cancelamento foi processada com segurança.');
+    });
+  </script>
+</div></div></main><footer class="w-full bg-surface-container-low mt-auto py-space-lg shadow-[0_-1px_6px_rgba(0,0,0,0.02)]"><div class="max-w-7xl mx-auto px-margin flex flex-col md:flex-row items-center justify-between gap-space-md font-body-sm text-body-sm text-on-surface-variant"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-tertiary-container text-[20px]">sailing</span><span>Base Náutica Guarderia Mar &amp; Raia 1 • Protocolos de Segurança Náutica e Salvamento Ativos (Diretoria de Segurança Marítima)</span></div><div class="flex items-center gap-space-lg"><span class="flex items-center gap-1.5 font-label-sm text-label-sm"><span class="w-2.5 h-2.5 rounded-full bg-secondary"></span>Sistemas Operacionais Conectados</span><span>© 2024 Projeto Canoa Para Todos. Todos os direitos reservados.</span></div></div></footer></body></html>

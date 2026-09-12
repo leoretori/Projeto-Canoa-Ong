@@ -25,7 +25,7 @@ Parameters:
     Description: Ambiente de deploy (dev, staging, prod)
   BudgetAlertEmail:
     Type: String
-    Default: "" # TODO: BACKLOG - Preencher com e-mail real da gestão do Va'aFlow
+    Default: "alerta-custos@vaaflow.org.br"
     Description: Email para receber os alertas de contenção de custos (US$ 1,00)
 
 Resources:
@@ -174,6 +174,17 @@ Resources:
             UserPoolArn: !GetAtt VaaFlowUserPool.Arn
             Identity:
               Header: Authorization
+      GatewayResponses:
+        DEFAULT_4XX:
+          ResponseParameters:
+            Headers:
+              Access-Control-Allow-Origin: "'*'"
+              Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-User-Id,X-User-Email,X-User-Name'"
+        DEFAULT_5XX:
+          ResponseParameters:
+            Headers:
+              Access-Control-Allow-Origin: "'*'"
+              Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-User-Id,X-User-Email,X-User-Name'"
 
   # ============================================================================
   # 5. AWS LAMBDA FUNCTIONS
@@ -241,6 +252,14 @@ Resources:
             RestApiId: !Ref VaaFlowApi
             Path: /sessions/{sessionId}
             Method: PUT
+        HealthCheck:
+          Type: Api
+          Properties:
+            RestApiId: !Ref VaaFlowApi
+            Path: /health
+            Method: GET
+            Auth:
+              Authorizer: NONE
 
   ReservationsFunction:
     Type: AWS::Serverless::Function
@@ -354,26 +373,7 @@ Resources:
           Properties:
             Topic: !Ref BudgetAlertTopic
 
-  # ============================================================================
-  # 7. CORS EM RESPOSTAS DE ERRO (401/403/4XX/5XX do Cognito Authorizer)
-  # ============================================================================
-  ApiGatewayDefault4xx:
-    Type: AWS::ApiGateway::GatewayResponse
-    Properties:
-      RestApiId: !Ref VaaFlowApi
-      ResponseType: DEFAULT_4XX
-      ResponseParameters:
-        gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
-        gatewayresponse.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-User-Id,X-User-Email,X-User-Name'"
 
-  ApiGatewayDefault5xx:
-    Type: AWS::ApiGateway::GatewayResponse
-    Properties:
-      RestApiId: !Ref VaaFlowApi
-      ResponseType: DEFAULT_5XX
-      ResponseParameters:
-        gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
-        gatewayresponse.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-User-Id,X-User-Email,X-User-Name'"
 
 Outputs:
   ApiUrl:

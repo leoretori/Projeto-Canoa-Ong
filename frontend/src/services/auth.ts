@@ -25,6 +25,82 @@ const userPool =
 let currentSession: CognitoUserSession | null = null;
 let currentCognitoUser: CognitoUser | null = null;
 
+// --- Fallback gracioso para ambiente de Desenvolvimento Local (dev_server.py) ---
+interface LocalDevSession {
+  email: string;
+  name: string;
+  role: 'ATHLETE' | 'INSTRUCTOR' | 'ADMIN';
+  token: string;
+}
+
+const LOCAL_DEV_STORAGE_KEY = 'vaaflow_dev_session';
+let localDevSession: LocalDevSession | null = null;
+
+function getStoredDevSession(): LocalDevSession | null {
+  if (localDevSession) return localDevSession;
+  if (typeof window !== 'undefined' && window.localStorage) {
+    try {
+      const stored = window.localStorage.getItem(LOCAL_DEV_STORAGE_KEY);
+      if (stored) {
+        localDevSession = JSON.parse(stored);
+        return localDevSession;
+      }
+    } catch {}
+  }
+  return null;
+}
+
+function setStoredDevSession(session: LocalDevSession | null) {
+  localDevSession = session;
+  if (typeof window !== 'undefined' && window.localStorage) {
+    try {
+      if (session) {
+        window.localStorage.setItem(LOCAL_DEV_STORAGE_KEY, JSON.stringify(session));
+      } else {
+        window.localStorage.removeItem(LOCAL_DEV_STORAGE_KEY);
+      }
+    } catch {}
+  }
+}
+
+function safeBase64Encode(str: string): string {
+  if (typeof btoa !== 'undefined') {
+    return btoa(unescape(encodeURIComponent(str)));
+  }
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
+  let output = '';
+  for (let block = 0, charCode = 0, i = 0; i < str.length || i % 3 !== 0; ) {
+    if (i < str.length) {
+      charCode = str.charCodeAt(i);
+      block = (block << 8) | charCode;
+    } else {
+      block = block << 8;
+    }
+    i++;
+    if (i % 3 === 0) {
+      output += chars.charAt((block >> 18) & 63);
+      output += chars.charAt((block >> 12) & 63);
+      output += chars.charAt((block >> 6) & 63);
+      output += chars.charAt(block & 63);
+      block = 0;
+    }
+  }
+  return output;
+}
+
+function createDevJwtToken(email: string, name: string, role: string, sub: string): string {
+  const header = safeBase64Encode(JSON.stringify({ alg: 'HS256', typ: 'JWT' }));
+  const payloadObj = {
+    sub,
+    email,
+    name,
+    'custom:role': role,
+    exp: Math.floor(Date.now() / 1000) + 86400 * 7,
+  };
+  const payload = safeBase64Encode(JSON.stringify(payloadObj));
+  return `${header}.${payload}.mock_local_signature`;
+}
+
 function ensurePoolConfigured() {
   if (!userPool) {
     throw new Error(
@@ -33,7 +109,28 @@ function ensurePoolConfigured() {
   }
 }
 
-export function signIn(email: string, password: string): Promise<CognitoUserSession> {
+export function signIn(email: string, password: string): Promise<CognitoUserSession | any> {
+  if (!userPool) {
+    // Simulação no dev_server.py: emails com 'admin' viram ADMIN, 'instrutor' viram INSTRUCTOR
+    const trimmedEmail = email.trim().toLowerCase();
+    let role: 'ATHLETE' | 'INSTRUCTOR' | 'ADMIN' = 'ATHLETE';
+    if (trimmedEmail.includes('admin')) {
+      role = 'ADMIN';
+    } else if (trimmedEmail.includes('instrutor') || trimmedEmail.includes('instructor')) {
+      role = 'INSTRUCTOR';
+    }
+    const namePart = trimmedEmail.split('@')[0].replace(/[._-]/g, ' ');
+    const name = namePart.charAt(0).toUpperCase() + namePart.slice(1);
+    const sub = `local-${trimmedEmail.replace(/[^a-z0-9]/g, '-')}`;
+    const token = createDevJwtToken(trimmedEmail, name, role, sub);
+    const session: LocalDevSession = { email: trimmedEmail, name, role, token };
+    setStoredDevSession(session);
+    return Promise.resolve({
+      getIdToken: () => ({ getJwtToken: () => token }),
+      isValid: () => true,
+    });
+  }
+
   ensurePoolConfigured();
   return new Promise((resolve, reject) => {
     const authDetails = new AuthenticationDetails({ Username: email, Password: password });
@@ -59,6 +156,9 @@ export function signUp(
   password: string,
   accessibilityNeeds: boolean
 ): Promise<void> {
+  if (!userPool) {
+    return Promise.resolve();
+  }
   ensurePoolConfigured();
   return new Promise((resolve, reject) => {
     const attributes = [
@@ -81,6 +181,9 @@ export function signUp(
 }
 
 export function confirmSignUp(email: string, code: string): Promise<void> {
+  if (!userPool) {
+    return Promise.resolve();
+  }
   ensurePoolConfigured();
   return new Promise((resolve, reject) => {
     const cognitoUser = new CognitoUser({ Username: email, Pool: userPool! });
@@ -95,6 +198,9 @@ export function confirmSignUp(email: string, code: string): Promise<void> {
 }
 
 export function resendConfirmationCode(email: string): Promise<void> {
+  if (!userPool) {
+    return Promise.resolve();
+  }
   ensurePoolConfigured();
   return new Promise((resolve, reject) => {
     const cognitoUser = new CognitoUser({ Username: email, Pool: userPool! });
@@ -110,6 +216,9 @@ export function resendConfirmationCode(email: string): Promise<void> {
 
 /** Dispara o envio do código de redefinição de senha para o e-mail do usuário. */
 export function forgotPassword(email: string): Promise<void> {
+  if (!userPool) {
+    return Promise.resolve();
+  }
   ensurePoolConfigured();
   return new Promise((resolve, reject) => {
     const cognitoUser = new CognitoUser({ Username: email, Pool: userPool! });
@@ -122,6 +231,9 @@ export function forgotPassword(email: string): Promise<void> {
 
 /** Confirma o código recebido e define a nova senha. */
 export function confirmNewPassword(email: string, code: string, newPassword: string): Promise<void> {
+  if (!userPool) {
+    return Promise.resolve();
+  }
   ensurePoolConfigured();
   return new Promise((resolve, reject) => {
     const cognitoUser = new CognitoUser({ Username: email, Pool: userPool! });
@@ -133,6 +245,10 @@ export function confirmNewPassword(email: string, code: string, newPassword: str
 }
 
 export function signOut(): void {
+  if (!userPool) {
+    setStoredDevSession(null);
+    return;
+  }
   const cognitoUser = currentCognitoUser || userPool?.getCurrentUser() || null;
   cognitoUser?.signOut();
   currentSession = null;
@@ -142,6 +258,10 @@ export function signOut(): void {
 /** Retorna o ID Token JWT válido, renovando via refresh token se necessário.
  *  Também restaura a sessão salva pelo Cognito (localStorage) em caso de reload da página. */
 export function getIdToken(): Promise<string | null> {
+  if (!userPool) {
+    const dev = getStoredDevSession();
+    return Promise.resolve(dev ? dev.token : null);
+  }
   const cognitoUser = currentCognitoUser || userPool?.getCurrentUser() || null;
   if (!cognitoUser) {
     return Promise.resolve(null);
@@ -183,6 +303,10 @@ function decodeJwtPayload(token: string): Record<string, any> | null {
 
 /** Retorna o role do usuário logado ('ATHLETE' | 'INSTRUCTOR' | 'ADMIN'), lido do próprio token. */
 export async function getCurrentUserRole(): Promise<string> {
+  if (!userPool) {
+    const dev = getStoredDevSession();
+    return dev ? dev.role : 'ATHLETE';
+  }
   const token = await getIdToken();
   if (!token) return 'ATHLETE';
   const payload = decodeJwtPayload(token);
@@ -192,6 +316,10 @@ export async function getCurrentUserRole(): Promise<string> {
 /** Retorna o e-mail real do usuário logado, lido do claim do token
  *  (o "username" interno do Cognito é um UUID, não o e-mail). */
 export async function getCurrentUserEmail(): Promise<string | null> {
+  if (!userPool) {
+    const dev = getStoredDevSession();
+    return dev ? dev.email : null;
+  }
   const token = await getIdToken();
   if (!token) return null;
   const payload = decodeJwtPayload(token);
