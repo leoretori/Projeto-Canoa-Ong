@@ -118,3 +118,4 @@ export function initAccessibility() {
     document.documentElement.classList.add('font-scale-' + scale);
   }
 }
+

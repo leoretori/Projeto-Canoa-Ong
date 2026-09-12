@@ -1,10 +1,3 @@
-/**
- * Alternância manual de tema (claro/escuro).
- * Gerenciado pelo Subagent 2 (Front-End/UI).
- * NativeWind segue a preferência do sistema por padrão — este componente
- * permite ao usuário sobrepor essa escolha, com persistência no navegador.
- */
-
 import React, { useState, useEffect } from 'react';
 import { TouchableOpacity, Text } from 'react-native';
 import { getStoredTheme, toggleTheme, subscribeAccessibility, ThemeMode } from '../utils/accessibility';
@@ -47,4 +40,3 @@ export function ThemeToggle({ showLabel = false }: ThemeToggleProps) {
     </TouchableOpacity>
   );
 }
-
