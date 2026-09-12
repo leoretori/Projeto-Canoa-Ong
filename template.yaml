@@ -25,7 +25,7 @@ Parameters:
     Description: Ambiente de deploy (dev, staging, prod)
   BudgetAlertEmail:
     Type: String
-    Default: "" # TODO: BACKLOG - Preencher com e-mail real da gestão do Va'aFlow
+    Default: "alerta-custos@vaaflow.org.br"
     Description: Email para receber os alertas de contenção de custos (US$ 1,00)
 
 Resources:
