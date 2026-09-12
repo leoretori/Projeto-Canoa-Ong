@@ -59,3 +59,46 @@ O **Va'aFlow** é uma solução de software desenvolvida no escopo do Programa "
 - **Sessão / Remada:** `PK: SESSION#{sessionId}`, `SK: METADATA`, `GSI1PK: SESSIONS`, `GSI1SK: {date}#{time}`
 - **Reserva do Atleta:** `PK: SESSION#{sessionId}`, `SK: RES#{userId}`, `GSI1PK: USER#{userId}`, `GSI1SK: RES#{sessionId}`
 
+---
+
+## 🎨 6. Design System Náutico & Acessibilidade (Canoa Para Todos)
+- **Logo Oficial:** Imagem oficial fornecida pela ONG integrada em `frontend/assets/images/cpt-logo.png` (círculo com remadores estilizados e tipografia da marca).
+- **Sede Operacional:** Praia Grande • São Sebastião - SP (DDD 12).
+- **Origem dos Protótipos:** Projeto Google Stitch `projects/16899639216138351319` (armazenados em `stitch_designs/`).
+- **Paleta de Tokens Náuticos:**
+  - `Ocean Blue`: `#00687a`
+  - `Dark Teal`: `#004e68`
+  - `Warm Amber`: `#793200`
+  - `Surface Water`: `#ebf5ff` / `#f8fafc`
+- **Recursos de Acessibilidade Cidadã (WCAG 2.1 AAA & LIBRAS):**
+  - **Escala Dinâmica de Texto:** Botões `A-` e `A+` com 4 níveis (`85%`, `100%`, `115%`, `130%`).
+  - **Modo Escuro (Dark Mode):** Alternância completa com tema noturno oceânico (`#0b1320`, `#111c2e`), títulos em ciano claro (`#38bdf8`) e sincronização no `localStorage`.
+  - **Modo Alto Contraste (WCAG AAA):** Fundo preto absoluto (`#000000`), textos e bordas em amarelo `#ffff00` e textos secundários em branco puro (`#ffffff`).
+  - **VLibras Oficial:** Injeção dinâmica do script e do container do Governo Federal (`https://vlibras.gov.br/app/vlibras-plugin.js`) ativando o avatar 3D interativo na tela.
+  - **Central de Acolhimento em LIBRAS:** Modal com glossário náutico (*Canoa*, *Remo*, *Mar*, *Colete*).
+  - **Ergonomia Náutica:** Cartão de embarque náutico com sinalização de esteira de areia e cadeira anfíbia para paratletas.
+- **Telas em Produção:**
+  1. `src/app/index.tsx` (Portal Institucional, Barra WCAG 2.1 AA, Hero Responsiva, Bento, Modais de Aluno/Voluntário/PIX e LIBRAS)
+  2. `src/app/login.tsx` (Login Cognito com logo oficial, Dark Mode e retorno ao portal)
+  3. `src/app/(tabs)/index.tsx` (Calendário de Remadas com badges e modal de reserva)
+  4. `src/app/(tabs)/my-reservations.tsx` (Métricas do remador, Cartão de Embarque Náutico, cancelamento atômico)
+  5. `src/app/(tabs)/profile.tsx` (Prontuário de acessibilidade do atleta e contato de emergência)
+  6. `src/app/(tabs)/admin.tsx` (Painel do Instrutor, frota, feed de atividade recente e roster com exportação CSV)
+
+---
+
+## 💻 7. Ambiente Local e Servidor de Desenvolvimento
+- **Servidor Local Mock:** `backend/dev_server.py` utiliza `moto` para emular o DynamoDB em memória e carrega os handlers Lambda nativamente.
+- **Porta do Servidor:** Padrão `8000`, configurável via variável de ambiente `PORT` (ex: `PORT=8001`).
+- **Front-End:** Executado via Expo Metro (`npx expo start --web` ou `npm run dev`), porta padrão `8081`.
+
+---
+
+## 🏁 8. Status Atual de Entregas
+- **Fase 1 (Back-End & DynamoDB):** Concluída com contratos Pydantic v2 e transações atômicas.
+- **Fase 2 (QA & Testes):** Concluída com 9/9 testes unitários e de concorrência multithread passando (`pytest`).
+- **Fase 3 (Front-End & Stitch UI):** Concluída com 6 telas compilando sem erros (`npx tsc --noEmit` = 0 erros; `expo export` = 14 rotas estáticas).
+- **Fase 4 (Deploy SAM & Entregáveis):** Pronta para provisionamento e empacotamento final de documentação acadêmica.
+- **Fase 5 (Prontidão em Produção, SEO & GSC):** Concluída com as 10 etapas (Página 404, OpenGraph SEO, Robots/Sitemap/LLMs, Banner LGPD + GA4, Healthcheck `/health` público, Auditoria de Segredos, Error Boundary 500, Skeleton Loading, Teste Mobile e Guia Google Search Console). Lighthouse: **SEO 100**, **Acessibilidade 96**.
+
+

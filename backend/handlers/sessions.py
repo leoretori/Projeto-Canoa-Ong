@@ -32,7 +32,13 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     http_method = event.get("httpMethod", "").upper()
     resource = event.get("resource", "")
     path_params = event.get("pathParameters") or {}
-    session_id = path_params.get("sessionId")
+    path = event.get("path") or event.get("resource") or ""
+    if path == "/health" and http_method == "GET":
+        return success_response({
+            "status": "HEALTHY",
+            "service": "Va'aFlow API",
+            "version": "1.0.0"
+        }, status_code=200)
 
     # Criar, editar ou alterar status de sessão exige role de Instrutor ou Admin.
     if http_method in ("POST", "PATCH", "PUT") and get_user_role(event) not in PRIVILEGED_ROLES:

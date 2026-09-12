@@ -1,4 +1,266 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* ==========================================================================
+   ACESSIBILIDADE: ESCALA DE FONTE DINÂMICA
+   ========================================================================== */
+html.font-scale-sm { font-size: 14px; }
+html.font-scale-md { font-size: 16px; }
+html.font-scale-lg { font-size: 18px; }
+html.font-scale-xl { font-size: 20px; }
+
+/* Garante renderização imediata de imagens no React Native Web */
+img {
+  opacity: 1 !important;
+}
+
+/* Garante transparência na pilha do React Navigation para que o tema escuro/contraste apareça */
+div[style*="background-color: rgb(242, 242, 242)"],
+div[style*="background-color: #f2f2f2"] {
+  background-color: transparent !important;
+}
+
+/* ==========================================================================
+   MODO ESCURO OCEÂNICO (DARK MODE - GOOGLE STITCH PALETTE)
+   ========================================================================== */
+html.dark,
+body.dark,
+.dark {
+  color-scheme: dark;
+  background-color: #07151f !important;
+  color: #f6f9ff !important;
+}
+
+html.dark body,
+.dark .bg-surface,
+.dark .bg-surface-container-lowest,
+.dark .bg-white {
+html.dark #root,
+.dark [class*="bg-surface"],
+.dark [class*="bg-background"],
+.dark [class*="bg-white"] {
+  background-color: #112435 !important;
+}
+
+.dark .bg-surface-container-low {
+  background-color: #0b1924 !important;
+.dark [class*="bg-surface-container-low"] {
+  background-color: #0a1824 !important;
+}
+
+.dark .bg-surface-container,
+.dark .bg-surface-container-high,
+.dark .bg-surface-container-highest {
+.dark [class*="bg-surface-container"],
+.dark [class*="bg-surface-container-high"],
+.dark [class*="bg-surface-container-highest"] {
+  background-color: #152d3f !important;
+}
+
+.dark .text-on-surface,
+.dark .text-slate-900,
+.dark .text-gray-900 {
+.dark [class*="from-surface"],
+.dark [class*="bg-gradient"] {
+  --tw-gradient-from: #07151f !important;
+  --tw-gradient-to: #0a1824 !important;
+  --tw-gradient-stops: #07151f, #0a1824 !important;
+  background-color: #07151f !important;
+  background-image: linear-gradient(to bottom, #07151f, #0a1824) !important;
+}
+
+.dark [class*="text-on-surface"],
+.dark [class*="text-slate-900"],
+.dark [class*="text-gray-900"] {
+  color: #f6f9ff !important;
+}
+
+.dark .text-primary {
+.dark [class*="text-primary"] {
+  color: #2ec4b6 !important; /* Turquesa Stitch no escuro */
+}
+
+.dark .text-secondary {
+.dark [class*="text-secondary"] {
+  color: #55e0d2 !important;
+}
+
+.dark .text-tertiary,
+.dark .text-tertiary-container {
+.dark [class*="text-tertiary"],
+.dark [class*="text-tertiary-container"] {
+  color: #ff7849 !important; /* Coral Stitch no escuro */
+}
+
+.dark .text-on-surface-variant,
+.dark .text-slate-600,
+.dark .text-gray-600,
+.dark .text-slate-500 {
+  color: #9cb5c9 !important; /* Text-muted Stitch de alta legibilidade */
+.dark [class*="text-on-surface-variant"],
+.dark [class*="text-slate-600"],
+.dark [class*="text-gray-600"],
+.dark [class*="text-slate-500"] {
+  color: #9cb5c9 !important; /* Text-muted Stitch */
+}
+
+.dark .border-outline-variant,
+.dark .border-outline-variant\/20,
+.dark .border-outline-variant\/30,
+.dark .border-outline-variant\/50,
+.dark .border-slate-100,
+.dark .border-slate-200,
+.dark .border-gray-100,
+.dark .border-gray-200 {
+.dark [class*="border-outline"],
+.dark [class*="border-slate-"],
+.dark [class*="border-gray-"] {
+  border-color: #244a66 !important;
+}
+
+.dark .bg-primary-fixed,
+.dark .bg-blue-50,
+.dark .bg-sky-50 {
+.dark [class*="bg-primary-fixed"],
+.dark [class*="bg-blue-50"],
+.dark [class*="bg-sky-50"] {
+  background-color: #004c46 !important;
+}
+
+.dark input,
+.dark textarea {
+  background-color: #132636 !important;
+  color: #f6f9ff !important;
+  border-color: #244a66 !important;
+}
+
+/* ==========================================================================
+   MODO ALTO CONTRASTE (WCAG 2.1 AAA - Amarelo e Branco sobre Preto Puro)
+   ========================================================================== */
+html.high-contrast,
+body.high-contrast,
+.high-contrast {
+html.high-contrast body,
+html.high-contrast #root,
+html.high-contrast [class*="bg-"],
+html.high-contrast div,
+html.high-contrast main,
+html.high-contrast header,
+html.high-contrast nav,
+html.high-contrast section,
+html.high-contrast article {
+  color-scheme: dark;
+  background-color: #000000 !important;
+  color: #ffffff !important;
+  background-image: none !important;
+}
+
+.high-contrast .bg-surface,
+.high-contrast .bg-surface-container-lowest,
+.high-contrast .bg-surface-container-low,
+.high-contrast .bg-surface-container,
+.high-contrast .bg-surface-container-high,
+.high-contrast .bg-surface-container-highest,
+.high-contrast .bg-white,
+.high-contrast .bg-blue-50,
+.high-contrast .bg-sky-50,
+.high-contrast .bg-primary-fixed {
+  background-color: #000000 !important;
+  border: 1px solid #ffff00 !important;
+html.high-contrast [class*="text-"],
+html.high-contrast h1,
+html.high-contrast h2,
+html.high-contrast h3,
+html.high-contrast h4,
+html.high-contrast p,
+html.high-contrast span {
+  color: #ffffff !important;
+}
+
+.high-contrast .text-on-surface,
+.high-contrast .text-primary,
+.high-contrast .text-secondary,
+.high-contrast .text-tertiary,
+.high-contrast .text-tertiary-container,
+.high-contrast .text-amber-700,
+.high-contrast .text-sky-700,
+.high-contrast .text-blue-700 {
+html.high-contrast [class*="text-primary"],
+html.high-contrast [class*="text-secondary"],
+html.high-contrast [class*="text-tertiary"],
+html.high-contrast [class*="text-tertiary-container"],
+html.high-contrast [class*="text-yellow"],
+html.high-contrast [class*="text-emerald"],
+html.high-contrast [class*="text-amber"],
+html.high-contrast [class*="text-sky"],
+html.high-contrast [class*="text-blue"] {
+  color: #ffff00 !important;
+}
+
+.high-contrast .text-on-surface-variant,
+.high-contrast .text-slate-600,
+.high-contrast .text-gray-600,
+.high-contrast .text-slate-500,
+.high-contrast .text-slate-400,
+.high-contrast .text-gray-400 {
+  color: #ffffff !important;
+}
+
+.high-contrast .border-outline-variant,
+.high-contrast .border-outline-variant\/20,
+.high-contrast .border-outline-variant\/30,
+.high-contrast .border-outline-variant\/50,
+.high-contrast .border-slate-100,
+.high-contrast .border-slate-200,
+.high-contrast .border-gray-100,
+.high-contrast .border-gray-200 {
+html.high-contrast [class*="border-"],
+html.high-contrast [class*="rounded-2xl"],
+html.high-contrast [class*="rounded-3xl"],
+html.high-contrast [class*="rounded-xl"] {
+  border-color: #ffff00 !important;
+}
+
+.high-contrast [role="button"],
+.high-contrast button {
+html.high-contrast [role="button"],
+html.high-contrast button {
+  background-color: #000000 !important;
+  border: 2px solid #ffff00 !important;
+  background-color: #000000 !important;
+  color: #ffff00 !important;
+}
+
+.high-contrast input,
+.high-contrast textarea {
+html.high-contrast [role="button"] text,
+html.high-contrast [role="button"] span,
+html.high-contrast button text,
+html.high-contrast button span,
+html.high-contrast [role="button"] div,
+html.high-contrast [role="button"] p {
+  color: #ffff00 !important;
+}
+
+html.high-contrast input,
+html.high-contrast textarea {
+  background-color: #000000 !important;
+  border: 2px solid #ffff00 !important;
+  color: #ffff00 !important;
+  border: 2px solid #ffff00 !important;
+}
+
+.high-contrast img,
+.high-contrast image {
+  filter: contrast(120%) brightness(110%);
+html.high-contrast img,
+html.high-contrast image {
+  filter: contrast(130%) brightness(110%) !important;
+  border: 2px solid #ffff00 !important;
+}
+
 

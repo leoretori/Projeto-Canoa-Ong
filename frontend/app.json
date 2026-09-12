@@ -1,10 +1,11 @@
 {
   "expo": {
-    "name": "Va'aFlow",
+    "name": "Va'aFlow • Canoa Para Todos",
     "slug": "vaaflow",
+    "description": "Agendamento inclusivo de canoagem polinésia (Va'a) em São Sebastião/SP.",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/cpt-logo.png",
     "scheme": "vaaflow",
     "userInterfaceStyle": "automatic",
     "ios": {
@@ -21,7 +22,7 @@
     },
     "web": {
       "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/images/cpt-logo.png"
     },
     "plugins": [
       "expo-router",

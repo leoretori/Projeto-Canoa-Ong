@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Tabs, useRouter } from 'expo-router';
-import { TouchableOpacity, Text, Platform, View } from 'react-native';
+import { TouchableOpacity, Text, Platform, View, Image } from 'react-native';
 import { getCurrentUserRole, getCurrentUserEmail, signOut } from '../../services/auth';
 import { showAlert } from '../../utils/alert';
 import { ThemeToggle } from '../../components/ThemeToggle';
+
+const CPT_LOGO = require('../../../assets/images/cpt-logo.png');
 
 export default function TabsLayout() {
   const router = useRouter();
@@ -37,7 +39,7 @@ export default function TabsLayout() {
   return (
     <Tabs 
       screenOptions={{ 
-        tabBarActiveTintColor: '#0E7490',
+        tabBarActiveTintColor: '#004e68',
         tabBarInactiveTintColor: '#64748B',
         tabBarStyle: {
           borderTopColor: '#E2E8F0',
@@ -45,6 +47,21 @@ export default function TabsLayout() {
           paddingBottom: 8,
           paddingTop: 8
         },
+        headerLeft: () => (
+          <View style={{ flexDirection: 'row', alignItems: 'center', marginLeft: 16, gap: 8 }}>
+            <Image 
+              source={CPT_LOGO} 
+              style={{ width: 32, height: 32, borderRadius: 16, backgroundColor: '#ffffff' }} 
+              resizeMode="contain" 
+            />
+            <TouchableOpacity 
+              onPress={() => router.push('/')}
+              style={{ paddingHorizontal: 8, paddingVertical: 4, borderRadius: 8, backgroundColor: '#ebf5ff' }}
+            >
+              <Text style={{ fontSize: 11, fontWeight: '700', color: '#004e68' }}>← Portal</Text>
+            </TouchableOpacity>
+          </View>
+        ),
         headerRight: () => (
           <View style={{ flexDirection: 'row', alignItems: 'center', marginRight: 16, gap: 12 }}>
             <ThemeToggle />

@@ -1,0 +1,17 @@
+# Robots.txt — Projeto Canoa Para Todos (Va'aFlow)
+# Domínio Oficial: https://canoaparatodos.org
+
+User-agent: *
+Allow: /
+Allow: /login
+Allow: /register
+
+# Restrição de áreas de gestão interna e diretórios técnicos
+Disallow: /admin
+Disallow: /(tabs)/admin
+Disallow: /_expo/
+Disallow: /api/
+
+# Localização do Mapa do Site
+Sitemap: https://canoaparatodos.org/sitemap.xml
+

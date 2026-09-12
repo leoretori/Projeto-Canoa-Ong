@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Login - Projeto Canoa Para Todos | Canoagem Inclusiva</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+<script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              dark: '#07151f',
+              abyss: '#0a1824',
+              surface: '#102231',
+              card: '#152d3f',
+              input: '#132636',
+              border: '#24425a',
+              textPrimary: '#F6F9FF',
+              textMuted: '#a6c6db',
+              teal: '#2EC4B6',
+              coral: '#FF7849',
+              gold: '#FBBF24',
+            }
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    .high-contrast {
+      filter: contrast(135%);
+    }
+    .large-text {
+      font-size: 115%;
+    }
+  </style>
+</head>
+<body class="bg-brand-dark text-brand-textPrimary min-h-screen flex flex-col antialiased selection:bg-brand-coral selection:text-white" id="main-body">
+<!-- Acessibilidade / Skip Link para Leitores de Tela -->
+<a class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:bg-brand-teal focus:text-slate-950 focus:font-bold focus:px-4 focus:py-2 focus:rounded-lg focus:shadow-xl focus:outline-none focus:ring-4 focus:ring-brand-coral" href="#login-form-container">
+    Pular direto para o formulário de login (Alt + 1)
+  </a>
+<!-- Barra Superior de Recursos de Acessibilidade -->
+<header class="bg-[#050e15] text-brand-textMuted text-xs px-4 sm:px-8 py-2.5 border-b border-brand-border/60 flex items-center justify-between">
+<div class="flex items-center gap-2 text-brand-teal">
+<i aria-hidden="true" class="fa-solid fa-universal-access text-sm"></i>
+<span class="font-semibold tracking-wide text-brand-textPrimary">Portal Acessível • Canoagem Inclusiva</span>
+</div>
+<!-- Controles Rápidos de Acessibilidade -->
+<div aria-label="Ferramentas de acessibilidade" class="flex items-center gap-2 sm:gap-3">
+<button aria-pressed="false" class="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-brand-surface hover:bg-brand-card border border-brand-border text-brand-textPrimary transition-colors focus:outline-none focus:ring-2 focus:ring-brand-teal" id="btn-contrast" onclick="toggleHighContrast()" title="Alternar alto contraste">
+<i aria-hidden="true" class="fa-solid fa-circle-half-stroke text-brand-teal"></i>
+<span class="hidden sm:inline font-medium">Alto Contraste</span>
+</button>
+<button aria-label="Aumentar tamanho do texto" class="px-2.5 py-1 rounded-lg bg-brand-surface hover:bg-brand-card border border-brand-border text-brand-textPrimary transition-colors font-bold focus:outline-none focus:ring-2 focus:ring-brand-teal" onclick="changeFontSize(1)" title="Aumentar texto">
+        A+
+      </button>
+<button aria-label="Diminuir tamanho do texto" class="px-2.5 py-1 rounded-lg bg-brand-surface hover:bg-brand-card border border-brand-border text-brand-textPrimary transition-colors font-bold focus:outline-none focus:ring-2 focus:ring-brand-teal" onclick="changeFontSize(-1)" title="Diminuir texto">
+        A-
+      </button>
+<button class="hidden md:inline px-2.5 py-1 rounded-lg bg-brand-surface hover:bg-brand-card border border-brand-border text-brand-textPrimary transition-colors focus:outline-none focus:ring-2 focus:ring-brand-teal" onclick="resetFontSize()" title="Tamanho normal">
+        Padrão
+      </button>
+<div class="h-4 w-px bg-brand-border mx-1"></div>
+<a class="hover:text-brand-teal transition-colors flex items-center gap-1 text-brand-textMuted hover:underline" href="#">
+<i aria-hidden="true" class="fa-solid fa-circle-question"></i>
+<span class="hidden sm:inline">Suporte &amp; VLibras</span>
+</a>
+</div>
+</header>
+<!-- Conteúdo Principal com Layout Split (50/50) -->
+<main class="flex-1 grid grid-cols-1 lg:grid-cols-12 min-h-[calc(100vh-45px)]">
+<!-- Lado Esquerdo: Painel Visual & Emocional Inspirador (5 colunas desktop) -->
+<section aria-label="Apresentação institucional" class="lg:col-span-5 relative hidden lg:flex flex-col justify-between p-10 bg-brand-dark overflow-hidden text-white">
+<!-- Imagem de Fundo Autêntica dos Atletas -->
+<img alt="Atletas com deficiência física e voluntários remando juntos em sintonia numa canoa polinésia ao amanhecer" class="absolute inset-0 w-full h-full object-cover object-center transform scale-105 hover:scale-100 transition-transform duration-1000 ease-out brightness-[0.78] contrast-[1.08]" src="https://lh3.googleusercontent.com/aida/AEtjO1U--wqjXoltdfHQ-JzY4OxmAQyqjKM8paxYBlOZ_98fCT0rxhIXVJ85LeVZjkcfaWCG8TEWWtTcfEbS1RvZxGvHTC35EjSmoxbEUqzrh-BJtfHP9kpmw3cB7Hn-GgX87KkBtszOjNVZIkiWjzSoSXluPMdVsl8k9YDYOGDcw1CPXfDI1lD7vwTc5NnlNaSwNoL6waQ0lFQH8VLQdA4oXqgC1pR1bltmfe8iQ3l4r9UEEL3vlLdge-ewx1dM"/>
+<!-- Sobreposição Gradiente Oceânica Escura e Suave (#07151f/80) preservando nitidez -->
+<div class="absolute inset-0 bg-gradient-to-t from-[#07151f] via-[#07151f]/75 to-[#07151f]/65"></div>
+<!-- Topo: Mini Tag de Boas-Vindas -->
+<div class="relative z-10 flex items-center gap-2 bg-[#0a1824]/80 backdrop-blur-md border border-brand-border rounded-full px-4 py-1.5 w-fit shadow-lg">
+<span class="w-2.5 h-2.5 rounded-full bg-brand-coral animate-pulse"></span>
+<span class="text-xs font-bold tracking-wider uppercase text-brand-teal">Projeto Canoa Para Todos</span>
+</div>
+<!-- Centro / Base: Mensagem Inspiradora & Depoimento -->
+<div class="relative z-10 space-y-6 my-auto pt-16">
+<div class="inline-flex p-3 rounded-2xl bg-brand-coral/20 backdrop-blur-md border border-brand-coral/40 text-brand-coral shadow-inner">
+<i class="fa-solid fa-water text-2xl"></i>
+</div>
+<h1 class="text-3xl xl:text-4xl font-extrabold leading-tight tracking-tight text-white drop-shadow-md">
+          A água não impõe barreiras. <span class="text-brand-coral">Ela liberta.</span>
+</h1>
+<p class="text-slate-200 text-base xl:text-lg leading-relaxed font-normal max-w-md drop-shadow">
+          Acesso exclusivo para atletas, voluntários, instrutores e apoiadores da Canoagem Polinésia Adaptada (Va'a).
+        </p>
+<!-- Card de Impacto Social / Depoimento -->
+<div class="bg-[#0b1b29]/85 backdrop-blur-md border border-brand-border p-5 rounded-2xl max-w-md shadow-2xl">
+<div aria-label="5 estrelas" class="flex items-center gap-1 text-amber-400 text-sm mb-2">
+<i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+</div>
+<p class="text-sm italic text-slate-100 leading-snug">
+            "Na canoa havaiana encontrei força, autonomia e uma família. Remar me mostrou que meus limites estavam apenas na minha mente."
+          </p>
+<div class="mt-3 flex items-center justify-between text-xs text-brand-teal font-medium">
+<span class="font-semibold">Marcos S. • Paratleta &amp; Aluno</span>
+<span class="text-slate-300">Equipe Va'aFlow</span>
+</div>
+</div>
+</div>
+<!-- Rodapé Lado Esquerdo -->
+<div class="relative z-10 flex items-center justify-between text-xs text-slate-300 pt-6 border-t border-brand-border/60">
+<div class="flex items-center gap-2">
+<i class="fa-solid fa-shield-heart text-brand-coral"></i>
+<span class="">Ambiente Seguro e Monitorado</span>
+</div>
+<a class="hover:text-brand-coral transition-colors flex items-center gap-1.5 text-white/90" href="https://www.instagram.com/canoaparatodos/" rel="noopener noreferrer" target="_blank">
+<i class="fa-brands fa-instagram text-sm text-brand-coral"></i>
+<span class="">@canoaparatodos</span>
+</a>
+</div>
+</section>
+<!-- Lado Direito: Formulário de Autenticação Dark Oceânico (7 colunas desktop) -->
+<section class="lg:col-span-7 flex flex-col justify-center items-center p-6 sm:p-12 lg:p-16 bg-[#0a1824] relative" id="login-form-container">
+<!-- Detalhe decorativo suave de fundo oceânico -->
+<div class="absolute top-0 right-0 w-96 h-96 bg-brand-teal/10 rounded-full filter blur-3xl pointer-events-none -mr-20 -mt-20"></div>
+<div class="absolute bottom-0 left-0 w-80 h-80 bg-brand-coral/10 rounded-full filter blur-3xl pointer-events-none -ml-20 -mb-20"></div>
+<div class="w-full max-w-md relative z-10 space-y-8">
+<!-- Identidade Visual Oficial Va'aFlow em Badge de Alto Contraste -->
+<div class="flex flex-col items-center sm:items-start text-center sm:text-left space-y-4">
+<a class="inline-block p-3 rounded-2xl bg-white/95 hover:bg-white shadow-lg shadow-black/40 border border-white/20 transition-transform hover:scale-[1.02] focus:outline-none focus:ring-4 focus:ring-brand-coral/50" href="#" title="Página inicial Canoa Para Todos">
+<img alt="Logo Oficial Projeto Canoa Para Todos" class="h-20 sm:h-24 w-auto object-contain drop-shadow-sm" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCDGJk4Hri7lcqjlriGyor6vYxvQrC2PwgUF7IxPNTx8LuNF8cq6jAx6kuT1U9RA3NShB2zgz6-VXWzK1blXx0r2UotXAciFtYL-CdC_mOKZX7KqTcQgBFwORV6cj3iaRppqvBSq0wHlIyd1mIUXNunX0CbITWgTzyNEveJBXwIKvKxJuA6hu2FNATehsGwsv349kHZt55rqLndTWCS3slAodq5VjasDQ_bhuyS-eYT0cH8x-FGnv5BvUeXYB5MVdU0k9E"/>
+</a>
+<div>
+<h2 class="text-2xl sm:text-3xl font-bold text-brand-textPrimary tracking-tight">Bem-vindo(a) de volta!</h2>
+<p class="text-brand-textMuted text-sm sm:text-base mt-1.5 leading-relaxed">
+              Entre com suas credenciais para acessar sua área de treinos, fichas e aulas.
+            </p>
+</div>
+</div>
+<!-- Alerta de Perfil / Tipo de Acesso Dark Mode -->
+<div class="bg-brand-surface border border-brand-border rounded-xl p-3.5 flex items-center justify-between text-xs font-medium text-brand-textPrimary shadow-sm">
+<div class="flex items-center gap-2.5">
+<span class="flex h-2.5 w-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+<span class="text-brand-textPrimary font-semibold">Acesso unificado:</span>
+</div>
+<div class="flex items-center gap-1.5 sm:gap-2 text-brand-textMuted">
+<span class="px-2 py-0.5 rounded-md bg-[#0a1824] border border-brand-border font-medium text-slate-200">Atletas</span>
+<span class="px-2 py-0.5 rounded-md bg-[#0a1824] border border-brand-border font-medium text-slate-200">Instrutores</span>
+<span class="px-2 py-0.5 rounded-md bg-[#0a1824] border border-brand-border font-medium text-slate-200">Voluntários</span>
+</div>
+</div>
+<!-- Formulário de Login Dark Oceânico -->
+<form action="#" class="space-y-5" method="POST" onsubmit="event.preventDefault(); alert('Login efetuado com sucesso!');">
+<!-- Campo E-mail -->
+<div>
+<label class="block text-sm font-semibold text-brand-textMuted mb-1.5" for="email">
+              E-mail ou CPF cadastrado <span aria-hidden="true" class="text-brand-coral font-bold">*</span>
+</label>
+<div class="relative">
+<div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-brand-textMuted/70">
+<i aria-hidden="true" class="fa-regular fa-envelope text-base"></i>
+</div>
+<input aria-required="true" autocomplete="email" class="w-full pl-11 pr-4 py-3.5 text-base rounded-xl border border-brand-border bg-brand-input text-brand-textPrimary placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-teal focus:border-brand-teal transition-all shadow-inner hover:border-slate-400" id="email" name="email" placeholder="seu.email@exemplo.com ou CPF" required="" type="text"/>
+</div>
+<p class="text-xs text-brand-textMuted/80 mt-1">Ex: 000.000.000-00 ou seu e-mail de inscrição</p>
+</div>
+<!-- Campo Senha -->
+<div>
+<div class="flex items-center justify-between mb-1.5">
+<label class="block text-sm font-semibold text-brand-textMuted" for="password">
+                Senha de acesso <span aria-hidden="true" class="text-brand-coral font-bold">*</span>
+</label>
+<a class="text-xs font-semibold text-brand-teal hover:text-brand-coral focus:outline-none focus:underline transition-colors" href="#" title="Recuperar senha perdida">
+                Esqueceu a senha?
+              </a>
+</div>
+<div class="relative">
+<div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-brand-textMuted/70">
+<i aria-hidden="true" class="fa-solid fa-lock text-base"></i>
+</div>
+<input aria-required="true" autocomplete="current-password" class="w-full pl-11 pr-12 py-3.5 text-base rounded-xl border border-brand-border bg-brand-input text-brand-textPrimary placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-teal focus:border-brand-teal transition-all shadow-inner hover:border-slate-400" id="password" name="password" placeholder="Digite sua senha de acesso" required="" type="password"/>
+<button aria-label="Mostrar ou ocultar senha" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-brand-textMuted hover:text-brand-teal focus:outline-none focus:text-brand-teal" id="btn-eye" onclick="togglePasswordVisibility()" type="button">
+<i class="fa-regular fa-eye text-base" id="eye-icon"></i>
+</button>
+</div>
+</div>
+<!-- Opções: Lembrar de mim -->
+<div class="flex items-center justify-between pt-1">
+<label class="flex items-center gap-3 cursor-pointer group">
+<input class="w-5 h-5 rounded border-brand-border bg-brand-input text-brand-teal focus:ring-brand-teal/50 transition duration-150 cursor-pointer" name="remember" type="checkbox"/>
+<span class="text-sm text-brand-textMuted group-hover:text-brand-textPrimary transition-colors select-none">
+                Lembrar meus dados neste aparelho
+              </span>
+</label>
+</div>
+<!-- Botão Principal de Login (Turquesa Oceânico Vibrante de Alto Contraste) -->
+<div class="pt-2">
+<button class="w-full py-4 px-6 rounded-xl bg-brand-teal hover:bg-[#25ab9e] active:scale-[0.99] text-[#051a1e] font-extrabold text-lg shadow-lg shadow-brand-teal/20 hover:shadow-xl hover:shadow-brand-teal/30 transition-all duration-200 flex items-center justify-center gap-3 focus:outline-none focus:ring-4 focus:ring-brand-teal/40" type="submit">
+<span class="">Entrar na Plataforma</span>
+<i aria-hidden="true" class="fa-solid fa-arrow-right text-base font-bold"></i>
+</button>
+</div>
+</form>
+<!-- Divisor com Alternativas -->
+<div class="relative flex items-center justify-center my-6">
+<div class="border-t border-brand-border w-full"></div>
+<span class="bg-[#0a1824] px-4 text-xs font-semibold text-brand-textMuted uppercase tracking-wider relative z-10">
+            Ainda não participa?
+          </span>
+</div>
+<!-- Ações Secundárias Dark Refinadas com Ícones Luminosos -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+<a class="flex items-center justify-center gap-2 py-3 px-4 rounded-xl border border-brand-teal/50 bg-brand-surface hover:bg-brand-card text-brand-textPrimary font-semibold text-sm transition-all hover:border-brand-teal focus:outline-none focus:ring-2 focus:ring-brand-teal text-center shadow-sm" href="#">
+<i class="fa-solid fa-user-plus text-brand-teal text-base"></i>
+<span class="">Inscrever-se como Aluno / Voluntário</span>
+</a>
+<a class="flex items-center justify-center gap-2 py-3 px-4 rounded-xl border border-brand-coral/50 bg-brand-surface hover:bg-brand-card text-brand-textPrimary font-semibold text-sm transition-all hover:border-brand-coral focus:outline-none focus:ring-2 focus:ring-brand-coral text-center shadow-sm" href="#">
+<i class="fa-solid fa-heart text-brand-coral text-base"></i>
+<span class="">Apoiar Projeto com Doação (PIX)</span>
+</a>
+</div>
+<!-- Links Institucionais e Suporte de Acessibilidade -->
+<footer class="pt-4 border-t border-brand-border/60 flex flex-wrap items-center justify-between text-xs text-brand-textMuted gap-2">
+<span class="">© 2025 Projeto Canoa Para Todos • Todos os direitos reservados</span>
+<div class="flex items-center gap-4">
+<a class="hover:text-brand-textPrimary underline underline-offset-2 transition-colors" href="#">Termos de Uso</a>
+<a class="hover:text-brand-textPrimary underline underline-offset-2 transition-colors" href="#">Privacidade</a>
+<a class="hover:text-brand-coral underline underline-offset-2 flex items-center gap-1 text-brand-teal font-semibold transition-colors" href="#">
+<i class="fa-solid fa-phone-volume"></i>
+<span class="">Ajuda Acessível</span>
+</a>
+</div>
+</footer>
+</div>
+</section>
+</main>
+<!-- Script de Interatividade e Acessibilidade -->
+<script>
+    function togglePasswordVisibility() {
+      const passwordInput = document.getElementById('password');
+      const eyeIcon = document.getElementById('eye-icon');
+      if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        eyeIcon.classList.remove('fa-eye');
+        eyeIcon.classList.add('fa-eye-slash');
+      } else {
+        passwordInput.type = 'password';
+        eyeIcon.classList.remove('fa-eye-slash');
+        eyeIcon.classList.add('fa-eye');
+      }
+    }
+
+    let isHighContrast = false;
+    function toggleHighContrast() {
+      const body = document.getElementById('main-body');
+      const btn = document.getElementById('btn-contrast');
+      isHighContrast = !isHighContrast;
+      if (isHighContrast) {
+        body.classList.add('high-contrast');
+        btn.setAttribute('aria-pressed', 'true');
+        btn.classList.add('bg-brand-coral', 'text-white');
+        btn.classList.remove('bg-brand-surface');
+      } else {
+        body.classList.remove('high-contrast');
+        btn.setAttribute('aria-pressed', 'false');
+        btn.classList.remove('bg-brand-coral', 'text-white');
+        btn.classList.add('bg-brand-surface');
+      }
+    }
+
+    let currentFontSizeStep = 0;
+    function changeFontSize(delta) {
+      const body = document.getElementById('main-body');
+      currentFontSizeStep = Math.max(-1, Math.min(2, currentFontSizeStep + delta));
+      if (currentFontSizeStep === 1) {
+        body.style.fontSize = '112%';
+      } else if (currentFontSizeStep === 2) {
+        body.style.fontSize = '125%';
+      } else if (currentFontSizeStep === -1) {
+        body.style.fontSize = '90%';
+      } else {
+        body.style.fontSize = '100%';
+      }
+    }
+
+    function resetFontSize() {
+      currentFontSizeStep = 0;
+      document.getElementById('main-body').style.fontSize = '100%';
+    }
+  </script>
+</body></html>
