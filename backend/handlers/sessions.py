@@ -9,6 +9,7 @@ from typing import Any, Dict
 from pydantic import ValidationError
 
 from common.models import PRIVILEGED_ROLES, SessionCreateRequest, SessionStatusUpdate, SessionUpdateRequest, SessionResponse
+from common.identity import get_identity
 from common.responses import success_response, error_response, validation_error_response
 from common.dynamo_dal import DynamoDAL, ResourceNotFoundError, DALException
 
@@ -20,11 +21,7 @@ dal = DynamoDAL()
 
 
 def get_user_role(event: Dict[str, Any]) -> str:
-    """Extrai o role do usuário a partir dos claims do Cognito (custom:role)."""
-    authorizer = event.get("requestContext", {}).get("authorizer", {})
-    claims = authorizer.get("claims", {})
-    headers = event.get("headers") or {}
-    return claims.get("custom:role") or headers.get("X-User-Role") or "ATHLETE"
+    return get_identity(event)["role"]
 
 
 def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
