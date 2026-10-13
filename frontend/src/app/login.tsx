@@ -54,7 +54,7 @@ export default function LoginScreen() {
   useEffect(() => {
     isAuthenticated().then((authenticated) => {
       if (authenticated) {
-        router.replace('/(tabs)');
+        router.replace('/painel');
       } else {
         setCheckingSession(false);
       }
@@ -78,7 +78,7 @@ export default function LoginScreen() {
     setLoading(true);
     try {
       await signIn(email.trim(), password);
-      router.replace('/(tabs)');
+      router.replace('/painel');
     } catch (err: any) {
       const code = err?.code || err?.name;
       if (code === 'UserNotConfirmedException') {

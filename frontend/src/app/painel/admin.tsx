@@ -203,12 +203,6 @@ export default function AdminScreen() {
       {/* TOP COMMAND & ACTION BAR: STITCH DESIGN */}
       <View className="flex flex-col lg:flex-row lg:items-end justify-between gap-4 mb-6">
         <View className="flex flex-col gap-1.5 max-w-2xl">
-          <View className="flex-row items-center gap-2 px-3 py-1 rounded-full bg-surface-container-high text-primary self-start">
-            <View className="w-2.5 h-2.5 rounded-full bg-secondary-container" />
-            <Text className="text-xs font-bold text-primary uppercase tracking-wider">
-              Controle Operacional da Guarderia • Mar Aberto
-            </Text>
-          </View>
           <Text className="text-2xl md:text-3xl font-extrabold text-primary tracking-tight" accessibilityRole="header">
             Painel do Leme
           </Text>
