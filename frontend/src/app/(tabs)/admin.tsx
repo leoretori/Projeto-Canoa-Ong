@@ -233,7 +233,7 @@ export default function AdminScreen() {
             accessibilityLabel="Cadastrar nova remada"
           >
             <Text className="text-base">➕</Text>
-            <Text className="text-white font-bold text-sm">+ Nova Remada</Text>
+            <Text className="text-white font-bold text-sm">Nova Remada</Text>
           </TouchableOpacity>
         </View>
       </View>

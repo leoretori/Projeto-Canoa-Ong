@@ -13,6 +13,7 @@ import {
 import { useRouter } from 'expo-router';
 import { isAuthenticated, getCurrentUserRole, getCurrentUserEmail } from '../services/auth';
 import { showAlert } from '../utils/alert';
+import { roleLabel } from '../utils/roles';
 import { ThemeToggle } from '../components/ThemeToggle';
 import { toggleVLibras } from '../utils/vlibras';
 import {
@@ -171,7 +172,7 @@ export default function LandingPage() {
             </Text>
           </View>
 
-          <View className="flex-row items-center gap-2 sm:gap-3 flex-wrap">
+          <View className="w-full sm:w-auto flex-row items-center gap-2 sm:gap-3 flex-wrap">
             {/* Redimensionamento de Texto */}
             <View className="flex-row items-center bg-surface-container rounded-lg p-0.5 border border-outline-variant/30">
               <TouchableOpacity
@@ -229,7 +230,7 @@ export default function LandingPage() {
 
       {/* 1. HEADER / NAVBAR PRINCIPAL */}
       <View className="bg-surface/95 border-b border-outline-variant/20 px-4 sm:px-8 py-3.5 z-40 sticky top-0">
-        <View className="max-w-7xl mx-auto flex-row items-center justify-between w-full">
+        <View className="max-w-7xl mx-auto flex-row flex-wrap items-center justify-between gap-2 w-full">
           {/* Marca e Logo Oficial */}
           <TouchableOpacity onPress={() => router.push('/')} className="flex-row items-center gap-3">
             <Image
@@ -249,7 +250,7 @@ export default function LandingPage() {
             onPress={abrirWhatsApp}
             accessibilityRole="link"
             accessibilityLabel="Entrar no Grupo Oficial do WhatsApp do Canoa Para Todos"
-            className="flex-row items-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 shadow-sm"
+            className="hidden md:flex flex-row items-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 shadow-sm"
           >
             <Text className="text-white text-base">💬</Text>
             <Text className="text-white text-xs sm:text-sm font-bold">Comunidade WhatsApp</Text>
@@ -263,8 +264,8 @@ export default function LandingPage() {
                 className="px-4 py-2 rounded-xl bg-primary text-white shadow-sm flex-row items-center gap-2"
               >
                 <Text className="text-white font-semibold text-sm">Ir para o Calendário</Text>
-                <Text className="text-white text-xs bg-white/20 px-2 py-0.5 rounded-full">
-                  {userRole}
+                <Text className="hidden sm:flex text-white text-xs bg-white/20 px-2 py-0.5 rounded-full">
+                  {roleLabel(userRole)}
                 </Text>
               </TouchableOpacity>
             ) : (
@@ -278,7 +279,7 @@ export default function LandingPage() {
 
             <TouchableOpacity
               onPress={() => setModalDoacao(true)}
-              className="px-4 py-2 rounded-xl bg-tertiary-container text-white shadow-sm"
+              className="hidden md:flex px-4 py-2 rounded-xl bg-tertiary-container text-white shadow-sm"
             >
               <Text className="text-white font-bold text-sm">Quero Apoiar</Text>
             </TouchableOpacity>

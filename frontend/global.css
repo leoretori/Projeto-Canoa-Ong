@@ -38,7 +38,7 @@ body.dark,
 html.dark body,
 .dark .bg-surface,
 .dark .bg-surface-container-lowest,
-.dark .bg-white {
+.dark .bg-white,
 html.dark #root,
 .dark [class*="bg-surface"],
 .dark [class*="bg-background"],
@@ -48,13 +48,14 @@ html.dark #root,
 
 .dark .bg-surface-container-low {
   background-color: #0b1924 !important;
+}
 .dark [class*="bg-surface-container-low"] {
   background-color: #0a1824 !important;
 }
 
 .dark .bg-surface-container,
 .dark .bg-surface-container-high,
-.dark .bg-surface-container-highest {
+.dark .bg-surface-container-highest,
 .dark [class*="bg-surface-container"],
 .dark [class*="bg-surface-container-high"],
 .dark [class*="bg-surface-container-highest"] {
@@ -63,7 +64,7 @@ html.dark #root,
 
 .dark .text-on-surface,
 .dark .text-slate-900,
-.dark .text-gray-900 {
+.dark .text-gray-900,
 .dark [class*="from-surface"],
 .dark [class*="bg-gradient"] {
   --tw-gradient-from: #07151f !important;
@@ -79,18 +80,18 @@ html.dark #root,
   color: #f6f9ff !important;
 }
 
-.dark .text-primary {
+.dark .text-primary,
 .dark [class*="text-primary"] {
   color: #2ec4b6 !important; /* Turquesa Stitch no escuro */
 }
 
-.dark .text-secondary {
+.dark .text-secondary,
 .dark [class*="text-secondary"] {
   color: #55e0d2 !important;
 }
 
 .dark .text-tertiary,
-.dark .text-tertiary-container {
+.dark .text-tertiary-container,
 .dark [class*="text-tertiary"],
 .dark [class*="text-tertiary-container"] {
   color: #ff7849 !important; /* Coral Stitch no escuro */
@@ -101,6 +102,7 @@ html.dark #root,
 .dark .text-gray-600,
 .dark .text-slate-500 {
   color: #9cb5c9 !important; /* Text-muted Stitch de alta legibilidade */
+}
 .dark [class*="text-on-surface-variant"],
 .dark [class*="text-slate-600"],
 .dark [class*="text-gray-600"],
@@ -115,7 +117,7 @@ html.dark #root,
 .dark .border-slate-100,
 .dark .border-slate-200,
 .dark .border-gray-100,
-.dark .border-gray-200 {
+.dark .border-gray-200,
 .dark [class*="border-outline"],
 .dark [class*="border-slate-"],
 .dark [class*="border-gray-"] {
@@ -124,7 +126,7 @@ html.dark #root,
 
 .dark .bg-primary-fixed,
 .dark .bg-blue-50,
-.dark .bg-sky-50 {
+.dark .bg-sky-50,
 .dark [class*="bg-primary-fixed"],
 .dark [class*="bg-blue-50"],
 .dark [class*="bg-sky-50"] {
@@ -143,7 +145,7 @@ html.dark #root,
    ========================================================================== */
 html.high-contrast,
 body.high-contrast,
-.high-contrast {
+.high-contrast,
 html.high-contrast body,
 html.high-contrast #root,
 html.high-contrast [class*="bg-"],
@@ -171,6 +173,7 @@ html.high-contrast article {
 .high-contrast .bg-primary-fixed {
   background-color: #000000 !important;
   border: 1px solid #ffff00 !important;
+}
 html.high-contrast [class*="text-"],
 html.high-contrast h1,
 html.high-contrast h2,
@@ -188,7 +191,7 @@ html.high-contrast span {
 .high-contrast .text-tertiary-container,
 .high-contrast .text-amber-700,
 .high-contrast .text-sky-700,
-.high-contrast .text-blue-700 {
+.high-contrast .text-blue-700,
 html.high-contrast [class*="text-primary"],
 html.high-contrast [class*="text-secondary"],
 html.high-contrast [class*="text-tertiary"],
@@ -217,7 +220,7 @@ html.high-contrast [class*="text-blue"] {
 .high-contrast .border-slate-100,
 .high-contrast .border-slate-200,
 .high-contrast .border-gray-100,
-.high-contrast .border-gray-200 {
+.high-contrast .border-gray-200,
 html.high-contrast [class*="border-"],
 html.high-contrast [class*="rounded-2xl"],
 html.high-contrast [class*="rounded-3xl"],
@@ -226,7 +229,7 @@ html.high-contrast [class*="rounded-xl"] {
 }
 
 .high-contrast [role="button"],
-.high-contrast button {
+.high-contrast button,
 html.high-contrast [role="button"],
 html.high-contrast button {
   background-color: #000000 !important;
@@ -236,7 +239,7 @@ html.high-contrast button {
 }
 
 .high-contrast input,
-.high-contrast textarea {
+.high-contrast textarea,
 html.high-contrast [role="button"] text,
 html.high-contrast [role="button"] span,
 html.high-contrast button text,
@@ -257,6 +260,7 @@ html.high-contrast textarea {
 .high-contrast img,
 .high-contrast image {
   filter: contrast(120%) brightness(110%);
+}
 html.high-contrast img,
 html.high-contrast image {
   filter: contrast(130%) brightness(110%) !important;
