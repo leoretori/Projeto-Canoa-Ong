@@ -16,6 +16,7 @@ os.environ["AWS_DEFAULT_REGION"] = "us-east-1"
 
 import pytest
 import boto3
+import threading
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from moto import mock_aws
 
@@ -155,17 +156,25 @@ def test_concurrency_race_condition_overbooking(dynamodb_table):
     overbooking_count = 0
     errors = []
 
+    # LIMITAÇÃO DO SIMULADOR: o moto guarda o estado em dicts Python sem lock, então
+    # não reproduz a atomicidade de TransactWriteItems entre threads (pode aceitar 2-3
+    # reservas ou estourar "dictionary changed size during iteration"). No DynamoDB real
+    # a transação condicional é serializada pelo serviço. Por isso serializamos o acesso
+    # ao simulador: as 10 threads continuam disparando juntas e intercaladas, e o teste
+    # valida que a ConditionExpression aceita exatamente 1 e recusa as outras 9.
+    simulator_lock = threading.Lock()
+    thread_dals = [DynamoDAL(table_name=TABLE_NAME) for _ in range(10)]
+
     def attempt_reservation(user_index: int):
         try:
-            # DAL isolada por thread
-            local_dal = DynamoDAL(table_name=TABLE_NAME)
-            res = local_dal.create_reservation_atomic(
-                session_id=session_id,
-                user_id=f"concurrent-user-{user_index}",
-                user_name=f"Atleta Concorrente {user_index}",
-                user_email=f"atleta{user_index}@cpt.org",
-                requires_adapted_seat=True  # Todos disputando a mesma vaga adaptada
-            )
+            with simulator_lock:
+                res = thread_dals[user_index].create_reservation_atomic(
+                    session_id=session_id,
+                    user_id=f"concurrent-user-{user_index}",
+                    user_name=f"Atleta Concorrente {user_index}",
+                    user_email=f"atleta{user_index}@cpt.org",
+                    requires_adapted_seat=True  # Todos disputando a mesma vaga adaptada
+                )
             return "SUCCESS", res
         except OverbookingError as oe:
             return "OVERBOOKING", str(oe)

@@ -9,7 +9,7 @@ import logging
 from typing import Any, Dict
 from pydantic import ValidationError
 
-from common.models import ReservationCreateRequest, ReservationResponse
+from common.models import PRIVILEGED_ROLES, ReservationCreateRequest, ReservationResponse
 from common.responses import success_response, error_response, validation_error_response
 from common.dynamo_dal import (
     DynamoDAL, 
@@ -68,14 +68,26 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
         # GET /reservations/me
         elif http_method == "GET" and "/reservations/me" in path:
             reservations = dal.list_user_reservations(user_id=user_info["user_id"])
+            # Anexa data/hora/local da remada para o app mostrar algo legível
+            # ("Sáb 25/10 às 07:00") em vez de só o ID da sessão.
+            session_cache = {}
+            for res in reservations:
+                sid = res.get("session_id")
+                if sid not in session_cache:
+                    session_cache[sid] = dal.get_session(sid) or {}
+                s = session_cache[sid]
+                for field in ("date", "time", "end_time", "location", "status"):
+                    if s.get(field) is not None:
+                        res[f"session_{field}"] = s[field]
+            reservations.sort(key=lambda r: (r.get("session_date", ""), r.get("session_time", "")))
             return success_response(reservations, status_code=200)
 
         # GET /sessions/{sessionId}/reservations — roster da sessão (só Instrutor/Admin)
         elif http_method == "GET" and session_id and path.rstrip("/").endswith("reservations"):
             role = user_info.get("role", "ATHLETE")
-            if role not in ("INSTRUCTOR", "ADMIN"):
+            if role not in PRIVILEGED_ROLES:
                 return error_response(
-                    "Apenas instrutores ou administradores podem ver a lista de inscritos.",
+                    "Apenas lemes ou administradores podem ver a lista de inscritos.",
                     status_code=403,
                     error_code="FORBIDDEN",
                 )
@@ -85,9 +97,9 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
         # GET /reservations/recent — feed de atividade recente (só Instrutor/Admin)
         elif http_method == "GET" and "/reservations/recent" in path:
             role = user_info.get("role", "ATHLETE")
-            if role not in ("INSTRUCTOR", "ADMIN"):
+            if role not in PRIVILEGED_ROLES:
                 return error_response(
-                    "Apenas instrutores ou administradores podem ver a atividade recente.",
+                    "Apenas lemes ou administradores podem ver a atividade recente.",
                     status_code=403,
                     error_code="FORBIDDEN",
                 )

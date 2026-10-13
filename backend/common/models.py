@@ -19,9 +19,14 @@ class AccessibilityType(str, Enum):
 
 
 class UserRole(str, Enum):
-    ATHLETE = "ATHLETE"
-    INSTRUCTOR = "INSTRUCTOR"
-    ADMIN = "ADMIN"
+    ATHLETE = "ATHLETE"        # Remador
+    LEME = "LEME"              # Leme: abre remadas, vê lista com indicadores, complementa cadastros
+    INSTRUCTOR = "INSTRUCTOR"  # Legado — tratado igual a LEME
+    ADMIN = "ADMIN"            # Acesso total
+
+
+# Perfis que podem gerenciar remadas e ver a lista de remadores.
+PRIVILEGED_ROLES = {"LEME", "INSTRUCTOR", "ADMIN"}
 
 
 class SessionStatus(str, Enum):
@@ -73,6 +78,20 @@ class SessionCreateRequest(BaseModel):
     max_adapted_seats: int = Field(2, ge=0, le=4, description="Limite de assentos adaptados disponíveis")
     instructor_name: Optional[str] = Field(None, max_length=100)
     notes: Optional[str] = Field(None, max_length=500)
+    end_time: Optional[str] = Field(None, description="Horário aproximado de término (HH:MM)")
+    vests_available: Optional[int] = Field(None, ge=0, le=200, description="Coletes separados para quem não tem")
+    paddles_available: Optional[int] = Field(None, ge=0, le=200, description="Remos separados para quem não tem")
+
+    @field_validator("end_time")
+    @classmethod
+    def validate_end_time(cls, v: Optional[str]) -> Optional[str]:
+        if v in (None, ""):
+            return None
+        try:
+            datetime.strptime(v, "%H:%M")
+        except ValueError:
+            raise ValueError("Formato de hora de término inválido. Utilize HH:MM.")
+        return v
 
     @field_validator("date")
     @classmethod
@@ -110,6 +129,20 @@ class SessionUpdateRequest(BaseModel):
     max_adapted_seats: Optional[int] = Field(None, ge=0, le=4)
     instructor_name: Optional[str] = Field(None, max_length=100)
     notes: Optional[str] = Field(None, max_length=500)
+    end_time: Optional[str] = Field(None, description="Horário aproximado de término (HH:MM)")
+    vests_available: Optional[int] = Field(None, ge=0, le=200)
+    paddles_available: Optional[int] = Field(None, ge=0, le=200)
+
+    @field_validator("end_time")
+    @classmethod
+    def validate_end_time(cls, v: Optional[str]) -> Optional[str]:
+        if v in (None, ""):
+            return None
+        try:
+            datetime.strptime(v, "%H:%M")
+        except ValueError:
+            raise ValueError("Formato de hora de término inválido. Utilize HH:MM.")
+        return v
 
     @field_validator("date")
     @classmethod
@@ -147,6 +180,9 @@ class SessionResponse(BaseModel):
     status: SessionStatus = SessionStatus.OPEN
     instructor_name: Optional[str] = None
     notes: Optional[str] = None
+    end_time: Optional[str] = None
+    vests_available: Optional[int] = None
+    paddles_available: Optional[int] = None
     created_at: str
 
     @property

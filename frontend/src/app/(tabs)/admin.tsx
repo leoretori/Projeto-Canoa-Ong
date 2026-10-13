@@ -10,6 +10,9 @@ import { showAlert } from '../../utils/alert';
 import { useSessions } from '../../hooks/useSessions';
 import { api, Reservation, Session, AdminUser } from '../../services/api';
 import { getCurrentUserRole } from '../../services/auth';
+import { ASSIGNABLE_ROLES, roleLabel } from '../../utils/roles';
+import { DateField, TimeField } from '../../components/DateTimeField';
+import { formatSessionDate, formatTimeRange, todayIso, tomorrowIso } from '../../utils/date';
 
 function exportRosterToCsv(session: Session, roster: Reservation[]) {
   const header = 'Nome,E-mail,Assento Adaptado,Status,Observações';
@@ -35,18 +38,36 @@ function exportRosterToCsv(session: Session, roster: Reservation[]) {
   }
 }
 
-const EMPTY_FORM = {
-  date: '2026-10-28',
-  time: '06:00',
+// Formulário novo sempre começa no dia seguinte (nunca numa data fixa).
+const makeEmptyForm = () => ({
+  date: tomorrowIso(),
+  time: '07:00',
+  endTime: '',
   location: 'Praia Grande - São Sebastião',
-  canoeType: 'Canoa OC6 (Ohana)',
+  canoeType: 'OC6',
   totalCapacity: '6',
   maxAdaptedSeats: '2',
-  instructorName: 'Instrutor Kaique',
-};
+  instructorName: '',
+  vests: '',
+  paddles: '',
+});
+
+// Indicadores de atenção ao lado do nome do remador.
+// Hoje só "assento adaptado" vem da reserva; os demais (não sabe nadar, doença
+// preexistente, medo do mar) entram quando o cadastro completo for implementado.
+function attentionIcons(res: Reservation): { emoji: string; label: string }[] {
+  const icons: { emoji: string; label: string }[] = [];
+  if (res.requires_adapted_seat) icons.push({ emoji: '♿', label: 'Mobilidade reduzida / cadeirante' });
+  return icons;
+}
+
+function needsAttention(res: Reservation): boolean {
+  return attentionIcons(res).length > 0;
+}
 
 export default function AdminScreen() {
-  const { sessions, loading, loadingMore, hasMore, error, createSession, refresh, loadMore } = useSessions();
+  const [showPast, setShowPast] = useState(false);
+  const { sessions, loading, loadingMore, hasMore, error, createSession, refresh, loadMore } = useSessions({ includePast: showPast });
   const [modalVisible, setModalVisible] = useState(false);
   const [editingSession, setEditingSession] = useState<Session | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -95,12 +116,12 @@ export default function AdminScreen() {
   };
 
   // Form states
-  const [form, setForm] = useState(EMPTY_FORM);
+  const [form, setForm] = useState(makeEmptyForm());
   const [creating, setCreating] = useState(false);
 
   const openCreateModal = () => {
     setEditingSession(null);
-    setForm(EMPTY_FORM);
+    setForm(makeEmptyForm());
     setModalVisible(true);
   };
 
@@ -109,11 +130,14 @@ export default function AdminScreen() {
     setForm({
       date: session.date,
       time: session.time,
+      endTime: session.end_time || '',
       location: session.location,
       canoeType: session.canoe_type,
       totalCapacity: String(session.total_capacity),
       maxAdaptedSeats: String(session.max_adapted_seats),
       instructorName: session.instructor_name || '',
+      vests: session.vests_available != null ? String(session.vests_available) : '',
+      paddles: session.paddles_available != null ? String(session.paddles_available) : '',
     });
     setModalVisible(true);
   };
@@ -123,15 +147,27 @@ export default function AdminScreen() {
       showAlert('Erro', 'Preencha a data, horário e ponto de embarque.');
       return;
     }
+    if (!editingSession && form.date < todayIso()) {
+      showAlert('Data no passado', 'Escolha hoje ou uma data futura para a remada.');
+      return;
+    }
+    if (form.endTime && form.endTime <= form.time) {
+      showAlert('Horário de término', 'O término precisa ser depois do horário de saída.');
+      return;
+    }
 
-    const payload = {
+    const toOptionalInt = (v: string) => (v.trim() === '' ? undefined : parseInt(v, 10));
+    const payload: Partial<Session> = {
       date: form.date,
       time: form.time,
+      end_time: form.endTime || undefined,
       location: form.location,
       canoe_type: form.canoeType,
       total_capacity: parseInt(form.totalCapacity, 10) || 6,
-      max_adapted_seats: parseInt(form.maxAdaptedSeats, 10) || 2,
+      max_adapted_seats: parseInt(form.maxAdaptedSeats, 10) || 0,
       instructor_name: form.instructorName,
+      vests_available: toOptionalInt(form.vests),
+      paddles_available: toOptionalInt(form.paddles),
     };
 
     try {
@@ -174,10 +210,10 @@ export default function AdminScreen() {
             </Text>
           </View>
           <Text className="text-2xl md:text-3xl font-extrabold text-primary tracking-tight" accessibilityRole="header">
-            Painel do Instrutor
+            Painel do Leme
           </Text>
           <Text className="text-sm md:text-base text-on-surface-variant leading-relaxed">
-            Controle de frota, horários, tripulação e assentos adaptados em tempo real com conformidade de segurança e salvamento náutico.
+            Abra remadas, veja quem se inscreveu e prepare o embarque.
           </Text>
         </View>
 
@@ -202,30 +238,10 @@ export default function AdminScreen() {
         </View>
       </View>
 
-      {/* AMBIENT PHOTO BANNER */}
-      <View className="relative w-full rounded-3xl overflow-hidden shadow-sm bg-surface-container-low p-6 md:p-8 mb-6 border border-outline-variant/30 flex-row items-center justify-between">
-        <View className="max-w-xl flex flex-col gap-1.5">
-          <View className="px-2.5 py-0.5 rounded-md bg-secondary-container/40 self-start">
-            <Text className="text-[11px] font-bold text-on-secondary-container uppercase tracking-wider">
-              Guarderia Guardiã dos Mares
-            </Text>
-          </View>
-          <Text className="text-lg md:text-xl font-extrabold text-primary">
-            Equipamentos & Suporte em Prontidão
-          </Text>
-          <Text className="text-xs md:text-sm text-on-surface-variant leading-relaxed">
-            Canoas modelo OC6 estabilizadas com iacos e ama de flutuação positiva. Esteiras acessíveis estendidas na faixa de areia.
-          </Text>
-        </View>
-        <View className="w-14 h-14 rounded-2xl bg-secondary-container text-on-secondary-container items-center justify-center hidden sm:flex shrink-0">
-          <Text className="text-3xl">🏄</Text>
-        </View>
-      </View>
-
       {/* QUICK MANAGEMENT GRID: USERS / ADMIN & RECENT ACTIVITIES */}
       <View className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-6">
         {/* Left Column: Admin & Athletes Quick Management */}
-        <View className="lg:col-span-7 bg-surface-container-lowest rounded-3xl p-6 shadow-sm border border-outline-variant/30 flex flex-col justify-between">
+        <View className={`${isAdmin ? "" : "hidden "}lg:col-span-7 bg-surface-container-lowest rounded-3xl p-6 shadow-sm border border-outline-variant/30 flex flex-col justify-between`}>
           <View>
             <View className="flex-row items-start justify-between gap-3 mb-4">
               <View className="flex-row items-center gap-3">
@@ -233,28 +249,12 @@ export default function AdminScreen() {
                   <Text className="text-xl">👥</Text>
                 </View>
                 <View>
-                  <Text className="text-base font-bold text-on-surface">Gerenciar Usuários & Atletas</Text>
-                  <Text className="text-xs text-on-surface-variant">Prontuários náuticos, fichas e níveis de autonomia</Text>
+                  <Text className="text-base font-bold text-on-surface">Usuários</Text>
+                  <Text className="text-xs text-on-surface-variant">Perfis de acesso: remador, leme e administrador</Text>
                 </View>
               </View>
               <View className="px-2.5 py-1 rounded-full bg-surface-container-high">
-                <Text className="text-[11px] font-bold text-primary">Gestão CPT</Text>
-              </View>
-            </View>
-
-            {/* Quick Stats Pills */}
-            <View className="grid grid-cols-3 gap-3 mb-4">
-              <View className="p-3.5 bg-surface-container-low rounded-2xl border border-outline-variant/20">
-                <Text className="text-[11px] font-bold text-on-surface-variant">Alunos Ativos</Text>
-                <Text className="text-xl font-extrabold text-primary mt-0.5">48</Text>
-              </View>
-              <View className="p-3.5 bg-surface-container-low rounded-2xl border border-outline-variant/20">
-                <Text className="text-[11px] font-bold text-on-surface-variant">Paratletas (PCD)</Text>
-                <Text className="text-xl font-extrabold text-secondary mt-0.5">19</Text>
-              </View>
-              <View className="p-3.5 bg-surface-container-low rounded-2xl border border-outline-variant/20">
-                <Text className="text-[11px] font-bold text-on-surface-variant">Fichas Válidas</Text>
-                <Text className="text-xl font-extrabold text-tertiary-container mt-0.5">100%</Text>
+                <Text className="text-xs font-bold text-primary">Gestão CPT</Text>
               </View>
             </View>
 
@@ -262,36 +262,35 @@ export default function AdminScreen() {
             {isAdmin && <UserManagementSection />}
           </View>
 
-          <View className="pt-3 border-t border-outline-variant/20 flex-row items-center justify-between text-xs text-on-surface-variant">
-            <View className="flex-row items-center gap-1.5">
-              <Text className="text-xs">🛡️</Text>
-              <Text className="text-xs text-on-surface-variant font-medium">Protocolo de Segurança Médica Atualizado</Text>
-            </View>
-          </View>
         </View>
 
         {/* Right Column: Recent Activity Feed */}
-        <View className="lg:col-span-5 bg-surface-container-lowest rounded-3xl p-6 shadow-sm border border-outline-variant/30 flex flex-col justify-between">
+        <View className={`${isAdmin ? "lg:col-span-5" : "lg:col-span-12"} bg-surface-container-lowest rounded-3xl p-6 shadow-sm border border-outline-variant/30 flex flex-col justify-between`}>
           <RecentActivitySection />
         </View>
       </View>
 
       {/* SCHEDULED OUTINGS FLEET CONTROL (REMADAS AGENDADAS) */}
       <View className="flex flex-col gap-4 mb-6">
-        <View className="flex-row items-center justify-between">
-          <View>
+        <View className="flex-row flex-wrap items-center justify-between gap-3">
+          <View className="flex-1 min-w-[200px]">
             <Text className="text-lg md:text-xl font-extrabold text-primary">
-              Remadas Agendadas (Controle de Frota)
+              {showPast ? 'Todas as remadas' : 'Remadas em aberto'}
             </Text>
-            <Text className="text-xs text-on-surface-variant">
-              Gerenciamento de tripulação, assento adaptado e check-in na água
+            <Text className="text-sm text-on-surface-variant">
+              {showPast ? 'Incluindo remadas que já aconteceram' : 'De hoje em diante'}
             </Text>
           </View>
 
-          <View className="hidden sm:flex px-3 py-1.5 rounded-xl bg-surface-container-high text-primary flex-row items-center gap-1.5">
-            <Text className="text-xs">📅</Text>
-            <Text className="text-xs font-bold text-primary">Temporada Ativa</Text>
-          </View>
+          <TouchableOpacity
+            onPress={() => setShowPast((v) => !v)}
+            className="px-4 py-3 rounded-xl bg-surface-container-high flex-row items-center gap-2"
+            accessibilityRole="button"
+          >
+            <Text className="text-sm font-bold text-primary">
+              {showPast ? 'Ver só em aberto' : 'Ver anteriores'}
+            </Text>
+          </TouchableOpacity>
         </View>
 
         {loading && sessions.length === 0 ? (
@@ -302,7 +301,7 @@ export default function AdminScreen() {
         ) : sessions.length === 0 ? (
           <View className="bg-surface-container-lowest p-8 rounded-3xl border border-outline-variant/30 items-center text-center shadow-sm">
             <Text className="text-4xl mb-3">🛶</Text>
-            <Text className="text-lg font-bold text-on-surface mb-1">Nenhuma remada cadastrada na frota</Text>
+            <Text className="text-lg font-bold text-on-surface mb-1">Nenhuma remada em aberto</Text>
             <Text className="text-xs text-on-surface-variant mb-4">
               Toque no botão "+ Nova Remada" acima para abrir horários no calendário inclusivo.
             </Text>
@@ -323,16 +322,16 @@ export default function AdminScreen() {
                   <View className="flex flex-col gap-1">
                     <View className="flex-row flex-wrap items-center gap-2">
                       <Text className="text-lg font-bold text-primary">
-                        {session.date} • {session.time}
+                        {formatSessionDate(session.date)} • {formatTimeRange(session.time, session.end_time)}
                       </Text>
                       <Text className="text-outline-variant">•</Text>
                       <Text className="text-xs font-bold text-on-surface">
                         {session.location} • Canoa {session.canoe_type}
                       </Text>
                     </View>
-                    <Text className="text-xs text-on-surface-variant">
-                      Saída monitorada • Condição: Ondulação suave de 0.4m, vento terral calmo (4 nós).
-                    </Text>
+                    {session.notes ? (
+                      <Text className="text-xs text-on-surface-variant">{session.notes}</Text>
+                    ) : null}
                   </View>
 
                   <View className={`px-3 py-1 rounded-full self-start md:self-auto ${
@@ -341,7 +340,7 @@ export default function AdminScreen() {
                     <Text className={`text-xs font-bold ${
                       isCancelled ? 'text-rose-800' : isFull ? 'text-amber-800' : 'text-on-secondary-container'
                     }`}>
-                      {isCancelled ? 'CANCELADA' : isFull ? 'ESGOTADA' : 'ABERTA / OPEN'}
+                      {isCancelled ? 'CANCELADA' : isFull ? 'ESGOTADA' : 'ABERTA'}
                     </Text>
                   </View>
                 </View>
@@ -349,10 +348,10 @@ export default function AdminScreen() {
                 {/* Metrics Overview Bento */}
                 <View className="grid grid-cols-2 lg:grid-cols-4 gap-3">
                   <View className="p-3.5 bg-surface-container-low rounded-2xl border border-outline-variant/20">
-                    <Text className="text-[11px] font-bold text-on-surface-variant">Capacidade Geral</Text>
+                    <Text className="text-xs font-bold text-on-surface-variant">Capacidade Geral</Text>
                     <View className="flex-row items-baseline gap-1.5 mt-0.5">
                       <Text className="text-lg font-extrabold text-primary">{session.booked_seats} / {session.total_capacity}</Text>
-                      <Text className="text-[11px] text-on-surface-variant">remadores</Text>
+                      <Text className="text-xs text-on-surface-variant">remadores</Text>
                     </View>
                     <View className="w-full bg-surface-container h-1.5 rounded-full mt-2 overflow-hidden">
                       <View className="bg-primary h-full rounded-full" style={{ width: `${Math.max(5, occupancyPercent)}%` }} />
@@ -360,28 +359,31 @@ export default function AdminScreen() {
                   </View>
 
                   <View className="p-3.5 bg-surface-container-low rounded-2xl border border-outline-variant/20">
-                    <Text className="text-[11px] font-bold text-secondary">♿ Assentos Adaptados</Text>
+                    <Text className="text-xs font-bold text-secondary">♿ Assentos Adaptados</Text>
                     <View className="flex-row items-baseline gap-1.5 mt-0.5">
                       <Text className="text-lg font-extrabold text-secondary">{session.booked_adapted_seats} / {session.max_adapted_seats}</Text>
-                      <Text className="text-[11px] text-on-surface-variant">ocupados</Text>
+                      <Text className="text-xs text-on-surface-variant">ocupados</Text>
                     </View>
-                    <Text className="text-[11px] text-on-surface-variant mt-1">
+                    <Text className="text-xs text-on-surface-variant mt-1">
                       {session.max_adapted_seats - session.booked_adapted_seats} vagas com encosto fixo
                     </Text>
                   </View>
 
                   <View className="p-3.5 bg-surface-container-low rounded-2xl border border-outline-variant/20">
-                    <Text className="text-[11px] font-bold text-on-surface-variant">Instrutor Responsável</Text>
-                    <Text className="text-xs font-bold text-on-surface mt-0.5 truncate">
-                      {session.instructor_name || 'Mestre Kaique'}
+                    <Text className="text-xs font-bold text-on-surface-variant">Leme responsável</Text>
+                    <Text className="text-sm font-bold text-on-surface mt-0.5 truncate">
+                      {session.instructor_name || 'A definir'}
                     </Text>
-                    <Text className="text-[10px] text-on-surface-variant">Auxiliar náutico escalado</Text>
                   </View>
 
                   <View className="p-3.5 bg-surface-container-low rounded-2xl border border-outline-variant/20">
-                    <Text className="text-[11px] font-bold text-on-surface-variant">Segurança Marítima</Text>
-                    <Text className="text-xs font-bold text-primary mt-0.5">Barco de Apoio 01</Text>
-                    <Text className="text-[10px] text-on-surface-variant">Rádio VHF Canal 16 Ativo</Text>
+                    <Text className="text-xs font-bold text-on-surface-variant">Equipamentos separados</Text>
+                    <Text className="text-sm font-bold text-on-surface mt-0.5">
+                      🦺 {session.vests_available ?? 0} coletes
+                    </Text>
+                    <Text className="text-sm font-bold text-on-surface">
+                      🛶 {session.paddles_available ?? 0} remos
+                    </Text>
                   </View>
                 </View>
 
@@ -418,20 +420,26 @@ export default function AdminScreen() {
                           {rosterCache[session.session_id].map((res) => (
                             <View 
                               key={res.reservation_id}
-                              className="flex-row items-center justify-between p-3 rounded-xl bg-surface-container-lowest border border-outline-variant/20"
+                              className={`flex-row items-center justify-between p-3 rounded-xl border ${
+                                needsAttention(res)
+                                  ? 'bg-amber-50 border-amber-400 border-l-4 dark:bg-amber-900/30'
+                                  : 'bg-surface-container-lowest border-outline-variant/20'
+                              }`}
                             >
                               <View className="flex-1 pr-2">
-                                <Text className="text-xs font-bold text-on-surface">{res.user_name}</Text>
-                                <Text className="text-[11px] text-on-surface-variant">{res.user_email}</Text>
+                                <Text className="text-sm font-bold text-on-surface">{res.user_name}</Text>
+                                <Text className="text-xs text-on-surface-variant">{res.user_email}</Text>
                                 {res.notes && (
-                                  <Text className="text-[10px] text-primary mt-0.5">Obs: {res.notes}</Text>
+                                  <Text className="text-xs text-primary mt-0.5">Obs: {res.notes}</Text>
                                 )}
                               </View>
-                              {res.requires_adapted_seat && (
-                                <View className="px-2.5 py-1 rounded-full bg-secondary-container/40">
-                                  <Text className="text-[10px] font-bold text-on-secondary-container">♿ Adaptado</Text>
-                                </View>
-                              )}
+                              <View className="flex-row gap-1">
+                                {attentionIcons(res).map((icon) => (
+                                  <View key={icon.emoji} className="px-2 py-1 rounded-full bg-amber-100" accessibilityLabel={icon.label}>
+                                    <Text className="text-sm">{icon.emoji}</Text>
+                                  </View>
+                                ))}
+                              </View>
                             </View>
                           ))}
 
@@ -526,7 +534,7 @@ export default function AdminScreen() {
             <Text className="text-2xl">🛶</Text>
             <View>
               <Text className="text-base font-bold text-white leading-tight">2 OC6</Text>
-              <Text className="text-[11px] text-surface-container-high">Canoas na água</Text>
+              <Text className="text-xs text-surface-container-high">Canoas na água</Text>
             </View>
           </View>
 
@@ -534,7 +542,7 @@ export default function AdminScreen() {
             <Text className="text-2xl">🦺</Text>
             <View>
               <Text className="text-base font-bold text-white leading-tight">3 Coletes</Text>
-              <Text className="text-[11px] text-surface-container-high">Adaptados prontos</Text>
+              <Text className="text-xs text-surface-container-high">Adaptados prontos</Text>
             </View>
           </View>
 
@@ -542,7 +550,7 @@ export default function AdminScreen() {
             <Text className="text-2xl">🏖️</Text>
             <View>
               <Text className="text-base font-bold text-white leading-tight">Instalada</Text>
-              <Text className="text-[11px] text-surface-container-high">Esteira na areia</Text>
+              <Text className="text-xs text-surface-container-high">Esteira na areia</Text>
             </View>
           </View>
         </View>
@@ -551,7 +559,7 @@ export default function AdminScreen() {
       {/* MODAL DE CRIAÇÃO / EDIÇÃO DE REMADA */}
       <Modal visible={modalVisible} animationType="slide" transparent={true}>
         <View className="flex-1 bg-black/60 justify-end">
-          <View className="bg-surface-container-lowest p-6 rounded-t-3xl max-h-[85%] border-t border-outline-variant/30">
+          <View className="bg-surface-container-lowest p-5 rounded-t-3xl max-h-[92%] w-full max-w-2xl self-center border-t border-outline-variant/30">
             <View className="flex-row items-center justify-between mb-4">
               <View className="flex-row items-center gap-2">
                 <Text className="text-xl">🛶</Text>
@@ -564,61 +572,93 @@ export default function AdminScreen() {
               </TouchableOpacity>
             </View>
 
-            <ScrollView className="space-y-4 mb-4">
+            <ScrollView className="mb-4" contentContainerStyle={{ gap: 16 }}>
+              <DateField
+                label="Data da remada"
+                required
+                value={form.date}
+                min={editingSession ? undefined : todayIso()}
+                onChange={(v) => setForm((f) => ({ ...f, date: v }))}
+              />
+
+              <View className="flex-row gap-3">
+                <View className="flex-1">
+                  <TimeField
+                    label="Saída"
+                    required
+                    value={form.time}
+                    onChange={(v) => setForm((f) => ({ ...f, time: v }))}
+                  />
+                </View>
+                <View className="flex-1">
+                  <TimeField
+                    label="Término (aprox.)"
+                    value={form.endTime}
+                    onChange={(v) => setForm((f) => ({ ...f, endTime: v }))}
+                  />
+                </View>
+              </View>
+
               <View>
-                <Text className="text-xs font-bold text-on-surface mb-1">Data (AAAA-MM-DD)</Text>
+                <Text className="text-sm font-bold text-on-surface mb-1.5">Ponto de embarque</Text>
                 <TextInput
-                  className="bg-surface-container-low border border-outline-variant/30 rounded-xl px-4 py-3 text-on-surface text-sm"
-                  value={form.date}
-                  onChangeText={(v) => setForm((f) => ({ ...f, date: v }))}
-                  placeholder="2026-10-28"
-                />
-              </View>
-
-              <View className="mt-3">
-                <Text className="text-xs font-bold text-on-surface mb-1">Horário de Embarque (HH:MM)</Text>
-                <TextInput
-                  className="bg-surface-container-low border border-outline-variant/30 rounded-xl px-4 py-3 text-on-surface text-sm"
-                  value={form.time}
-                  onChangeText={(v) => setForm((f) => ({ ...f, time: v }))}
-                  placeholder="06:00"
-                />
-              </View>
-
-              <View className="mt-3">
-                <Text className="text-xs font-bold text-on-surface mb-1">Ponto de Embarque / Praia</Text>
-                <TextInput
-                  className="bg-surface-container-low border border-outline-variant/30 rounded-xl px-4 py-3 text-on-surface text-sm"
+                  className="bg-surface-container-low border border-outline-variant/40 rounded-2xl px-4 py-3.5 text-on-surface text-lg"
                   value={form.location}
                   onChangeText={(v) => setForm((f) => ({ ...f, location: v }))}
                 />
               </View>
 
-              <View className="grid grid-cols-2 gap-3 mt-3">
-                <View>
-                  <Text className="text-xs font-bold text-on-surface mb-1">Vagas Totais (máx. 12)</Text>
+              <View className="flex-row gap-3">
+                <View className="flex-1">
+                  <Text className="text-sm font-bold text-on-surface mb-1.5">Vagas totais (máx. 12)</Text>
                   <TextInput
-                    className="bg-surface-container-low border border-outline-variant/30 rounded-xl px-4 py-3 text-on-surface text-sm"
+                    className="bg-surface-container-low border border-outline-variant/40 rounded-2xl px-4 py-3.5 text-on-surface text-lg"
                     value={form.totalCapacity}
-                    onChangeText={(v) => setForm((f) => ({ ...f, totalCapacity: v }))}
-                    keyboardType="numeric"
+                    onChangeText={(v) => setForm((f) => ({ ...f, totalCapacity: v.replace(/\D/g, '') }))}
+                    keyboardType="number-pad"
                   />
                 </View>
-                <View>
-                  <Text className="text-xs font-bold text-secondary mb-1">♿ Vagas Adaptadas (máx. 4)</Text>
+                <View className="flex-1">
+                  <Text className="text-sm font-bold text-secondary mb-1.5">♿ Adaptadas (máx. 4)</Text>
                   <TextInput
-                    className="bg-secondary-container/30 border border-secondary-container rounded-xl px-4 py-3 text-primary font-bold text-sm"
+                    className="bg-surface-container-low border border-outline-variant/40 rounded-2xl px-4 py-3.5 text-on-surface text-lg"
                     value={form.maxAdaptedSeats}
-                    onChangeText={(v) => setForm((f) => ({ ...f, maxAdaptedSeats: v }))}
-                    keyboardType="numeric"
+                    onChangeText={(v) => setForm((f) => ({ ...f, maxAdaptedSeats: v.replace(/\D/g, '') }))}
+                    keyboardType="number-pad"
                   />
                 </View>
               </View>
 
-              <View className="mt-3">
-                <Text className="text-xs font-bold text-on-surface mb-1">Instrutor(a) Timoneiro(a)</Text>
+              <View>
+                <Text className="text-sm font-bold text-on-surface mb-1">Equipamentos separados para quem não tem</Text>
+                <View className="flex-row gap-3">
+                  <View className="flex-1">
+                    <Text className="text-xs text-on-surface-variant mb-1">🦺 Coletes</Text>
+                    <TextInput
+                      className="bg-surface-container-low border border-outline-variant/40 rounded-2xl px-4 py-3.5 text-on-surface text-lg"
+                      value={form.vests}
+                      placeholder="0"
+                      onChangeText={(v) => setForm((f) => ({ ...f, vests: v.replace(/\D/g, '') }))}
+                      keyboardType="number-pad"
+                    />
+                  </View>
+                  <View className="flex-1">
+                    <Text className="text-xs text-on-surface-variant mb-1">🛶 Remos</Text>
+                    <TextInput
+                      className="bg-surface-container-low border border-outline-variant/40 rounded-2xl px-4 py-3.5 text-on-surface text-lg"
+                      value={form.paddles}
+                      placeholder="0"
+                      onChangeText={(v) => setForm((f) => ({ ...f, paddles: v.replace(/\D/g, '') }))}
+                      keyboardType="number-pad"
+                    />
+                  </View>
+                </View>
+              </View>
+
+              <View>
+                <Text className="text-sm font-bold text-on-surface mb-1.5">Leme responsável</Text>
                 <TextInput
-                  className="bg-surface-container-low border border-outline-variant/30 rounded-xl px-4 py-3 text-on-surface text-sm"
+                  className="bg-surface-container-low border border-outline-variant/40 rounded-2xl px-4 py-3.5 text-on-surface text-lg"
                   value={form.instructorName}
                   onChangeText={(v) => setForm((f) => ({ ...f, instructorName: v }))}
                 />
@@ -631,7 +671,7 @@ export default function AdminScreen() {
                 onPress={() => setModalVisible(false)}
                 disabled={creating}
               >
-                <Text className="text-on-surface-variant font-bold text-xs">Cancelar</Text>
+                <Text className="text-on-surface-variant font-bold text-base">Cancelar</Text>
               </TouchableOpacity>
 
               <TouchableOpacity
@@ -642,8 +682,8 @@ export default function AdminScreen() {
                 {creating ? (
                   <ActivityIndicator size="small" color="#ffffff" />
                 ) : (
-                  <Text className="text-white font-bold text-xs">
-                    {editingSession ? 'Salvar Alterações' : 'Salvar e Publicar Remada'}
+                  <Text className="text-white font-bold text-base">
+                    {editingSession ? 'Salvar alterações' : 'Publicar remada'}
                   </Text>
                 )}
               </TouchableOpacity>
@@ -686,11 +726,11 @@ function RecentActivitySection() {
             </View>
             <View>
               <Text className="text-base font-bold text-on-surface">Atividade Recente</Text>
-              <Text className="text-[11px] text-on-surface-variant">Últimas 24 horas na base</Text>
+              <Text className="text-xs text-on-surface-variant">Últimas inscrições</Text>
             </View>
           </View>
           <View className="px-2 py-0.5 rounded-full bg-primary/10">
-            <Text className="text-[10px] font-bold text-primary">{activity.length} Eventos</Text>
+            <Text className="text-xs font-bold text-primary">{activity.length} Eventos</Text>
           </View>
         </View>
 
@@ -710,7 +750,7 @@ function RecentActivitySection() {
                     <Text className="font-bold">{res.user_name}</Text> se inscreveu na remada
                     {res.requires_adapted_seat ? ' (♿ adaptado)' : ''}.
                   </Text>
-                  <Text className="text-[10px] text-on-surface-variant mt-0.5">
+                  <Text className="text-xs text-on-surface-variant mt-0.5">
                     {new Date(res.created_at).toLocaleString('pt-BR')}
                   </Text>
                 </View>
@@ -750,7 +790,7 @@ function UserManagementSection() {
       setUpdatingUserId(userId);
       await api.adminSetUserRole(userId, role);
       setUsers((prev) => prev.map((u) => (u.user_id === userId ? { ...u, role } : u)));
-      showAlert('Papel Alterado', `Usuário agora tem permissão de ${role}.`);
+      showAlert('Perfil alterado', `Usuário agora é ${roleLabel(role)}.`);
     } catch (err: any) {
       showAlert('Erro', err.message || 'Não foi possível alterar o role.');
     } finally {
@@ -758,12 +798,12 @@ function UserManagementSection() {
     }
   };
 
-  const roleOptions: AdminUser['role'][] = ['ATHLETE', 'INSTRUCTOR', 'ADMIN'];
+  const roleOptions = ASSIGNABLE_ROLES as AdminUser['role'][];
 
   return (
     <View className="mt-4 pt-4 border-t border-outline-variant/20">
       <Text className="text-xs font-bold text-on-surface uppercase tracking-wider mb-2">
-        Acesso de Administrador (Roles)
+        Perfis de acesso
       </Text>
       {loadingUsers ? (
         <ActivityIndicator size="small" color="#004e68" />
@@ -772,7 +812,7 @@ function UserManagementSection() {
           {users.map((u) => (
             <View key={u.user_id} className="p-3 bg-surface-container-low rounded-xl border border-outline-variant/20">
               <Text className="text-xs font-bold text-on-surface">{u.name}</Text>
-              <Text className="text-[10px] text-on-surface-variant mb-2">{u.email}</Text>
+              <Text className="text-xs text-on-surface-variant mb-2">{u.email}</Text>
               <View className="flex-row gap-1.5">
                 {roleOptions.map((r) => (
                   <TouchableOpacity
@@ -780,10 +820,10 @@ function UserManagementSection() {
                     onPress={() => setRole(u.user_id, r)}
                     disabled={updatingUserId === u.user_id}
                     className={`px-2.5 py-1 rounded-full border ${
-                      u.role === r ? 'bg-primary border-primary' : 'bg-surface-container border-outline-variant/30'
+                      u.role === r || (r === 'LEME' && u.role === 'INSTRUCTOR') ? 'bg-primary border-primary' : 'bg-surface-container border-outline-variant/30'
                     }`}
                   >
-                    <Text className={`text-[10px] font-bold ${u.role === r ? 'text-white' : 'text-on-surface'}`}>{r}</Text>
+                    <Text className={`text-xs font-bold ${u.role === r || (r === 'LEME' && u.role === 'INSTRUCTOR') ? 'text-white' : 'text-on-surface'}`}>{roleLabel(r)}</Text>
                   </TouchableOpacity>
                 ))}
               </View>

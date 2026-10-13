@@ -151,3 +151,69 @@ def test_sessions_and_reservations_handlers(init_dynamo):
     my_res = json.loads(resp_me["body"])
     assert len(my_res) == 1
 
+
+
+INSTRUCTOR_CTX = {
+    "authorizer": {
+        "claims": {"sub": "leme-1", "email": "leme@vaaflow.org", "name": "Leme CPT", "custom:role": "LEME"}
+    }
+}
+
+
+def _create_session(date, time="07:00", capacity=6):
+    event = {
+        "httpMethod": "POST",
+        "requestContext": INSTRUCTOR_CTX,
+        "body": json.dumps({"date": date, "time": time, "total_capacity": capacity, "max_adapted_seats": 1}),
+    }
+    return sessions.handler(event, None)
+
+
+def test_sessions_list_returns_created_session(init_dynamo):
+    """Regressão: GET /sessions quebrava com NameError (session_id indefinido)
+    e o front mostrava dados de exemplo no lugar das remadas reais."""
+    created = _create_session("2099-01-10")
+    assert created["statusCode"] == 201
+    new_id = json.loads(created["body"])["session_id"]
+
+    resp = sessions.handler({"httpMethod": "GET", "queryStringParameters": None}, None)
+    assert resp["statusCode"] == 200
+    ids = [s["session_id"] for s in json.loads(resp["body"])]
+    assert new_id in ids
+
+
+def test_sessions_list_from_date_hides_past(init_dynamo):
+    _create_session("2000-01-01")
+    future = json.loads(_create_session("2099-02-02")["body"])["session_id"]
+
+    resp = sessions.handler(
+        {"httpMethod": "GET", "queryStringParameters": {"from": "2026-01-01"}}, None
+    )
+    body = json.loads(resp["body"])
+    assert resp["statusCode"] == 200
+    assert [s["session_id"] for s in body] == [future]
+
+
+def test_session_get_by_id_and_status_patch(init_dynamo):
+    sid = json.loads(_create_session("2099-03-03")["body"])["session_id"]
+
+    got = sessions.handler({"httpMethod": "GET", "pathParameters": {"sessionId": sid}}, None)
+    assert got["statusCode"] == 200
+
+    patched = sessions.handler({
+        "httpMethod": "PATCH",
+        "pathParameters": {"sessionId": sid},
+        "requestContext": INSTRUCTOR_CTX,
+        "body": json.dumps({"status": "CANCELLED"}),
+    }, None)
+    assert patched["statusCode"] == 200
+    assert json.loads(patched["body"])["status"] == "CANCELLED"
+
+
+def test_athlete_cannot_create_session(init_dynamo):
+    event = {
+        "httpMethod": "POST",
+        "requestContext": {"authorizer": {"claims": {"sub": "a1", "custom:role": "ATHLETE"}}},
+        "body": json.dumps({"date": "2099-01-01", "time": "07:00"}),
+    }
+    assert sessions.handler(event, None)["statusCode"] == 403
