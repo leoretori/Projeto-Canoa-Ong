@@ -9,6 +9,7 @@ from typing import Any, Dict
 from pydantic import ValidationError
 
 from common.models import UserProfileUpdate, UserProfileResponse, AccessibilityType, UserRole
+from common.identity import get_identity
 from common.responses import success_response, error_response, validation_error_response
 from common.dynamo_dal import DynamoDAL
 
@@ -19,17 +20,7 @@ dal = DynamoDAL()
 
 
 def get_user_from_event(event: Dict[str, Any]) -> Dict[str, str]:
-    """Extrai informações do usuário a partir dos claims do Amazon Cognito."""
-    authorizer = event.get("requestContext", {}).get("authorizer", {})
-    claims = authorizer.get("claims", {})
-    
-    # Fallback para desenvolvimento / testes locais
-    headers = event.get("headers") or {}
-    user_id = claims.get("sub") or headers.get("X-User-Id") or headers.get("x-user-id") or "mock-user-123"
-    email = claims.get("email") or headers.get("X-User-Email") or headers.get("x-user-email") or "remador@vaaflow.org"
-    name = claims.get("name") or headers.get("X-User-Name") or headers.get("x-user-name") or "Remador CPT"
-    
-    return {"user_id": user_id, "email": email, "name": name}
+    return get_identity(event)
 
 
 def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:

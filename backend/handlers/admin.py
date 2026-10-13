@@ -13,6 +13,7 @@ from typing import Any, Dict
 import boto3
 from botocore.exceptions import ClientError
 
+from common.identity import get_identity
 from common.responses import success_response, error_response
 
 logger = logging.getLogger()
@@ -25,10 +26,7 @@ VALID_ROLES = {"ATHLETE", "LEME", "ADMIN"}
 
 
 def get_user_role(event: Dict[str, Any]) -> str:
-    authorizer = event.get("requestContext", {}).get("authorizer", {})
-    claims = authorizer.get("claims", {})
-    headers = event.get("headers") or {}
-    return claims.get("custom:role") or headers.get("X-User-Role") or "ATHLETE"
+    return get_identity(event)["role"]
 
 
 def _map_cognito_user(user: Dict[str, Any]) -> Dict[str, Any]:

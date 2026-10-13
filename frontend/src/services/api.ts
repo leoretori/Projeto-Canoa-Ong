@@ -134,21 +134,8 @@ class ApiService {
       'Content-Type': 'application/json',
     };
     if (token) {
+      // A identidade vai só no token assinado; o servidor ignora cabeçalhos X-User-*.
       headers['Authorization'] = token;
-      try {
-        const base64 = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
-        const json = decodeURIComponent(
-          atob(base64)
-            .split('')
-            .map((c) => '%' + c.charCodeAt(0).toString(16).padStart(2, '0'))
-            .join('')
-        );
-        const payload = JSON.parse(json);
-        if (payload.sub) headers['X-User-Id'] = payload.sub;
-        if (payload.name) headers['X-User-Name'] = payload.name;
-        if (payload.email) headers['X-User-Email'] = payload.email;
-        if (payload['custom:role']) headers['X-User-Role'] = payload['custom:role'];
-      } catch {}
     } else {
       // Fallback apenas para backend/dev_server.py local (sem Cognito real).
       headers['X-User-Id'] = 'user-demo-me';

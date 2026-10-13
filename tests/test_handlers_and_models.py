@@ -217,3 +217,27 @@ def test_athlete_cannot_create_session(init_dynamo):
         "body": json.dumps({"date": "2099-01-01", "time": "07:00"}),
     }
     assert sessions.handler(event, None)["statusCode"] == 403
+
+
+def test_athlete_cannot_escalate_role_via_header(init_dynamo):
+    """Segurança: com token Cognito válido, o perfil vem SÓ do token.
+    Um remador sem custom:role não pode virar ADMIN mandando X-User-Role."""
+    event = {
+        "httpMethod": "POST",
+        "headers": {"X-User-Role": "ADMIN"},
+        "requestContext": {"authorizer": {"claims": {"sub": "a1", "email": "a@x.org", "name": "Atleta"}}},
+        "body": json.dumps({"date": "2099-01-01", "time": "07:00"}),
+    }
+    assert sessions.handler(event, None)["statusCode"] == 403
+
+
+def test_athlete_cannot_read_roster_via_header(init_dynamo):
+    sid = json.loads(_create_session("2099-04-04")["body"])["session_id"]
+    event = {
+        "httpMethod": "GET",
+        "path": f"/sessions/{sid}/reservations",
+        "pathParameters": {"sessionId": sid},
+        "headers": {"X-User-Role": "LEME"},
+        "requestContext": {"authorizer": {"claims": {"sub": "a1", "email": "a@x.org", "name": "Atleta"}}},
+    }
+    assert reservations.handler(event, None)["statusCode"] == 403
