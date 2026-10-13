@@ -91,56 +91,23 @@ export default function ProfileScreen() {
 
   return (
     <ScrollView 
-      className="flex-1 bg-surface px-4 py-6" 
+      className="flex-1 bg-surface"
+      contentContainerStyle={{ paddingHorizontal: 16, paddingTop: 16, paddingBottom: 32, width: '100%', maxWidth: 1100, alignSelf: 'center' }}
       accessibilityLabel="Meu Perfil de Remador e Acessibilidade"
     >
-      {/* HERO BANNER: STITCH DESIGN */}
-      <View className="relative overflow-hidden rounded-3xl bg-surface-container-lowest shadow-sm mb-6 p-6 md:p-8 border border-outline-variant/30">
-        <View className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-          <View className="max-w-2xl flex flex-col gap-1.5">
-            <View className="flex-row items-center gap-2 px-3 py-1 rounded-full bg-surface-container text-primary self-start">
-              <Text className="text-xs">🛡️</Text>
-              <Text className="text-xs font-bold text-primary">Cadastro Ativo de Paratleta</Text>
-            </View>
-            <Text className="text-2xl md:text-3xl font-extrabold text-primary tracking-tight" accessibilityRole="header">
-              Meu Perfil
-            </Text>
-            <Text className="text-sm md:text-base text-on-surface-variant leading-relaxed">
-              Esses dados ajudam a equipe do Canoa Para Todos a preparar seu embarque com conforto e segurança.
-            </Text>
-          </View>
-
-          <View className="flex-row items-center gap-3 bg-surface-container-low px-4 py-3 rounded-2xl border border-outline-variant/20 self-start md:self-center">
-            <View className="w-10 h-10 rounded-xl bg-secondary-container text-on-secondary-container items-center justify-center">
-              <Text className="text-lg">🌊</Text>
-            </View>
-            <View>
-              <Text className="text-xs font-bold text-on-surface">Base Guarderia</Text>
-              <Text className="text-xs text-on-surface-variant">Raia 1 • Mar Calmo</Text>
-            </View>
-          </View>
-        </View>
-      </View>
-
-      {/* AMBIENCE BANNER */}
-      <View className="rounded-3xl bg-surface-container-low p-5 md:p-6 mb-6 border border-outline-variant/30 flex-row items-center gap-4">
-        <View className="w-12 h-12 rounded-2xl bg-primary text-on-primary items-center justify-center shrink-0 shadow-sm">
-          <Text className="text-2xl">🛶</Text>
-        </View>
-        <View className="flex-1">
-          <Text className="text-base font-bold text-primary">Vivência Va'a Inclusiva</Text>
-          <Text className="text-xs text-on-surface-variant leading-relaxed">
-            Equipamento adaptado pré-ajustado conforme ficha técnica individual, com acompanhamento de monitores em praia e no mar.
-          </Text>
-        </View>
+      <View className="mb-4">
+        <Text className="text-2xl font-extrabold text-primary" accessibilityRole="header">Meu perfil</Text>
+        <Text className="text-sm text-on-surface-variant mt-0.5">
+          Esses dados ajudam a equipe a preparar seu embarque com conforto e segurança.
+        </Text>
       </View>
 
       {/* MAIN TWO-COLUMN GRID */}
-      <View className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start mb-8">
+      <View className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start mb-8">
         {/* LEFT COLUMN: Identity & Stats Card */}
-        <View className="lg:col-span-4 flex flex-col gap-6">
-          <View className="rounded-3xl bg-surface-container-lowest p-6 shadow-sm border border-outline-variant/30 flex flex-col items-center text-center">
-            <View className="w-24 h-24 rounded-full bg-primary-container text-on-primary items-center justify-center shadow-md mb-4">
+        <View className="lg:col-span-4 flex flex-col gap-4">
+          <View className="rounded-2xl bg-surface-container-lowest p-5 border border-outline-variant/30 flex flex-col items-center text-center">
+            <View className="w-16 h-16 rounded-full bg-primary-container items-center justify-center mb-3">
               <Text className="text-2xl font-extrabold text-white">
                 {getInitials(profile?.name)}
               </Text>
@@ -153,46 +120,22 @@ export default function ProfileScreen() {
             </View>
 
             <Text className="text-lg font-bold text-on-surface">{profile?.name || 'Atleta Canoa'}</Text>
-            <Text className="text-xs text-on-surface-variant mb-4">
-              ID de Remador: #CPT-{profile?.user_id ? profile.user_id.slice(-6).toUpperCase() : '2026-089'}
-            </Text>
 
-            <View className="w-full bg-surface-container-low rounded-2xl p-4 flex flex-col gap-2 text-left border border-outline-variant/20">
-              <View className="flex-row items-center justify-between">
-                <Text className="text-xs font-medium text-on-surface-variant">Presenças em 2026</Text>
-                <Text className="text-xs font-bold text-primary">14 Remadas</Text>
-              </View>
-              <View className="w-full bg-surface-container-high h-2 rounded-full overflow-hidden">
-                <View className="bg-primary h-full rounded-full" style={{ width: '78%' }} />
-              </View>
-              <Text className="text-xs text-on-surface-variant mt-1">
-                Próxima saída sugerida: Sábado às 08h30
-              </Text>
-            </View>
           </View>
 
-          <View className="rounded-3xl bg-surface-container-low p-6 border border-outline-variant/30">
-            <View className="flex-row items-center gap-2 text-primary mb-2">
-              <Text className="text-lg">🦺</Text>
-              <Text className="text-base font-bold text-primary">Diretrizes de Conforto</Text>
-            </View>
-            <Text className="text-xs text-on-surface-variant leading-relaxed">
-              Nossa equipe de apoio marítimo confere suas preferências antes do posicionamento das canoas OC-6 e V1. Você pode atualizar seus dados médicos ou logísticos a qualquer momento.
-            </Text>
-          </View>
         </View>
 
         {/* RIGHT COLUMN: Contact & Accessibility Form */}
-        <View className="lg:col-span-8 flex flex-col gap-6">
+        <View className="lg:col-span-8 flex flex-col gap-4">
           {/* Card 1: Dados Pessoais e de Contato */}
-          <View className="rounded-3xl bg-surface-container-lowest p-6 md:p-8 shadow-sm border border-outline-variant/30">
+          <View className="rounded-2xl bg-surface-container-lowest p-5 md:p-8 border border-outline-variant/30">
             <View className="flex-row items-center gap-3 mb-5">
               <View className="w-10 h-10 rounded-xl bg-surface-container flex items-center justify-center">
                 <Text className="text-lg">🪪</Text>
               </View>
-              <View>
-                <Text className="text-lg font-bold text-primary">Dados Pessoais e de Contato</Text>
-                <Text className="text-xs text-on-surface-variant">Canais diretos para confirmação de raia e avisos climáticos</Text>
+              <View className="flex-1">
+                <Text className="text-lg font-bold text-primary">Dados pessoais e contato</Text>
+                <Text className="text-xs text-on-surface-variant">Usados para avisos sobre suas remadas</Text>
               </View>
             </View>
 
@@ -266,14 +209,14 @@ export default function ProfileScreen() {
           </View>
 
           {/* Card 2: Acessibilidade e Necessidades Náuticas */}
-          <View className="rounded-3xl bg-surface-container-lowest p-6 md:p-8 shadow-sm border border-outline-variant/30">
+          <View className="rounded-2xl bg-surface-container-lowest p-5 md:p-8 border border-outline-variant/30">
             <View className="flex-row items-center gap-3 mb-5">
               <View className="w-10 h-10 rounded-xl bg-primary text-on-primary flex items-center justify-center">
                 <Text className="text-lg">♿</Text>
               </View>
-              <View>
-                <Text className="text-lg font-bold text-primary">Acessibilidade e Necessidades Náuticas</Text>
-                <Text className="text-xs text-on-surface-variant">Personalização de suporte de praia, esteira de areia e ajustes de banco</Text>
+              <View className="flex-1">
+                <Text className="text-lg font-bold text-primary">Acessibilidade</Text>
+                <Text className="text-xs text-on-surface-variant">Apoio na praia e ajustes na canoa</Text>
               </View>
             </View>
 

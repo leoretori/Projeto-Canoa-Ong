@@ -76,7 +76,7 @@ export default function MyReservationsScreen() {
           <Text className="text-base text-on-surface-variant">Suas vagas confirmadas.</Text>
         </View>
         <TouchableOpacity
-          onPress={() => router.push('/(tabs)')}
+          onPress={() => router.push('/painel')}
           className="min-h-[52px] px-5 rounded-2xl bg-primary flex-row items-center justify-center gap-2"
           accessibilityRole="button"
           accessibilityLabel="Agendar nova remada"
@@ -98,7 +98,7 @@ export default function MyReservationsScreen() {
             Escolha um horário no calendário para garantir seu lugar na canoa.
           </Text>
           <TouchableOpacity
-            onPress={() => router.push('/(tabs)')}
+            onPress={() => router.push('/painel')}
             className="min-h-[52px] px-6 rounded-2xl bg-primary items-center justify-center"
           >
             <Text className="text-white font-bold text-base">Ver horários disponíveis</Text>
