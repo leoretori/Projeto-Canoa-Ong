@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Tabs, useRouter } from 'expo-router';
 import { TouchableOpacity, Text, Platform, View, Image } from 'react-native';
 import { getCurrentUserRole, getCurrentUserEmail, signOut } from '../../services/auth';
+import { isPrivilegedRole } from '../../utils/roles';
 import { showAlert } from '../../utils/alert';
 import { ThemeToggle } from '../../components/ThemeToggle';
 
@@ -17,7 +18,7 @@ export default function TabsLayout() {
     getCurrentUserEmail().then(setEmail);
   }, []);
 
-  const isPrivileged = role === 'INSTRUCTOR' || role === 'ADMIN';
+  const isPrivileged = isPrivilegedRole(role);
 
   const doLogout = () => {
     signOut();
@@ -102,7 +103,7 @@ export default function TabsLayout() {
         name="admin" 
         options={{ 
           title: 'Gestão Va\'aFlow',
-          tabBarLabel: 'Instrutor',
+          tabBarLabel: 'Leme',
           href: isPrivileged ? undefined : null,
         }} 
       />

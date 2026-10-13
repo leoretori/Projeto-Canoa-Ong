@@ -21,7 +21,7 @@ logger.setLevel(logging.INFO)
 cognito = boto3.client("cognito-idp")
 USER_POOL_ID = os.environ["USER_POOL_ID"]
 
-VALID_ROLES = {"ATHLETE", "INSTRUCTOR", "ADMIN"}
+VALID_ROLES = {"ATHLETE", "LEME", "ADMIN"}
 
 
 def get_user_role(event: Dict[str, Any]) -> str:

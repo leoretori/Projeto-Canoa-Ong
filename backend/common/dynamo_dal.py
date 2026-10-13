@@ -114,8 +114,13 @@ class DynamoDAL:
             "status": session_data.get("status", "OPEN"),
             "instructor_name": session_data.get("instructor_name"),
             "notes": session_data.get("notes"),
+            "end_time": session_data.get("end_time"),
+            "vests_available": session_data.get("vests_available"),
+            "paddles_available": session_data.get("paddles_available"),
             "created_at": now
         }
+        # DynamoDB não aceita atributos None em put_item limpo — remove os vazios.
+        item = {k: v for k, v in item.items() if v is not None}
 
         self.table.put_item(Item=item)
         return item
@@ -126,15 +131,26 @@ class DynamoDAL:
         response = self.table.get_item(Key={"PK": pk, "SK": sk})
         return response.get("Item")
 
-    def list_sessions(self, limit: int = 50) -> List[Dict[str, Any]]:
-        """Lista próximas sessões ordenadas por Data#Hora via GSI1."""
-        response = self.table.query(
-            IndexName="GSI1",
-            KeyConditionExpression="GSI1PK = :gsi1pk",
-            ExpressionAttributeValues={":gsi1pk": "SESSIONS"},
-            ScanIndexForward=True,
-            Limit=limit
-        )
+    def list_sessions(self, limit: int = 50, from_date: Optional[str] = None) -> List[Dict[str, Any]]:
+        """Lista sessões ordenadas por Data#Hora via GSI1.
+        Com from_date (YYYY-MM-DD), traz só remadas a partir dessa data — evita que
+        remadas antigas ocupem a página e escondam as novas."""
+        if from_date:
+            response = self.table.query(
+                IndexName="GSI1",
+                KeyConditionExpression="GSI1PK = :gsi1pk AND GSI1SK >= :from",
+                ExpressionAttributeValues={":gsi1pk": "SESSIONS", ":from": from_date},
+                ScanIndexForward=True,
+                Limit=limit
+            )
+        else:
+            response = self.table.query(
+                IndexName="GSI1",
+                KeyConditionExpression="GSI1PK = :gsi1pk",
+                ExpressionAttributeValues={":gsi1pk": "SESSIONS"},
+                ScanIndexForward=True,
+                Limit=limit
+            )
         return response.get("Items", [])
 
     def list_recent_reservations(self, limit: int = 20) -> List[Dict[str, Any]]:

@@ -8,6 +8,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, TextInput, Switch, ActivityIndicator } from 'react-native';
 import { api, UserProfile } from '../../services/api';
 import { showAlert } from '../../utils/alert';
+import { roleLabel } from '../../utils/roles';
 
 const ACCESSIBILITY_TYPES: { value: UserProfile['accessibility_type']; label: string }[] = [
   { value: 'NONE', label: 'Nenhuma' },
@@ -64,7 +65,7 @@ export default function ProfileScreen() {
       });
       setSavedSuccess(true);
       setTimeout(() => setSavedSuccess(false), 4000);
-      showAlert('Sucesso! 🎉', 'Seu perfil náutico foi atualizado. Os instrutores e a equipe de praia terão acesso aos ajustes.');
+      showAlert('Sucesso! 🎉', 'Seu perfil náutico foi atualizado. Os lemes e a equipe de praia terão acesso aos ajustes.');
     } catch (err: any) {
       showAlert('Erro', err.message || 'Não foi possível salvar seu perfil.');
     } finally {
@@ -115,7 +116,7 @@ export default function ProfileScreen() {
             </View>
             <View>
               <Text className="text-xs font-bold text-on-surface">Base Guarderia</Text>
-              <Text className="text-[11px] text-on-surface-variant">Raia 1 • Mar Calmo</Text>
+              <Text className="text-xs text-on-surface-variant">Raia 1 • Mar Calmo</Text>
             </View>
           </View>
         </View>
@@ -146,8 +147,8 @@ export default function ProfileScreen() {
             </View>
 
             <View className="px-3 py-1 rounded-full bg-secondary-container/40 mb-2">
-              <Text className="text-[11px] font-bold text-on-secondary-container uppercase">
-                {profile?.role === 'ADMIN' ? 'Administrador Náutico' : profile?.role === 'INSTRUCTOR' ? 'Instrutor / Timoneiro' : 'Atleta / Praticante'}
+              <Text className="text-xs font-bold text-on-secondary-container uppercase">
+                {roleLabel(profile?.role)}
               </Text>
             </View>
 
@@ -164,7 +165,7 @@ export default function ProfileScreen() {
               <View className="w-full bg-surface-container-high h-2 rounded-full overflow-hidden">
                 <View className="bg-primary h-full rounded-full" style={{ width: '78%' }} />
               </View>
-              <Text className="text-[11px] text-on-surface-variant mt-1">
+              <Text className="text-xs text-on-surface-variant mt-1">
                 Próxima saída sugerida: Sábado às 08h30
               </Text>
             </View>
@@ -210,7 +211,7 @@ export default function ProfileScreen() {
                   <View className="flex-row items-center justify-between mb-1.5">
                     <Text className="text-xs font-bold text-on-surface">E-mail Cadastrado</Text>
                     <View className="px-2 py-0.5 rounded bg-surface-container">
-                      <Text className="text-[10px] font-bold text-primary">✓ Verificado</Text>
+                      <Text className="text-xs font-bold text-primary">✓ Verificado</Text>
                     </View>
                   </View>
                   <TextInput
@@ -243,7 +244,7 @@ export default function ProfileScreen() {
                 </View>
                 <View className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <View>
-                    <Text className="text-[11px] font-medium text-on-surface-variant mb-1">Nome Completo</Text>
+                    <Text className="text-xs font-medium text-on-surface-variant mb-1">Nome Completo</Text>
                     <TextInput
                       className="w-full h-11 px-3 rounded-xl bg-surface-container-lowest text-on-surface text-xs border border-outline-variant/30"
                       value={emergencyName}
@@ -251,7 +252,7 @@ export default function ProfileScreen() {
                     />
                   </View>
                   <View>
-                    <Text className="text-[11px] font-medium text-on-surface-variant mb-1">Telefone de Contato</Text>
+                    <Text className="text-xs font-medium text-on-surface-variant mb-1">Telefone de Contato</Text>
                     <TextInput
                       className="w-full h-11 px-3 rounded-xl bg-surface-container-lowest text-on-surface text-xs border border-outline-variant/30"
                       value={emergencyPhone}
@@ -283,10 +284,10 @@ export default function ProfileScreen() {
                   <View className="flex-row items-center gap-2 mb-0.5">
                     <Text className="text-xs font-bold text-on-surface">Necessidade de Assento Adaptado / Acessibilidade</Text>
                     <View className="px-2 py-0.5 rounded-full bg-secondary-container">
-                      <Text className="text-[10px] font-bold text-on-secondary-container">Recomendado</Text>
+                      <Text className="text-xs font-bold text-on-secondary-container">Recomendado</Text>
                     </View>
                   </View>
-                  <Text className="text-[11px] text-on-surface-variant leading-tight">
+                  <Text className="text-xs text-on-surface-variant leading-tight">
                     Ativando, seus agendamentos já vêm com assento adaptado e suporte de esteira pré-alocados pela nossa equipe de praia.
                   </Text>
                 </View>
@@ -335,7 +336,7 @@ export default function ProfileScreen() {
                 multiline
                 numberOfLines={3}
               />
-              <Text className="text-[11px] text-on-surface-variant mt-1">
+              <Text className="text-xs text-on-surface-variant mt-1">
                 Essas informações são confidenciais e compartilhadas apenas com o timoneiro e apoio técnico da raia.
               </Text>
             </View>

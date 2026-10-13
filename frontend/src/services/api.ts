@@ -7,6 +7,10 @@
 
 const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL || 'http://127.0.0.1:3333';
 
+// Dados de exemplo só são usados contra o servidor local de desenvolvimento.
+// Em produção, qualquer falha da API é repassada para a tela (nunca mascarada).
+const IS_LOCAL_API = /localhost|127\.0\.0\.1/.test(API_BASE_URL);
+
 import { getIdToken, notifySessionExpired } from './auth';
 
 export interface UserProfile {
@@ -16,7 +20,7 @@ export interface UserProfile {
   phone?: string;
   has_accessibility_needs: boolean;
   accessibility_type: 'NONE' | 'WHEELCHAIR' | 'REDUCED_MOBILITY' | 'VISUAL_IMPAIRMENT' | 'OTHER';
-  role: 'ATHLETE' | 'INSTRUCTOR' | 'ADMIN';
+  role: 'ATHLETE' | 'LEME' | 'INSTRUCTOR' | 'ADMIN';
   notes?: string;
 }
 
@@ -24,7 +28,7 @@ export interface AdminUser {
   user_id: string;
   email: string;
   name: string;
-  role: 'ATHLETE' | 'INSTRUCTOR' | 'ADMIN';
+  role: 'ATHLETE' | 'LEME' | 'INSTRUCTOR' | 'ADMIN';
   status: string;
   enabled: boolean;
 }
@@ -42,6 +46,9 @@ export interface Session {
   status: 'OPEN' | 'FULL' | 'CANCELLED' | 'COMPLETED';
   instructor_name?: string;
   notes?: string;
+  end_time?: string;
+  vests_available?: number;
+  paddles_available?: number;
 }
 
 export interface Reservation {
@@ -54,6 +61,12 @@ export interface Reservation {
   status: string;
   notes?: string;
   created_at: string;
+  // Anexados pelo backend em GET /reservations/me
+  session_date?: string;
+  session_time?: string;
+  session_end_time?: string;
+  session_location?: string;
+  session_status?: string;
 }
 
 // Fallback in-memory para testes puramente de UI
@@ -153,16 +166,18 @@ class ApiService {
     }
   }
 
-  async getSessions(limit: number = 50): Promise<Session[]> {
+  async getSessions(limit: number = 50, fromDate?: string): Promise<Session[]> {
     try {
-      const response = await fetch(`${API_BASE_URL}/sessions?limit=${limit}`, {
+      const fromParam = fromDate ? `&from=${encodeURIComponent(fromDate)}` : '';
+      const response = await fetch(`${API_BASE_URL}/sessions?limit=${limit}${fromParam}`, {
         method: 'GET',
         headers: await this.getHeaders()
       });
       this.checkAuthError(response);
       if (!response.ok) throw new Error(`HTTP error ${response.status}`);
       return await response.json();
-    } catch {
+    } catch (err) {
+      if (!IS_LOCAL_API) throw err;
       const fallback = [...fallbackSessions];
       (fallback as any).__isFallback = true;
       return fallback;
@@ -182,7 +197,8 @@ class ApiService {
         throw new Error(errorData.message || 'Erro ao criar sessão');
       }
       return await response.json();
-    } catch {
+    } catch (err) {
+      if (!IS_LOCAL_API) throw err;
       const newSession: Session = {
         session_id: `session-local-${Date.now()}`,
         date: sessionData.date || '2026-10-27',
@@ -223,6 +239,7 @@ class ApiService {
       }
       return await response.json();
     } catch (e: any) {
+      if (!IS_LOCAL_API) throw e;
       if (e.message?.includes('Conflito:')) {
         throw e;
       }
@@ -362,7 +379,8 @@ class ApiService {
       this.checkAuthError(response);
       if (!response.ok) throw new Error(`HTTP error ${response.status}`);
       return await response.json();
-    } catch {
+    } catch (err) {
+      if (!IS_LOCAL_API) throw err;
       const fallback = [...fallbackReservations];
       (fallback as any).__isFallback = true;
       return fallback;
@@ -377,7 +395,8 @@ class ApiService {
       });
       this.checkAuthError(response);
       if (!response.ok) throw new Error('Erro ao cancelar reserva.');
-    } catch {
+    } catch (err) {
+      if (!IS_LOCAL_API) throw err;
       const idx = fallbackReservations.findIndex((r) => r.session_id === sessionId && r.user_id === userId);
       if (idx !== -1) {
         const removed = fallbackReservations.splice(idx, 1)[0];

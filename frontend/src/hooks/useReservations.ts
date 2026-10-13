@@ -3,7 +3,8 @@
  * Gerenciado pelo Subagent 2 (Front-End/UI).
  */
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
+import { useFocusEffect } from 'expo-router';
 import { api, Reservation } from '../services/api';
 
 export function useReservations() {
@@ -56,9 +57,12 @@ export function useReservations() {
     }
   };
 
-  useEffect(() => {
-    fetchMyReservations();
-  }, [fetchMyReservations]);
+  // Recarrega sempre que a aba volta a ficar visível.
+  useFocusEffect(
+    useCallback(() => {
+      fetchMyReservations();
+    }, [fetchMyReservations])
+  );
 
   return {
     reservations,

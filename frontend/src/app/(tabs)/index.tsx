@@ -8,6 +8,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, Switch, Modal, RefreshControl, TextInput } from 'react-native';
 import { showAlert } from '../../utils/alert';
 import { useSessions } from '../../hooks/useSessions';
+import { formatSessionDate } from '../../utils/date';
 import { useReservations } from '../../hooks/useReservations';
 import { api, Session } from '../../services/api';
 
@@ -30,14 +31,14 @@ function isWeekend(dateStr: string): boolean {
 }
 
 export default function CalendarScreen() {
-  const { sessions, loading, loadingMore, hasMore, error, refresh, loadMore } = useSessions();
+  const [showPast, setShowPast] = useState(false);
+  const { sessions, loading, loadingMore, hasMore, error, refresh, loadMore } = useSessions({ includePast: showPast });
   const { bookSession } = useReservations();
 
   const [selectedSession, setSelectedSession] = useState<Session | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [needsAdaptedSeat, setNeedsAdaptedSeat] = useState(false);
   const [bookingLoading, setBookingLoading] = useState(false);
-  const [showPast, setShowPast] = useState(false);
   const [defaultAccessibility, setDefaultAccessibility] = useState(false);
   const [searchText, setSearchText] = useState('');
   const [activeFilter, setActiveFilter] = useState<'ALL' | 'ADAPTED' | 'WEEKENDS'>('ALL');
@@ -84,7 +85,7 @@ export default function CalendarScreen() {
       refresh();
       showAlert(
         'Vaga Confirmada! 🎉🛶', 
-        `Sua presença está confirmada para o dia ${selectedSession.date} às ${selectedSession.time} em ${selectedSession.location}. A equipe de praia da Raia 1 estará com a esteira e os equipamentos em prontidão 30 min antes!`
+        `Sua presença está confirmada para ${formatSessionDate(selectedSession.date)} às ${selectedSession.time}, em ${selectedSession.location}. Chegue 30 minutos antes.`
       );
     } catch (err: any) {
       showAlert('Não foi possível agendar', err.message || 'Ocorreu um erro ao processar sua vaga.');
@@ -234,7 +235,7 @@ export default function CalendarScreen() {
                 key={session.session_id} 
                 className={`bg-surface-container-lowest rounded-2xl p-5 md:p-6 shadow-sm border border-outline-variant/30 transition-all ${isPast ? 'opacity-60' : ''}`}
                 accessible={true}
-                accessibilityLabel={`Remada dia ${session.date} às ${session.time}. Local: ${session.location}. Ocupação: ${session.booked_seats} de ${session.total_capacity}. Assentos adaptados livres: ${freeAdaptedSeats}.`}
+                accessibilityLabel={`Remada ${formatSessionDate(session.date)} às ${session.time}. Local: ${session.location}. Ocupação: ${session.booked_seats} de ${session.total_capacity}. Assentos adaptados livres: ${freeAdaptedSeats}.`}
               >
                 <View className="flex flex-col lg:flex-row lg:items-center justify-between gap-5">
                   {/* Left Column: Date & Time Box */}
@@ -242,7 +243,10 @@ export default function CalendarScreen() {
                     <View className="flex flex-col items-center justify-center min-w-[105px] p-3.5 rounded-xl bg-surface-container-low border border-outline-variant/20 text-center">
                       <Text className="text-xl">🌅</Text>
                       <Text className="text-xl font-extrabold text-primary leading-tight mt-1">{session.time}</Text>
-                      <Text className="text-[11px] font-bold text-on-surface-variant uppercase tracking-wider">{session.date}</Text>
+                      {session.end_time ? (
+                        <Text className="text-xs text-on-surface-variant">até {session.end_time}</Text>
+                      ) : null}
+                      <Text className="text-xs font-bold text-on-surface-variant text-center mt-1">{formatSessionDate(session.date)}</Text>
                     </View>
 
                     {/* Middle Column: Title & Info */}
@@ -254,23 +258,23 @@ export default function CalendarScreen() {
                         
                         {isCancelled ? (
                           <View className="px-2.5 py-0.5 rounded-full bg-rose-100">
-                            <Text className="text-[11px] font-bold text-rose-800">CANCELADA</Text>
+                            <Text className="text-xs font-bold text-rose-800">CANCELADA</Text>
                           </View>
                         ) : isPast ? (
                           <View className="px-2.5 py-0.5 rounded-full bg-surface-container-high">
-                            <Text className="text-[11px] font-bold text-on-surface-variant">ENCERRADA</Text>
+                            <Text className="text-xs font-bold text-on-surface-variant">ENCERRADA</Text>
                           </View>
                         ) : isFull ? (
                           <View className="px-2.5 py-0.5 rounded-full bg-amber-100">
-                            <Text className="text-[11px] font-bold text-amber-800">ESGOTADA</Text>
+                            <Text className="text-xs font-bold text-amber-800">ESGOTADA</Text>
                           </View>
                         ) : isLastSeats ? (
                           <View className="px-2.5 py-0.5 rounded-full bg-tertiary-fixed">
-                            <Text className="text-[11px] font-bold text-on-tertiary-fixed-variant">ÚLTIMAS VAGAS</Text>
+                            <Text className="text-xs font-bold text-on-tertiary-fixed-variant">ÚLTIMAS VAGAS</Text>
                           </View>
                         ) : (
                           <View className="px-2.5 py-0.5 rounded-full bg-secondary-container/40">
-                            <Text className="text-[11px] font-bold text-on-secondary-container">ABERTA</Text>
+                            <Text className="text-xs font-bold text-on-secondary-container">ABERTA</Text>
                           </View>
                         )}
                       </View>
@@ -312,7 +316,7 @@ export default function CalendarScreen() {
 
                       <View className="flex-row items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-container-high dark:bg-[#132636] border border-outline-variant/20 dark:border-[#2ec4b6]/30 self-start lg:self-end mt-0.5">
                         <Text className="text-xs">♿</Text>
-                        <Text className="text-[11px] font-bold text-primary dark:text-[#2ec4b6]">
+                        <Text className="text-xs font-bold text-primary dark:text-[#2ec4b6]">
                           {freeAdaptedSeats > 0 ? `${freeAdaptedSeats} Assentos Adaptados livres` : 'Assentos adaptados preenchidos'}
                         </Text>
                       </View>
@@ -327,7 +331,7 @@ export default function CalendarScreen() {
                       disabled={isDisabled}
                       onPress={() => openBookingModal(session)}
                       accessibilityRole="button"
-                      accessibilityLabel={isDisabled ? 'Remada indisponível' : `Agendar remada para ${session.date}`}
+                      accessibilityLabel={isDisabled ? 'Remada indisponível' : `Agendar remada para ${formatSessionDate(session.date)}`}
                     >
                       <Text className={`font-extrabold text-sm ${isDisabled ? 'text-outline dark:text-slate-500' : 'text-white'}`}>
                         {isCancelled ? 'Cancelada' : isPast ? 'Encerrada' : isFull ? 'Esgotado' : 'Agendar Minha Vaga'}
@@ -394,14 +398,14 @@ export default function CalendarScreen() {
               <View className="bg-surface-container-low p-4 rounded-2xl mb-4 border border-outline-variant/20">
                 <Text className="text-xs font-bold text-secondary uppercase tracking-wider">Dados da Expedição</Text>
                 <Text className="text-base font-bold text-on-surface mt-0.5">
-                  {selectedSession.date} às {selectedSession.time}
+                  {formatSessionDate(selectedSession.date)} às {selectedSession.time}
                 </Text>
                 <Text className="text-xs text-on-surface-variant mt-0.5">
                   Local: {selectedSession.location} • Canoa {selectedSession.canoe_type}
                 </Text>
                 {selectedSession.instructor_name && (
                   <Text className="text-xs text-on-surface-variant mt-0.5">
-                    Instrutor Responsável: {selectedSession.instructor_name}
+                    Leme responsável: {selectedSession.instructor_name}
                   </Text>
                 )}
               </View>

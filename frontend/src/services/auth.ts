@@ -29,7 +29,7 @@ let currentCognitoUser: CognitoUser | null = null;
 interface LocalDevSession {
   email: string;
   name: string;
-  role: 'ATHLETE' | 'INSTRUCTOR' | 'ADMIN';
+  role: 'ATHLETE' | 'LEME' | 'INSTRUCTOR' | 'ADMIN';
   token: string;
 }
 
@@ -111,13 +111,13 @@ function ensurePoolConfigured() {
 
 export function signIn(email: string, password: string): Promise<CognitoUserSession | any> {
   if (!userPool) {
-    // Simulação no dev_server.py: emails com 'admin' viram ADMIN, 'instrutor' viram INSTRUCTOR
+    // Simulação no dev_server.py: emails com 'admin' viram ADMIN, 'leme'/'instrutor' viram LEME
     const trimmedEmail = email.trim().toLowerCase();
-    let role: 'ATHLETE' | 'INSTRUCTOR' | 'ADMIN' = 'ATHLETE';
+    let role: 'ATHLETE' | 'LEME' | 'INSTRUCTOR' | 'ADMIN' = 'ATHLETE';
     if (trimmedEmail.includes('admin')) {
       role = 'ADMIN';
-    } else if (trimmedEmail.includes('instrutor') || trimmedEmail.includes('instructor')) {
-      role = 'INSTRUCTOR';
+    } else if (trimmedEmail.includes('leme') || trimmedEmail.includes('instrutor')) {
+      role = 'LEME';
     }
     const namePart = trimmedEmail.split('@')[0].replace(/[._-]/g, ' ');
     const name = namePart.charAt(0).toUpperCase() + namePart.slice(1);
@@ -301,7 +301,7 @@ function decodeJwtPayload(token: string): Record<string, any> | null {
   }
 }
 
-/** Retorna o role do usuário logado ('ATHLETE' | 'INSTRUCTOR' | 'ADMIN'), lido do próprio token. */
+/** Retorna o role do usuário logado ('ATHLETE' | 'LEME' | 'INSTRUCTOR' | 'ADMIN'), lido do próprio token. */
 export async function getCurrentUserRole(): Promise<string> {
   if (!userPool) {
     const dev = getStoredDevSession();

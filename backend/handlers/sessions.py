@@ -8,7 +8,7 @@ import logging
 from typing import Any, Dict
 from pydantic import ValidationError
 
-from common.models import SessionCreateRequest, SessionStatusUpdate, SessionUpdateRequest, SessionResponse
+from common.models import PRIVILEGED_ROLES, SessionCreateRequest, SessionStatusUpdate, SessionUpdateRequest, SessionResponse
 from common.responses import success_response, error_response, validation_error_response
 from common.dynamo_dal import DynamoDAL, ResourceNotFoundError, DALException
 
@@ -17,7 +17,6 @@ logger.setLevel(logging.INFO)
 
 dal = DynamoDAL()
 
-PRIVILEGED_ROLES = {"INSTRUCTOR", "ADMIN"}
 
 
 def get_user_role(event: Dict[str, Any]) -> str:
@@ -32,6 +31,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     http_method = event.get("httpMethod", "").upper()
     resource = event.get("resource", "")
     path_params = event.get("pathParameters") or {}
+    session_id = path_params.get("sessionId")
     path = event.get("path") or event.get("resource") or ""
     if path == "/health" and http_method == "GET":
         return success_response({
@@ -43,7 +43,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     # Criar, editar ou alterar status de sessão exige role de Instrutor ou Admin.
     if http_method in ("POST", "PATCH", "PUT") and get_user_role(event) not in PRIVILEGED_ROLES:
         return error_response(
-            "Apenas instrutores ou administradores podem gerenciar sessões.",
+            "Apenas lemes ou administradores podem gerenciar remadas.",
             status_code=403,
             error_code="FORBIDDEN",
         )
@@ -63,7 +63,8 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                 limit = int(query_params.get("limit", 50))
             except (TypeError, ValueError):
                 limit = 50
-            sessions = dal.list_sessions(limit=limit)
+            from_date = query_params.get("from") or None
+            sessions = dal.list_sessions(limit=limit, from_date=from_date)
             return success_response(sessions, status_code=200)
 
         # POST /sessions
