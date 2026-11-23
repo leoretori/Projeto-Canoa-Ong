@@ -17,7 +17,7 @@ export default function Root({ children }: PropsWithChildren) {
         <title>Va'aFlow • Canoa Para Todos | Canoagem Inclusiva em São Sebastião/SP</title>
         <meta
           name="description"
-          content="Agendamento inclusivo de canoagem polinésia adaptada (Va'a) para paratletas e pessoas com deficiência na Praia Grande em São Sebastião - SP. Vivências no mar 100% gratuitas."
+          content="Agendamento inclusivo de canoagem polinésia adaptada (Va'a) para paratletas e pessoas com deficiência na Praia do Porto Grande em São Sebastião - SP. Vivências no mar 100% gratuitas."
         />
         <meta
           name="keywords"
@@ -27,7 +27,7 @@ export default function Root({ children }: PropsWithChildren) {
         <meta name="robots" content="index, follow" />
         <link rel="canonical" href="https://canoaparatodos.org/" />
 
-        {/* Geolocalização Náutica (Praia Grande • São Sebastião - SP) */}
+        {/* Geolocalização Náutica (Praia do Porto Grande • São Sebastião - SP) */}
         <meta name="geo.region" content="BR-SP" />
         <meta name="geo.placename" content="São Sebastião" />
         <meta name="geo.position" content="-23.8166;-45.4166" />
@@ -51,7 +51,7 @@ export default function Root({ children }: PropsWithChildren) {
         <meta name="twitter:title" content="Va'aFlow • Canoa Para Todos" />
         <meta
           name="twitter:description"
-          content="Canoagem polinésia inclusiva na Praia Grande em São Sebastião - SP."
+          content="Canoagem polinésia inclusiva na Praia do Porto Grande em São Sebastião - SP."
         />
         <meta name="twitter:image" content="https://canoaparatodos.org/cpt-logo.png" />
 

@@ -13,11 +13,14 @@ import { getCurrentUserRole } from '../../services/auth';
 import { ASSIGNABLE_ROLES, roleLabel } from '../../utils/roles';
 import { DateField, TimeField } from '../../components/DateTimeField';
 import { formatSessionDate, formatTimeRange, todayIso, tomorrowIso } from '../../utils/date';
+import { LemePicker, sessionLemes } from '../../components/LemePicker';
+import { SessionRoster } from '../../components/SessionRoster';
+import { DEFAULT_SESSION_LOCATION } from '../../constants/base';
 
 function exportRosterToCsv(session: Session, roster: Reservation[]) {
-  const header = 'Nome,E-mail,Assento Adaptado,Status,Observações';
+  const header = 'Nome,Contato,Convidado,Assento Adaptado,Status,Observações';
   const rows = roster.map((r) =>
-    [r.user_name, r.user_email, r.requires_adapted_seat ? 'Sim' : 'Não', r.status, r.notes || '']
+    [r.user_name, r.is_guest ? r.guest_phone || '' : r.user_email, r.is_guest ? 'Sim' : 'Não', r.requires_adapted_seat ? 'Sim' : 'Não', r.status, r.notes || '']
       .map((field) => `"${String(field).replace(/"/g, '""')}"`)
       .join(',')
   );
@@ -43,27 +46,14 @@ const makeEmptyForm = () => ({
   date: tomorrowIso(),
   time: '07:00',
   endTime: '',
-  location: 'Praia Grande - São Sebastião',
+  location: DEFAULT_SESSION_LOCATION,
   canoeType: 'OC6',
   totalCapacity: '6',
   maxAdaptedSeats: '2',
-  instructorName: '',
+  lemes: [] as string[],
   vests: '',
   paddles: '',
 });
-
-// Indicadores de atenção ao lado do nome do remador.
-// Hoje só "assento adaptado" vem da reserva; os demais (não sabe nadar, doença
-// preexistente, medo do mar) entram quando o cadastro completo for implementado.
-function attentionIcons(res: Reservation): { emoji: string; label: string }[] {
-  const icons: { emoji: string; label: string }[] = [];
-  if (res.requires_adapted_seat) icons.push({ emoji: '♿', label: 'Mobilidade reduzida / cadeirante' });
-  return icons;
-}
-
-function needsAttention(res: Reservation): boolean {
-  return attentionIcons(res).length > 0;
-}
 
 export default function AdminScreen() {
   const [showPast, setShowPast] = useState(false);
@@ -102,6 +92,31 @@ export default function AdminScreen() {
     }
   };
 
+  const reloadRoster = async (sessionId: string) => {
+    try {
+      const roster = await api.getSessionRoster(sessionId);
+      setRosterCache((prev) => ({ ...prev, [sessionId]: roster }));
+    } catch {
+      // mantém a lista anterior
+    }
+    refresh();
+  };
+
+  const confirmToggleStatus = (session: Session) => {
+    if (session.status === 'CANCELLED') {
+      handleToggleStatus(session);
+      return;
+    }
+    showAlert(
+      'Cancelar remada',
+      `Cancelar a remada de ${formatSessionDate(session.date)} às ${session.time}? Os inscritos verão a remada como cancelada.`,
+      [
+        { text: 'Não', style: 'cancel' },
+        { text: 'Sim, cancelar remada', style: 'destructive', onPress: () => handleToggleStatus(session) },
+      ]
+    );
+  };
+
   const handleToggleStatus = async (session: Session) => {
     const nextStatus = session.status === 'CANCELLED' ? 'OPEN' : 'CANCELLED';
     try {
@@ -135,7 +150,7 @@ export default function AdminScreen() {
       canoeType: session.canoe_type,
       totalCapacity: String(session.total_capacity),
       maxAdaptedSeats: String(session.max_adapted_seats),
-      instructorName: session.instructor_name || '',
+      lemes: sessionLemes(session),
       vests: session.vests_available != null ? String(session.vests_available) : '',
       paddles: session.paddles_available != null ? String(session.paddles_available) : '',
     });
@@ -165,7 +180,7 @@ export default function AdminScreen() {
       canoe_type: form.canoeType,
       total_capacity: parseInt(form.totalCapacity, 10) || 6,
       max_adapted_seats: parseInt(form.maxAdaptedSeats, 10) || 0,
-      instructor_name: form.instructorName,
+      lemes: form.lemes,
       vests_available: toOptionalInt(form.vests),
       paddles_available: toOptionalInt(form.paddles),
     };
@@ -364,10 +379,16 @@ export default function AdminScreen() {
                   </View>
 
                   <View className="p-3.5 bg-surface-container-low rounded-2xl border border-outline-variant/20">
-                    <Text className="text-xs font-bold text-on-surface-variant">Leme responsável</Text>
-                    <Text className="text-sm font-bold text-on-surface mt-0.5 truncate">
-                      {session.instructor_name || 'A definir'}
+                    <Text className="text-xs font-bold text-on-surface-variant">
+                      {sessionLemes(session).length > 1 ? 'Lemes' : 'Leme'}
                     </Text>
+                    {sessionLemes(session).length === 0 ? (
+                      <Text className="text-sm font-bold text-on-surface mt-0.5">A definir</Text>
+                    ) : (
+                      sessionLemes(session).map((name) => (
+                        <Text key={name} className="text-sm font-bold text-on-surface mt-0.5">🧭 {name}</Text>
+                      ))
+                    )}
                   </View>
 
                   <View className="p-3.5 bg-surface-container-low rounded-2xl border border-outline-variant/20">
@@ -381,77 +402,36 @@ export default function AdminScreen() {
                   </View>
                 </View>
 
-                {/* Expandable Roster Accordion */}
-                <TouchableOpacity
-                  onPress={() => toggleRoster(session.session_id)}
-                  className="bg-surface-container-low/60 rounded-2xl p-4 border border-outline-variant/20 flex-col"
-                  accessibilityRole="button"
-                >
-                  <View className="flex-row items-center justify-between">
-                    <View className="flex-row items-center gap-2">
-                      <Text className="text-sm">📋</Text>
-                      <Text className="text-xs font-bold text-primary">
-                        {expandedSessionId === session.session_id ? 'Ocultar Lista de Inscritos' : `Ver inscritos nesta canoa (${session.booked_seats} confirmados)`}
-                      </Text>
-                    </View>
-                    <Text className="text-xs font-bold text-primary">
+                {/* Lista de participantes */}
+                <View className="bg-surface-container-low/60 rounded-2xl p-3 border border-outline-variant/20">
+                  <TouchableOpacity
+                    onPress={() => toggleRoster(session.session_id)}
+                    className="min-h-[44px] flex-row items-center justify-between"
+                    accessibilityRole="button"
+                  >
+                    <Text className="text-sm font-bold text-primary">
+                      📋 {expandedSessionId === session.session_id ? 'Ocultar participantes' : `Participantes (${session.booked_seats})`}
+                    </Text>
+                    <Text className="text-sm font-bold text-primary">
                       {expandedSessionId === session.session_id ? '▲' : '▼'}
                     </Text>
-                  </View>
+                  </TouchableOpacity>
 
                   {expandedSessionId === session.session_id && (
-                    <View className="mt-3 pt-3 border-t border-outline-variant/20">
+                    <View className="mt-2 pt-3 border-t border-outline-variant/20">
                       {rosterLoading === session.session_id ? (
                         <ActivityIndicator size="small" color="#004e68" />
-                      ) : (rosterCache[session.session_id]?.length ?? 0) === 0 ? (
-                        <View className="py-4 items-center text-center">
-                          <Text className="text-xs text-on-surface-variant font-medium">
-                            Nenhum atleta inscrito nesta sessão até o momento. Vagas abertas para preenchimento.
-                          </Text>
-                        </View>
                       ) : (
-                        <View className="flex flex-col gap-2">
-                          {rosterCache[session.session_id].map((res) => (
-                            <View 
-                              key={res.reservation_id}
-                              className={`flex-row items-center justify-between p-3 rounded-xl border ${
-                                needsAttention(res)
-                                  ? 'bg-amber-50 border-amber-400 border-l-4 dark:bg-amber-900/30'
-                                  : 'bg-surface-container-lowest border-outline-variant/20'
-                              }`}
-                            >
-                              <View className="flex-1 pr-2">
-                                <Text className="text-sm font-bold text-on-surface">{res.user_name}</Text>
-                                <Text className="text-xs text-on-surface-variant">{res.user_email}</Text>
-                                {res.notes && (
-                                  <Text className="text-xs text-primary mt-0.5">Obs: {res.notes}</Text>
-                                )}
-                              </View>
-                              <View className="flex-row gap-1">
-                                {attentionIcons(res).map((icon) => (
-                                  <View key={icon.emoji} className="px-2 py-1 rounded-full bg-amber-100" accessibilityLabel={icon.label}>
-                                    <Text className="text-sm">{icon.emoji}</Text>
-                                  </View>
-                                ))}
-                              </View>
-                            </View>
-                          ))}
-
-                          <TouchableOpacity
-                            onPress={(e: any) => {
-                              e.stopPropagation?.();
-                              exportRosterToCsv(session, rosterCache[session.session_id]);
-                            }}
-                            className="mt-2 py-2.5 bg-surface-container rounded-xl flex-row items-center justify-center gap-1.5"
-                          >
-                            <Text className="text-xs">⬇</Text>
-                            <Text className="text-xs font-bold text-primary">Exportar Planilha de Embarque (CSV)</Text>
-                          </TouchableOpacity>
-                        </View>
+                        <SessionRoster
+                          session={session}
+                          roster={rosterCache[session.session_id] || []}
+                          onChanged={() => reloadRoster(session.session_id)}
+                          onExport={() => exportRosterToCsv(session, rosterCache[session.session_id] || [])}
+                        />
                       )}
                     </View>
                   )}
-                </TouchableOpacity>
+                </View>
 
                 {/* Bottom Action Buttons */}
                 <View className="flex-col sm:flex-row items-center justify-between gap-3 pt-2 border-t border-outline-variant/20">
@@ -460,21 +440,14 @@ export default function AdminScreen() {
                       onPress={() => openEditModal(session)}
                       className="h-11 px-4 rounded-xl bg-surface-container text-primary flex-row items-center justify-center gap-1.5 flex-1 sm:flex-initial"
                     >
-                      <Text className="text-xs">✏️</Text>
-                      <Text className="text-xs font-bold text-primary">Editar</Text>
+                      <Text className="text-sm">✏️</Text>
+                      <Text className="text-sm font-bold text-primary">Editar remada</Text>
                     </TouchableOpacity>
 
-                    <TouchableOpacity
-                      onPress={() => showAlert('Apoio e Coletes', `Canoa ${session.canoe_type} com ${session.max_adapted_seats} assentos adaptados homologados e coletes salva-vidas disponíveis.`)}
-                      className="h-11 px-4 rounded-xl bg-surface-container text-primary flex-row items-center justify-center gap-1.5 flex-1 sm:flex-initial"
-                    >
-                      <Text className="text-xs">🦺</Text>
-                      <Text className="text-xs font-bold text-primary">Coletes / Assentos</Text>
-                    </TouchableOpacity>
                   </View>
 
                   <TouchableOpacity
-                    onPress={() => handleToggleStatus(session)}
+                    onPress={() => confirmToggleStatus(session)}
                     disabled={statusUpdating === session.session_id}
                     className={`h-11 px-5 rounded-xl flex-row items-center justify-center gap-1.5 w-full sm:w-auto ${
                       isCancelled ? 'bg-secondary-container/40' : 'bg-error-container/40'
@@ -483,8 +456,8 @@ export default function AdminScreen() {
                     {statusUpdating === session.session_id ? (
                       <ActivityIndicator size="small" color="#004e68" />
                     ) : (
-                      <Text className={`text-xs font-bold ${isCancelled ? 'text-on-secondary-container' : 'text-error'}`}>
-                        {isCancelled ? '✓ Reabrir Remada' : '✕ Cancelar Remada'}
+                      <Text className={`text-sm font-bold ${isCancelled ? 'text-on-secondary-container' : 'text-error'}`}>
+                        {isCancelled ? '✓ Reabrir remada' : '✕ Cancelar remada'}
                       </Text>
                     )}
                   </TouchableOpacity>
@@ -509,47 +482,6 @@ export default function AdminScreen() {
         )}
       </View>
 
-      {/* SUMMARY STATISTICS FOOTER BANNER */}
-      <View className="bg-primary text-on-primary rounded-3xl p-6 md:p-8 shadow-md mb-8 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-        <View className="space-y-1 max-w-xl">
-          <Text className="text-xs font-bold text-secondary-fixed uppercase tracking-wider">
-            Resumo Diário da Operação Náutica
-          </Text>
-          <Text className="text-lg md:text-xl font-extrabold text-white">
-            Status da Base e Equipamentos Inclusivos
-          </Text>
-          <Text className="text-xs text-surface-container leading-relaxed">
-            Controle ativo de prontidão para garantir entrada e saída da água com acessibilidade total e segurança marítima.
-          </Text>
-        </View>
-
-        <View className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <View className="bg-primary-container/80 p-3.5 rounded-2xl flex-row items-center gap-3">
-            <Text className="text-2xl">🛶</Text>
-            <View>
-              <Text className="text-base font-bold text-white leading-tight">2 OC6</Text>
-              <Text className="text-xs text-surface-container-high">Canoas na água</Text>
-            </View>
-          </View>
-
-          <View className="bg-primary-container/80 p-3.5 rounded-2xl flex-row items-center gap-3">
-            <Text className="text-2xl">🦺</Text>
-            <View>
-              <Text className="text-base font-bold text-white leading-tight">3 Coletes</Text>
-              <Text className="text-xs text-surface-container-high">Adaptados prontos</Text>
-            </View>
-          </View>
-
-          <View className="bg-primary-container/80 p-3.5 rounded-2xl flex-row items-center gap-3">
-            <Text className="text-2xl">🏖️</Text>
-            <View>
-              <Text className="text-base font-bold text-white leading-tight">Instalada</Text>
-              <Text className="text-xs text-surface-container-high">Esteira na areia</Text>
-            </View>
-          </View>
-        </View>
-      </View>
-
       {/* MODAL DE CRIAÇÃO / EDIÇÃO DE REMADA */}
       <Modal visible={modalVisible} animationType="slide" transparent={true}>
         <View className="flex-1 bg-black/60 justify-end">
@@ -558,7 +490,7 @@ export default function AdminScreen() {
               <View className="flex-row items-center gap-2">
                 <Text className="text-xl">🛶</Text>
                 <Text className="text-lg font-extrabold text-primary">
-                  {editingSession ? 'Editar Detalhes da Remada' : 'Agendar Nova Remada Inclusiva'}
+                  {editingSession ? 'Editar remada' : 'Nova remada'}
                 </Text>
               </View>
               <TouchableOpacity onPress={() => setModalVisible(false)} className="p-1">
@@ -594,7 +526,7 @@ export default function AdminScreen() {
               </View>
 
               <View>
-                <Text className="text-sm font-bold text-on-surface mb-1.5">Ponto de embarque</Text>
+                <Text className="text-sm font-bold text-on-surface mb-1.5">Local de encontro</Text>
                 <TextInput
                   className="bg-surface-container-low border border-outline-variant/40 rounded-2xl px-4 py-3.5 text-on-surface text-lg"
                   value={form.location}
@@ -649,14 +581,10 @@ export default function AdminScreen() {
                 </View>
               </View>
 
-              <View>
-                <Text className="text-sm font-bold text-on-surface mb-1.5">Leme responsável</Text>
-                <TextInput
-                  className="bg-surface-container-low border border-outline-variant/40 rounded-2xl px-4 py-3.5 text-on-surface text-lg"
-                  value={form.instructorName}
-                  onChangeText={(v) => setForm((f) => ({ ...f, instructorName: v }))}
-                />
-              </View>
+              <LemePicker
+                value={form.lemes}
+                onChange={(lemes) => setForm((f) => ({ ...f, lemes }))}
+              />
             </ScrollView>
 
             <View className="flex-row gap-3 pt-3 border-t border-outline-variant/20">

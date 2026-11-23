@@ -11,6 +11,8 @@ import { useReservations } from '../../hooks/useReservations';
 import { showAlert } from '../../utils/alert';
 import { Reservation } from '../../services/api';
 import { formatSessionDate, formatTimeRange, todayIso } from '../../utils/date';
+import { MeetingPoint, ImportantRules } from '../../components/BoardingInfo';
+import { ARRIVAL_MINUTES } from '../../constants/base';
 
 export default function MyReservationsScreen() {
   const router = useRouter();
@@ -140,7 +142,7 @@ export default function MyReservationsScreen() {
                     {res.session_location ? (
                       <Text className="text-base text-on-surface">📍 {res.session_location}</Text>
                     ) : null}
-                    <Text className="text-sm text-on-surface-variant">Chegue 30 minutos antes.</Text>
+                    <Text className="text-sm text-on-surface-variant">Chegue {ARRIVAL_MINUTES} minutos antes para montar as canoas.</Text>
                   </View>
 
                   {res.notes ? (
@@ -183,64 +185,29 @@ export default function MyReservationsScreen() {
       {/* MODAL: ORIENTAÇÕES DE EMBARQUE */}
       <Modal visible={modalOrientacoes} transparent={true} animationType="fade">
         <View className="flex-1 bg-black/60 justify-center items-center px-4">
-          <View className="w-full max-w-lg bg-surface-container-lowest p-6 rounded-3xl shadow-2xl border border-outline-variant/20">
-            <View className="flex-row items-center justify-between mb-4">
-              <View className="flex-row items-center gap-2">
-                <Text className="text-xl">📋</Text>
-                <Text className="text-xl font-extrabold text-primary">Guia Rápido de Embarque</Text>
-              </View>
-              <TouchableOpacity onPress={() => setModalOrientacoes(false)} className="p-1">
-                <Text className="text-gray-400 font-bold text-lg">✕</Text>
+          <View className="w-full max-w-lg max-h-[90%] bg-surface-container-lowest p-5 rounded-3xl shadow-2xl border border-outline-variant/20">
+            <View className="flex-row items-center justify-between mb-3">
+              <Text className="text-xl font-extrabold text-primary">Orientações de embarque</Text>
+              <TouchableOpacity
+                onPress={() => setModalOrientacoes(false)}
+                className="w-11 h-11 items-center justify-center"
+                accessibilityRole="button"
+                accessibilityLabel="Fechar"
+              >
+                <Text className="text-on-surface-variant font-bold text-lg">✕</Text>
               </TouchableOpacity>
             </View>
 
-            <View className="flex flex-col gap-3.5 mb-6">
-              <View className="flex-row items-start gap-3 p-3 rounded-2xl bg-surface-container-low">
-                <View className="w-7 h-7 rounded-full bg-primary items-center justify-center">
-                  <Text className="text-white font-bold text-xs">1</Text>
-                </View>
-                <View className="flex-1">
-                  <Text className="text-xs font-bold text-on-surface">Chegada Antecipada (30 min)</Text>
-                  <Text className="text-xs text-on-surface-variant leading-tight">Apresente-se na tenda principal da Guarderia Raia 1 para conferência de presença e hidratação.</Text>
-                </View>
-              </View>
+            <ScrollView contentContainerStyle={{ gap: 12, paddingBottom: 4 }}>
+              <MeetingPoint />
+              <ImportantRules />
+            </ScrollView>
 
-              <View className="flex-row items-start gap-3 p-3 rounded-2xl bg-surface-container-low">
-                <View className="w-7 h-7 rounded-full bg-primary items-center justify-center">
-                  <Text className="text-white font-bold text-xs">2</Text>
-                </View>
-                <View className="flex-1">
-                  <Text className="text-xs font-bold text-on-surface">Regulagem do Colete Salva-Vidas</Text>
-                  <Text className="text-xs text-on-surface-variant leading-tight">Nossos lemes ajustam as fitas do colete ergonômico homologado pela Marinha para sua segurança.</Text>
-                </View>
-              </View>
-
-              <View className="flex-row items-start gap-3 p-3 rounded-2xl bg-surface-container-low">
-                <View className="w-7 h-7 rounded-full bg-primary items-center justify-center">
-                  <Text className="text-white font-bold text-xs">3</Text>
-                </View>
-                <View className="flex-1">
-                  <Text className="text-xs font-bold text-on-surface">Esteira de Praia & Transferência</Text>
-                  <Text className="text-xs text-on-surface-variant leading-tight">Se você for cadeirante, nossa equipe realiza a condução segura pela esteira até o assento adaptado da canoa.</Text>
-                </View>
-              </View>
-
-              <View className="flex-row items-start gap-3 p-3 rounded-2xl bg-surface-container-low">
-                <View className="w-7 h-7 rounded-full bg-primary items-center justify-center">
-                  <Text className="text-white font-bold text-xs">4</Text>
-                </View>
-                <View className="flex-1">
-                  <Text className="text-xs font-bold text-on-surface">Navegação e Espírito Va'a</Text>
-                  <Text className="text-xs text-on-surface-variant leading-tight">Todos no mesmo ritmo e respiração. Em caso de cansaço, apenas apoie o remo e aproveite o mar.</Text>
-                </View>
-              </View>
-            </View>
-
-            <TouchableOpacity 
+            <TouchableOpacity
               onPress={() => setModalOrientacoes(false)}
-              className="w-full h-12 rounded-xl bg-primary items-center justify-center shadow-sm"
+              className="w-full min-h-[52px] mt-4 rounded-2xl bg-primary items-center justify-center"
             >
-              <Text className="text-white font-bold text-sm">Entendido, estou pronto!</Text>
+              <Text className="text-white font-bold text-base">Entendi</Text>
             </TouchableOpacity>
           </View>
         </View>

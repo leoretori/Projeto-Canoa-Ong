@@ -22,6 +22,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..",
 
 from common.models import SessionCreateRequest, UserProfileUpdate
 from handlers import users, sessions, reservations
+from common.dynamo_dal import DynamoDAL
 
 
 @pytest.fixture
@@ -52,6 +53,11 @@ def init_dynamo():
             ],
             BillingMode="PAY_PER_REQUEST"
         )
+        # Aponta os handlers para a tabela deste teste. Sem isso, outro arquivo de
+        # teste que mude TABLE_NAME antes (ex.: test_edge_cases) quebra estes testes
+        # dependendo da ordem de execução.
+        for module in (users, sessions, reservations):
+            module.dal = DynamoDAL(table_name="VaaFlow-TestTable", region_name="us-east-1")
         yield dynamodb
 
 
@@ -241,3 +247,125 @@ def test_athlete_cannot_read_roster_via_header(init_dynamo):
         "requestContext": {"authorizer": {"claims": {"sub": "a1", "email": "a@x.org", "name": "Atleta"}}},
     }
     assert reservations.handler(event, None)["statusCode"] == 403
+
+
+# ---------------------------------------------------------------------------
+# Lemes múltiplos, convidados e retirada de participante pelo leme
+# ---------------------------------------------------------------------------
+LEME_CTX = {"authorizer": {"claims": {"sub": "leme-1", "email": "leme@x.org", "name": "Leme Um", "custom:role": "LEME"}}}
+ATHLETE_CTX = {"authorizer": {"claims": {"sub": "ath-1", "email": "a@x.org", "name": "Atleta", "custom:role": "ATHLETE"}}}
+
+
+def _guest(sid, ctx, name="Convidado Teste", adapted=False):
+    return reservations.handler({
+        "httpMethod": "POST",
+        "path": f"/sessions/{sid}/guests",
+        "pathParameters": {"sessionId": sid},
+        "requestContext": ctx,
+        "body": json.dumps({"name": name, "phone": "12999990000", "requires_adapted_seat": adapted}),
+    }, None)
+
+
+def test_session_with_multiple_lemes_and_edit(init_dynamo):
+    created = sessions.handler({
+        "httpMethod": "POST",
+        "requestContext": LEME_CTX,
+        "body": json.dumps({"date": "2099-05-05", "time": "07:00", "lemes": ["Ana", " ana ", "Bruno", ""]}),
+    }, None)
+    assert created["statusCode"] == 201
+    body = json.loads(created["body"])
+    assert body["lemes"] == ["Ana", "Bruno"]
+    assert body["instructor_name"] == "Ana, Bruno"
+
+    # Leme edita a remada já aberta
+    edited = sessions.handler({
+        "httpMethod": "PUT",
+        "pathParameters": {"sessionId": body["session_id"]},
+        "requestContext": LEME_CTX,
+        "body": json.dumps({"lemes": ["Carla"], "time": "08:00"}),
+    }, None)
+    assert edited["statusCode"] == 200
+    e = json.loads(edited["body"])
+    assert e["lemes"] == ["Carla"] and e["instructor_name"] == "Carla" and e["time"] == "08:00"
+
+
+def test_leme_adds_guest_and_guest_takes_a_seat(init_dynamo):
+    sid = json.loads(_create_session("2099-06-06", capacity=2)["body"])["session_id"]
+
+    r = _guest(sid, LEME_CTX)
+    assert r["statusCode"] == 201
+    g = json.loads(r["body"])
+    assert g["is_guest"] is True and g["user_id"].startswith("GUEST-") and g["added_by"] == "Leme Um"
+
+    _guest(sid, LEME_CTX, name="Outro Convidado")
+    # Lotou: terceiro convidado é barrado pela mesma trava atômica
+    assert _guest(sid, LEME_CTX, name="Terceiro")["statusCode"] == 409
+
+    roster = json.loads(reservations.handler({
+        "httpMethod": "GET", "path": f"/sessions/{sid}/reservations",
+        "pathParameters": {"sessionId": sid}, "requestContext": LEME_CTX,
+    }, None)["body"])
+    assert len(roster) == 2 and all(x["is_guest"] for x in roster)
+
+
+def test_athlete_cannot_add_guest(init_dynamo):
+    sid = json.loads(_create_session("2099-07-07")["body"])["session_id"]
+    assert _guest(sid, ATHLETE_CTX)["statusCode"] == 403
+
+
+def test_leme_removes_guest_and_frees_seat(init_dynamo):
+    sid = json.loads(_create_session("2099-08-08", capacity=1)["body"])["session_id"]
+    gid = json.loads(_guest(sid, LEME_CTX)["body"])["user_id"]
+
+    resp = reservations.handler({
+        "httpMethod": "DELETE",
+        "path": f"/sessions/{sid}/reservations/{gid}",
+        "pathParameters": {"sessionId": sid, "userId": gid},
+        "requestContext": LEME_CTX,
+    }, None)
+    assert resp["statusCode"] == 200
+    session = json.loads(sessions.handler({"httpMethod": "GET", "pathParameters": {"sessionId": sid}}, None)["body"])
+    assert session["booked_seats"] == 0
+
+
+def test_athlete_cannot_remove_someone_else(init_dynamo):
+    """Remador comum que manda o ID de outra pessoa na URL só consegue mexer na própria vaga."""
+    sid = json.loads(_create_session("2099-09-09")["body"])["session_id"]
+    gid = json.loads(_guest(sid, LEME_CTX)["body"])["user_id"]
+
+    resp = reservations.handler({
+        "httpMethod": "DELETE",
+        "path": f"/sessions/{sid}/reservations/{gid}",
+        "pathParameters": {"sessionId": sid, "userId": gid},
+        "requestContext": ATHLETE_CTX,
+    }, None)
+    assert resp["statusCode"] == 404  # não tem vaga própria; o convidado continua lá
+    session = json.loads(sessions.handler({"httpMethod": "GET", "pathParameters": {"sessionId": sid}}, None)["body"])
+    assert session["booked_seats"] == 1
+
+
+def test_any_leme_can_cancel_session(init_dynamo):
+    sid = json.loads(_create_session("2099-10-10")["body"])["session_id"]
+    other_leme = {"authorizer": {"claims": {"sub": "leme-2", "name": "Leme Dois", "custom:role": "LEME"}}}
+    resp = sessions.handler({
+        "httpMethod": "PATCH",
+        "pathParameters": {"sessionId": sid},
+        "requestContext": other_leme,
+        "body": json.dumps({"status": "CANCELLED"}),
+    }, None)
+    assert resp["statusCode"] == 200
+
+
+def test_leme_cancels_own_reservation_with_legacy_url(init_dynamo):
+    """Versões antigas do app mandam 'user-demo-me' na URL; para o leme isso
+    continua significando a própria vaga (não um terceiro)."""
+    sid = json.loads(_create_session("2099-11-11")["body"])["session_id"]
+    reservations.handler({
+        "httpMethod": "POST", "path": f"/sessions/{sid}/reservations",
+        "pathParameters": {"sessionId": sid}, "requestContext": LEME_CTX, "body": "{}",
+    }, None)
+    resp = reservations.handler({
+        "httpMethod": "DELETE", "path": f"/sessions/{sid}/reservations/user-demo-me",
+        "pathParameters": {"sessionId": sid, "userId": "user-demo-me"}, "requestContext": LEME_CTX,
+    }, None)
+    assert resp["statusCode"] == 200

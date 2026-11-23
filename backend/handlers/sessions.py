@@ -24,6 +24,14 @@ def get_user_role(event: Dict[str, Any]) -> str:
     return get_identity(event)["role"]
 
 
+def _sync_instructor_name(data: Dict[str, Any]) -> Dict[str, Any]:
+    """Mantém instructor_name (texto) em sincronia com a lista de lemes,
+    para telas antigas que só leem o campo de texto."""
+    if data.get("lemes") is not None:
+        data["instructor_name"] = ", ".join(data["lemes"])
+    return data
+
+
 def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     http_method = event.get("httpMethod", "").upper()
     resource = event.get("resource", "")
@@ -70,7 +78,8 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             body_json = json.loads(body_raw) if isinstance(body_raw, str) else body_raw
 
             validated = SessionCreateRequest.model_validate(body_json)
-            created_session = dal.create_session(validated.model_dump())
+            data = _sync_instructor_name(validated.model_dump())
+            created_session = dal.create_session(data)
             return success_response(created_session, status_code=201)
 
         # PATCH /sessions/{sessionId}/status
@@ -88,7 +97,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             body_json = json.loads(body_raw) if isinstance(body_raw, str) else body_raw
 
             validated = SessionUpdateRequest.model_validate(body_json)
-            updates = validated.model_dump(exclude_unset=True, exclude_none=True)
+            updates = _sync_instructor_name(validated.model_dump(exclude_unset=True, exclude_none=True))
             updated = dal.update_session_fields(session_id, updates)
             return success_response(updated, status_code=200)
 

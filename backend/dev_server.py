@@ -167,6 +167,8 @@ class LocalGatewayHandler(BaseHTTPRequestHandler):
                     "GET  /reservations/me - Listar minhas reservas",
                     "GET  /reservations/recent - Feed de atividade recente",
                     "DELETE /sessions/{sessionId}/reservations/{userId} - Cancelar reserva",
+                    "POST /sessions/{sessionId}/guests - Leme adiciona convidado",
+                    "GET  /lemes - Lemes cadastrados",
                     "GET  /users/me - Perfil do remador",
                     "PUT  /users/me - Atualizar necessidades de acessibilidade",
                     "GET  /admin/users - Gestão de usuários (Admin)",
@@ -197,6 +199,24 @@ class LocalGatewayHandler(BaseHTTPRequestHandler):
         elif match := re.match(r"^/sessions/([^/]+)/reservations/([^/]+)$", path):
             event["pathParameters"] = {"sessionId": match.group(1), "userId": match.group(2)}
             response = reservations.handler(event, None)
+
+        # 4b. Convidado adicionado pelo leme: POST /sessions/{sessionId}/guests
+        elif match := re.match(r"^/sessions/([^/]+)/guests$", path):
+            event["pathParameters"] = {"sessionId": match.group(1)}
+            response = reservations.handler(event, None)
+
+        # 4c. Lemes cadastrados (mock local): GET /lemes
+        elif path == "/lemes" and method == "GET":
+            mock_lemes = [
+                {"user_id": "user-local-admin", "name": "Coordenador Geral", "role": "ADMIN"},
+                {"user_id": "user-local-instrutor", "name": "Mestre Kaique", "role": "LEME"},
+            ]
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json")
+            self.send_header("Access-Control-Allow-Origin", "*")
+            self.end_headers()
+            self.wfile.write(json.dumps(mock_lemes).encode("utf-8"))
+            return
 
         # 5. Rota de Sessões: GET /sessions e POST /sessions
         elif path == "/sessions":

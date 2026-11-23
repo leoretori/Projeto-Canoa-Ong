@@ -5,7 +5,7 @@ Todos os payloads JSON devem ser estritamente validados contra estes schemas.
 """
 
 from enum import Enum
-from typing import Optional
+from typing import List, Optional
 from datetime import datetime
 from pydantic import BaseModel, Field, ConfigDict, field_validator
 
@@ -27,6 +27,22 @@ class UserRole(str, Enum):
 
 # Perfis que podem gerenciar remadas e ver a lista de remadores.
 PRIVILEGED_ROLES = {"LEME", "INSTRUCTOR", "ADMIN"}
+
+
+def _clean_lemes(v: Optional[List[str]]) -> Optional[List[str]]:
+    """Normaliza a lista de lemes: tira espaços, vazios e repetidos."""
+    if v is None:
+        return None
+    cleaned: List[str] = []
+    for name in v:
+        name = (name or "").strip()
+        if not name:
+            continue
+        if len(name) > 100:
+            raise ValueError("Nome de leme muito longo (máx. 100 caracteres).")
+        if name.lower() not in {n.lower() for n in cleaned}:
+            cleaned.append(name)
+    return cleaned
 
 
 class SessionStatus(str, Enum):
@@ -81,6 +97,12 @@ class SessionCreateRequest(BaseModel):
     end_time: Optional[str] = Field(None, description="Horário aproximado de término (HH:MM)")
     vests_available: Optional[int] = Field(None, ge=0, le=200, description="Coletes separados para quem não tem")
     paddles_available: Optional[int] = Field(None, ge=0, le=200, description="Remos separados para quem não tem")
+    lemes: Optional[List[str]] = Field(None, max_length=6, description="Lemes responsáveis (nomes)")
+
+    @field_validator("lemes")
+    @classmethod
+    def validate_lemes(cls, v: Optional[List[str]]) -> Optional[List[str]]:
+        return _clean_lemes(v)
 
     @field_validator("end_time")
     @classmethod
@@ -132,6 +154,12 @@ class SessionUpdateRequest(BaseModel):
     end_time: Optional[str] = Field(None, description="Horário aproximado de término (HH:MM)")
     vests_available: Optional[int] = Field(None, ge=0, le=200)
     paddles_available: Optional[int] = Field(None, ge=0, le=200)
+    lemes: Optional[List[str]] = Field(None, max_length=6, description="Lemes responsáveis (nomes)")
+
+    @field_validator("lemes")
+    @classmethod
+    def validate_lemes(cls, v: Optional[List[str]]) -> Optional[List[str]]:
+        return _clean_lemes(v)
 
     @field_validator("end_time")
     @classmethod
@@ -183,6 +211,7 @@ class SessionResponse(BaseModel):
     end_time: Optional[str] = None
     vests_available: Optional[int] = None
     paddles_available: Optional[int] = None
+    lemes: Optional[List[str]] = None
     created_at: str
 
     @property
@@ -208,6 +237,24 @@ class ReservationCreateRequest(BaseModel):
     notes: Optional[str] = Field(None, max_length=300, description="Necessidades especiais de embarque")
 
 
+class GuestCreateRequest(BaseModel):
+    """Convidado adicionado por um leme (ocupa vaga como qualquer remador)."""
+    model_config = ConfigDict(extra="forbid")
+
+    name: str = Field(..., min_length=2, max_length=100, description="Nome do convidado")
+    phone: Optional[str] = Field(None, max_length=20, description="Telefone de contato")
+    requires_adapted_seat: bool = Field(default=False)
+    notes: Optional[str] = Field(None, max_length=300)
+
+    @field_validator("name")
+    @classmethod
+    def strip_name(cls, v: str) -> str:
+        v = v.strip()
+        if len(v) < 2:
+            raise ValueError("Informe o nome do convidado.")
+        return v
+
+
 class ReservationResponse(BaseModel):
     reservation_id: str
     session_id: str
@@ -217,5 +264,8 @@ class ReservationResponse(BaseModel):
     requires_adapted_seat: bool
     status: str = "CONFIRMED"
     notes: Optional[str] = None
+    is_guest: bool = False
+    guest_phone: Optional[str] = None
+    added_by: Optional[str] = None
     created_at: str
 

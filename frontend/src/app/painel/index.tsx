@@ -85,7 +85,7 @@ export default function CalendarScreen() {
       refresh();
       showAlert(
         'Vaga Confirmada! 🎉🛶', 
-        `Sua presença está confirmada para ${formatSessionDate(selectedSession.date)} às ${selectedSession.time}, em ${selectedSession.location}. Chegue 30 minutos antes.`
+        `Sua presença está confirmada para ${formatSessionDate(selectedSession.date)} às ${selectedSession.time}, em ${selectedSession.location}. Chegue 15 minutos antes para montar as canoas. Endereço e avisos em Minhas vagas › Orientações de embarque.`
       );
     } catch (err: any) {
       showAlert('Não foi possível agendar', err.message || 'Ocorreu um erro ao processar sua vaga.');
@@ -281,7 +281,7 @@ export default function CalendarScreen() {
       )}
 
       <Text className="text-sm text-on-surface-variant text-center px-2">
-        Precisa de apoio na areia (esteira ou transferência)? Chegue 30 minutos antes e procure a tenda da equipe.
+        Base do Canoa para Todos: Rua Pescador Altino Garcês, 35 – Praia do Porto Grande. Chegue 15 minutos antes para montar as canoas.
       </Text>
 
       {/* MODAL DE CONFIRMAÇÃO DE AGENDAMENTO */}
@@ -336,7 +336,7 @@ export default function CalendarScreen() {
             <View className="bg-surface-container p-3 rounded-xl mb-5 flex-row items-center gap-2">
               <Text className="text-base">ℹ️</Text>
               <Text className="text-xs text-on-surface-variant flex-1">
-                Recomendamos chegar 30 minutos antes para regulagem de coletes homologados pela Marinha e esteira de praia.
+                Chegue 15 minutos antes para montar as canoas. Uso obrigatório do colete/flutuador.
               </Text>
             </View>
 
