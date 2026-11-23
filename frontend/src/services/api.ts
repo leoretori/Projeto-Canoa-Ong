@@ -49,6 +49,20 @@ export interface Session {
   end_time?: string;
   vests_available?: number;
   paddles_available?: number;
+  lemes?: string[];
+}
+
+export interface LemeOption {
+  user_id: string;
+  name: string;
+  role: string;
+}
+
+export interface GuestInput {
+  name: string;
+  phone?: string;
+  requires_adapted_seat?: boolean;
+  notes?: string;
 }
 
 export interface Reservation {
@@ -61,6 +75,10 @@ export interface Reservation {
   status: string;
   notes?: string;
   created_at: string;
+  // Convidado adicionado por um leme
+  is_guest?: boolean;
+  guest_phone?: string;
+  added_by?: string;
   // Anexados pelo backend em GET /reservations/me
   session_date?: string;
   session_time?: string;
@@ -337,6 +355,44 @@ class ApiService {
     }
   }
 
+  // --- Lemes e convidados ---
+  async listLemes(): Promise<LemeOption[]> {
+    const response = await fetch(`${API_BASE_URL}/lemes`, {
+      method: 'GET',
+      headers: await this.getHeaders()
+    });
+    this.checkAuthError(response);
+    if (!response.ok) throw new Error(`HTTP error ${response.status}`);
+    return await response.json();
+  }
+
+  async addGuest(sessionId: string, guest: GuestInput): Promise<Reservation> {
+    const response = await fetch(`${API_BASE_URL}/sessions/${sessionId}/guests`, {
+      method: 'POST',
+      headers: await this.getHeaders(),
+      body: JSON.stringify(guest)
+    });
+    this.checkAuthError(response);
+    if (!response.ok) {
+      const errJson = await response.json().catch(() => ({}));
+      throw new Error(errJson.message || 'Não foi possível adicionar o convidado.');
+    }
+    return await response.json();
+  }
+
+  /** Leme/Admin retira um participante (ou convidado) da remada. */
+  async removeParticipant(sessionId: string, userId: string): Promise<void> {
+    const response = await fetch(`${API_BASE_URL}/sessions/${sessionId}/reservations/${encodeURIComponent(userId)}`, {
+      method: 'DELETE',
+      headers: await this.getHeaders()
+    });
+    this.checkAuthError(response);
+    if (!response.ok) {
+      const errJson = await response.json().catch(() => ({}));
+      throw new Error(errJson.message || 'Não foi possível retirar o participante.');
+    }
+  }
+
   async getRecentActivity(): Promise<Reservation[]> {
     const response = await fetch(`${API_BASE_URL}/reservations/recent`, {
       method: 'GET',
@@ -374,7 +430,7 @@ class ApiService {
     }
   }
 
-  async cancelReservation(sessionId: string, userId: string = 'user-demo-me'): Promise<void> {
+  async cancelReservation(sessionId: string, userId: string = 'me'): Promise<void> {
     try {
       const response = await fetch(`${API_BASE_URL}/sessions/${sessionId}/reservations/${userId}`, {
         method: 'DELETE',
@@ -384,7 +440,7 @@ class ApiService {
       if (!response.ok) throw new Error('Erro ao cancelar reserva.');
     } catch (err) {
       if (!IS_LOCAL_API) throw err;
-      const idx = fallbackReservations.findIndex((r) => r.session_id === sessionId && r.user_id === userId);
+      const idx = fallbackReservations.findIndex((r) => r.session_id === sessionId && (userId === 'me' || r.user_id === userId));
       if (idx !== -1) {
         const removed = fallbackReservations.splice(idx, 1)[0];
         const session = fallbackSessions.find((s) => s.session_id === sessionId);

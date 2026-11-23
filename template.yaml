@@ -301,6 +301,12 @@ Resources:
             RestApiId: !Ref VaaFlowApi
             Path: /sessions/{sessionId}/reservations/{userId}
             Method: DELETE
+        AddGuest:
+          Type: Api
+          Properties:
+            RestApiId: !Ref VaaFlowApi
+            Path: /sessions/{sessionId}/guests
+            Method: POST
 
   # ============================================================================
   # 5b. AWS LAMBDA — ADMINISTRAÇÃO DE USUÁRIOS (gestão de roles no Cognito)
@@ -332,6 +338,12 @@ Resources:
             RestApiId: !Ref VaaFlowApi
             Path: /admin/users/{userId}/role
             Method: PATCH
+        ListLemes:
+          Type: Api
+          Properties:
+            RestApiId: !Ref VaaFlowApi
+            Path: /lemes
+            Method: GET
 
   # ============================================================================
   # 6. BUDGET KILL-SWITCH (bloqueia a API automaticamente ao estourar o budget)

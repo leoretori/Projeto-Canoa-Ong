@@ -117,6 +117,7 @@ class DynamoDAL:
             "end_time": session_data.get("end_time"),
             "vests_available": session_data.get("vests_available"),
             "paddles_available": session_data.get("paddles_available"),
+            "lemes": session_data.get("lemes") or None,
             "created_at": now
         }
         # DynamoDB não aceita atributos None em put_item limpo — remove os vazios.
@@ -250,7 +251,8 @@ class DynamoDAL:
         user_name: str,
         user_email: str,
         requires_adapted_seat: bool = False,
-        notes: Optional[str] = None
+        notes: Optional[str] = None,
+        extra: Optional[Dict[str, Any]] = None
     ) -> Dict[str, Any]:
         """
         Executa reserva atômica via TransactWriteItems:
@@ -284,6 +286,11 @@ class DynamoDAL:
         }
         if notes:
             res_item["notes"] = {"S": notes}
+        # Campos extras (ex.: convidado adicionado pelo leme)
+        for key, value in (extra or {}).items():
+            if value is None or value == "":
+                continue
+            res_item[key] = {"BOOL": value} if isinstance(value, bool) else {"S": str(value)}
 
         # Configuração da transação
         put_reservation_action = {
@@ -366,6 +373,7 @@ class DynamoDAL:
             "requires_adapted_seat": requires_adapted_seat,
             "status": "CONFIRMED",
             "notes": notes,
+            **{k: v for k, v in (extra or {}).items() if v not in (None, "")},
             "created_at": now
         }
 

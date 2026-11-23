@@ -6,10 +6,11 @@ Regra Crítica: Tratamento semântico de Overbooking retornando 409 Conflict.
 
 import json
 import logging
+import uuid
 from typing import Any, Dict
 from pydantic import ValidationError
 
-from common.models import PRIVILEGED_ROLES, ReservationCreateRequest, ReservationResponse
+from common.models import PRIVILEGED_ROLES, GuestCreateRequest, ReservationCreateRequest, ReservationResponse
 from common.identity import get_identity
 from common.responses import success_response, error_response, validation_error_response
 from common.dynamo_dal import (
@@ -39,8 +40,31 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     user_info = get_user_from_event(event)
 
     try:
+        # POST /sessions/{sessionId}/guests — leme adiciona convidado (ocupa vaga normalmente)
+        if http_method == "POST" and session_id and path.rstrip("/").endswith("/guests"):
+            if user_info.get("role", "ATHLETE") not in PRIVILEGED_ROLES:
+                return error_response(
+                    "Apenas lemes ou administradores podem adicionar convidados.",
+                    status_code=403,
+                    error_code="FORBIDDEN",
+                )
+            body_raw = event.get("body") or "{}"
+            body_json = json.loads(body_raw) if isinstance(body_raw, str) else body_raw
+            guest = GuestCreateRequest.model_validate(body_json)
+
+            reservation = dal.create_reservation_atomic(
+                session_id=session_id,
+                user_id=f"GUEST-{uuid.uuid4().hex[:12]}",
+                user_name=guest.name,
+                user_email="",
+                requires_adapted_seat=guest.requires_adapted_seat,
+                notes=guest.notes,
+                extra={"is_guest": True, "guest_phone": guest.phone, "added_by": user_info.get("name")},
+            )
+            return success_response(reservation, status_code=201)
+
         # POST /sessions/{sessionId}/reservations
-        if http_method == "POST" and session_id:
+        elif http_method == "POST" and session_id:
             body_raw = event.get("body") or "{}"
             body_json = json.loads(body_raw) if isinstance(body_raw, str) else body_raw
 
@@ -98,10 +122,15 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             return success_response(recent, status_code=200)
 
         # DELETE /sessions/{sessionId}/reservations/{userId}
-        # Segurança: a identidade usada é sempre a do token autenticado, nunca o
-        # valor vindo da URL — evita que um usuário cancele reserva de outro.
+        # Segurança: remador comum só cancela a própria vaga (identidade do token,
+        # nunca a da URL). Leme/Admin pode retirar outra pessoa ou um convidado.
         elif http_method == "DELETE" and session_id:
-            dal.cancel_reservation_atomic(session_id=session_id, user_id=user_info["user_id"])
+            target = path_params.get("userId")
+            is_privileged = user_info.get("role", "ATHLETE") in PRIVILEGED_ROLES
+            # "me" (e "user-demo-me", enviado por versões antigas do app) = a própria vaga.
+            names_self = target in (None, "", "me", "user-demo-me", user_info["user_id"])
+            user_to_cancel = user_info["user_id"] if (names_self or not is_privileged) else target
+            dal.cancel_reservation_atomic(session_id=session_id, user_id=user_to_cancel)
             return success_response({"message": "Reserva cancelada com sucesso."}, status_code=200)
 
         else:

@@ -621,7 +621,7 @@ export default function LandingPage() {
                 Promovendo emancipação motora, acolhimento social e conexão náutica através da canoagem polinésia (Va'a) 100% adaptada para pessoas com deficiência.
               </Text>
               <Text className="text-xs text-on-surface-variant">CNPJ: 42.180.932/0001-85</Text>
-              <Text className="text-xs text-on-surface-variant font-medium">Sede Náutica: Praia Grande • São Sebastião - SP</Text>
+              <Text className="text-xs text-on-surface-variant font-medium">Base: Rua Pescador Altino Garcês, 35 – Praia do Porto Grande • São Sebastião - SP</Text>
             </View>
 
             {/* Links Rápidos */}

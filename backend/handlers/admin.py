@@ -41,7 +41,42 @@ def _map_cognito_user(user: Dict[str, Any]) -> Dict[str, Any]:
     }
 
 
+LEME_ROLES = {"LEME", "INSTRUCTOR", "ADMIN"}
+
+
+def _list_all_users() -> list:
+    users, token = [], None
+    while True:
+        kwargs = {"UserPoolId": USER_POOL_ID, "Limit": 60}
+        if token:
+            kwargs["PaginationToken"] = token
+        response = cognito.list_users(**kwargs)
+        users.extend(_map_cognito_user(u) for u in response.get("Users", []))
+        token = response.get("PaginationToken")
+        if not token:
+            return users
+
+
 def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
+    path = event.get("path") or event.get("resource") or ""
+
+    # GET /lemes — nomes dos lemes cadastrados, para escolher na remada.
+    # Liberado para Leme e Admin (não expõe e-mail nem telefone).
+    if path.rstrip("/").endswith("/lemes") and event.get("httpMethod", "").upper() == "GET":
+        if get_user_role(event) not in LEME_ROLES:
+            return error_response("Apenas lemes ou administradores.", status_code=403, error_code="FORBIDDEN")
+        try:
+            lemes = [
+                {"user_id": u["user_id"], "name": u["name"] or (u["email"] or "").split("@")[0], "role": u["role"]}
+                for u in _list_all_users()
+                if u["role"] in LEME_ROLES and u.get("enabled", True)
+            ]
+            lemes.sort(key=lambda u: (u["name"] or "").lower())
+            return success_response(lemes, status_code=200)
+        except ClientError:
+            logger.exception("Erro do Cognito ao listar lemes")
+            return error_response("Não foi possível carregar os lemes.", status_code=400, error_code="COGNITO_ERROR")
+
     if get_user_role(event) != "ADMIN":
         return error_response(
             "Apenas administradores podem gerenciar usuários.",
@@ -56,8 +91,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     try:
         # GET /admin/users
         if http_method == "GET":
-            response = cognito.list_users(UserPoolId=USER_POOL_ID, Limit=60)
-            users = [_map_cognito_user(u) for u in response.get("Users", [])]
+            users = _list_all_users()
             return success_response(users, status_code=200)
 
         # PATCH /admin/users/{userId}/role
